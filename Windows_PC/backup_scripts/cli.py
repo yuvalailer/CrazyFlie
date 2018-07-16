@@ -26,7 +26,7 @@ def drawBoxs():
 	sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (11, 4+2*BOARD_SIZE_X, "  Player 1   CrazyFlie: 1  "))
 	sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (12, 4+2*BOARD_SIZE_X, "             CrazyFlie: 2  "))
 	sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (13, 4+2*BOARD_SIZE_X, "             Targets:   3&4"))
-	#
+	# player 2
 	sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (17, 4+2*BOARD_SIZE_X, "  Player 2   CrazyFlie: A  "))
 	sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (18, 4+2*BOARD_SIZE_X, "             CrazyFlie: B  "))
 	sys.stdout.write("\x1b7\x1b[%d;%df%s\x1b8" % (19, 4+2*BOARD_SIZE_X, "             Targets:   C&D"))
