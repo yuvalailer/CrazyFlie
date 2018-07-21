@@ -14,10 +14,10 @@ class ElapsedTime(threading.Thread):
 		self._work = False
 	def run(self):
 		self._start_time = time.time()
-		while self._work: # Note, this time is not a clock, There is a trailing measurement error
+		while self._work:
 			diff = time.time()-self._start_time
-			lib.updateInfo(lib.INFO_ELAPSED,"{:.2f}".format(diff)) # Update the requested value at the CLI info box
-			time.sleep(1)
+			lib.updateInfo(lib.INFO_ELAPSED,"{:.0f}".format(diff)) # Update the requested value at the CLI info box
+			time.sleep(1-(diff%1))
 
 class CFPlayer(object):
 	_player_Type = lib.HUMAN_PLAYER
