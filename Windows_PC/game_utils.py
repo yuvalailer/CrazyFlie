@@ -4,38 +4,37 @@ import numpy as np
 
 from pygame.locals import *
 
-#         R    G    B
+PLAYER = 1  # 1 for HUMAN, 0 for MACHINE
+
+WINDOW_WIDTH = 1000  # width of the program's window, in pixels
+WINDOW_HEIGHT = 800  # height in pixels
+EMPTY = ""  # an arbitrary but unique value
+
+# colors: R    G    B
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 GREEN = (0, 155, 0)
-BLUE = (0, 50, 255)
+BLUE  = (0, 50, 255)
 BROWN = (174, 94, 0)
+RED   = (255, 0, 0)
 
 
 class Board:
 
-    board = []
-    turns = 0
-    time = 0
-    window_width = 1000  # width of the program's window, in pixels
-    window_height = 800  # height in pixels
-    space_size = 50  # width & height of each space on the board, in pixels
-    board_width = 8  # how many columns of spaces on the game board
-    board_height = 8  # how many rows of spaces on the game board
-    empty = ""  # an arbitrary but unique value
-    x_margin = int(int((window_width - (board_width * space_size)) / 2)/3)
-    y_margin = int((window_height - (board_height * space_size)) / 2)
+    DISPLAYSURF = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    DISPLAYSURF = pygame.display.set_mode((window_width, window_height))
-    TEXTBGCOLOR1 = BLUE
-    TEXTBGCOLOR2 = GREEN
-    grid_line_color = BLUE
-    TEXTCOLOR = WHITE
-
-    def __init__(self):
+    def __init__(self, width, height, space_size):
         # Creates a brand new, empty board data structure.
-        for i in range(self.board_width):
-            self.board.append([self.empty] * self.board_height)
+        self.board = []
+        self.turns = 0
+        self.time = 0
+        self.width, self.height = width, height
+        self.space_size = space_size
+        self.x_margin = int(int((WINDOW_WIDTH - (width * space_size)) / 2) / 3)
+        self.y_margin = int((WINDOW_HEIGHT - (height * space_size)) / 2)
+        self.grid_line_color = BLUE
+        for i in range(self.width):
+            self.board.append([EMPTY] * self.height)
         return
 
     def add_players(self, player1, player2):
@@ -62,6 +61,10 @@ class Board:
     def draw_board(self):
         pygame.init()
         pygame.display.set_caption('Crazy Hell Game')
+
+        # the color of the board is blue on the human player's turn, and red on the computer's turn
+        self.grid_line_color = BLUE if PLAYER else RED
+
         font = pygame.font.Font('freesansbold.ttf', 16)
         bigfont = pygame.font.Font('freesansbold.ttf', 32)
 
@@ -84,12 +87,21 @@ class Board:
         # Add starting pieces to the center
         for i in range(self.board_width):
             for j in range(self.board_height):
-                if(self.board[i][j] != self.empty):
+                if self.board[i][j] != EMPTY:
                     if self.board[i][j].isupper():
                         self.draw_item(self.board[i][j], i, j, WHITE)
                     else:
                         self.draw_item(self.board[i][j], i, j, GREEN)
 
         # Draw Game Info
-        self.draw_text("Turns:  " + str(self.turns), self.window_width * 0.75, self.y_margin, BROWN)
-        self.draw_text("Time:  " + str(self.time), self.window_width * 0.75, 2*self.y_margin, BROWN)
+        self.draw_text("Turns:  " + str(self.turns), WINDOW_WIDTH * 0.75, self.y_margin, BROWN)
+        self.draw_text("Time:  " + str(self.time), WINDOW_WIDTH * 0.75, 2*self.y_margin, BROWN)
+
+
+class Player:
+
+    def __init__(self, player_type, name, x, y):
+        self.type = player_type  # 1 for human, 0 for computer
+        self.name = name  # the name of the specific drone - rigid1 for example
+        self.loc = [x, y]  # where the player is located on the board
+        return

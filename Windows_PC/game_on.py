@@ -4,16 +4,15 @@ from game_utils import *
 
 def game_loop():
     while True:
-        for event in pygame.event.get():
+        for event in pygame.event.get(): ##### TODO: able to quit at any time?
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
         pygame.display.update()
 
 
-def run_game():
-    # Plays a single game of reversi each time this function is called.
 
+def run_game():
     # create the board and the players
     board = Board()
     player1 = {"rigid1": (0, board.board_height / 2 - 1), "rigid2": (0, board.board_height / 2)}
@@ -32,6 +31,5 @@ def main():
     run_game()
 
 
-
-
-main()
+if __name__ == "__main__":
+    main()
