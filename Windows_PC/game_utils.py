@@ -1,7 +1,4 @@
-import sys
 import pygame
-import numpy as np
-
 from pygame.locals import *
 
 PLAYER = 1  # 1 for HUMAN, 0 for MACHINE
@@ -65,28 +62,25 @@ class Board:
         # the color of the board is blue on the human player's turn, and red on the computer's turn
         self.grid_line_color = BLUE if PLAYER else RED
 
-        font = pygame.font.Font('freesansbold.ttf', 16)
-        bigfont = pygame.font.Font('freesansbold.ttf', 32)
-
         # Draw grid lines of the board.
-        for x in range(self.board_width + 1):
+        for x in range(self.width + 1):
             # Draw the horizontal lines.
             start_x = (x * self.space_size) + self.x_margin
             start_y = self.y_margin
             end_x = (x * self.space_size) + self.x_margin
-            end_y = self.y_margin + (self.board_height * self.space_size)
+            end_y = self.y_margin + (self.height * self.space_size)
             pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (start_x, start_y), (end_x, end_y))
-        for y in range(self.board_height + 1):
+        for y in range(self.height + 1):
             # Draw the vertical lines.
             start_x = self.x_margin
             start_y = (y * self.space_size) + self.y_margin
-            end_x = self.x_margin + (self.board_width * self.space_size)
+            end_x = self.x_margin + (self.width * self.space_size)
             end_y = (y * self.space_size) + self.y_margin
             pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (start_x, start_y), (end_x, end_y))
 
         # Add starting pieces to the center
-        for i in range(self.board_width):
-            for j in range(self.board_height):
+        for i in range(self.width):
+            for j in range(self.height):
                 if self.board[i][j] != EMPTY:
                     if self.board[i][j].isupper():
                         self.draw_item(self.board[i][j], i, j, WHITE)
@@ -97,11 +91,63 @@ class Board:
         self.draw_text("Turns:  " + str(self.turns), WINDOW_WIDTH * 0.75, self.y_margin, BROWN)
         self.draw_text("Time:  " + str(self.time), WINDOW_WIDTH * 0.75, 2*self.y_margin, BROWN)
 
+    def move_player(self, player, direction, x=0, y=0):
+        """ moves player on the board while updating player's info
+            unless move isn't valid then an error is printed to the user
+            @return: 0 if not a valid move, 1 else """
+        old_pos = player.pos
+        if player.type == 1:  # for the human player
+            if direction == "UP":
+                new_pos = [player.pos[0], player.pos[1] + 1]
+            elif direction == "DOWN":
+                new_pos = [player.pos[0], player.pos[1] - 1]
+            elif direction == "LEFT":
+                new_pos = [player.pos[0] + 1, player.pos[1]]
+            elif direction == "RIGHT":
+                new_pos = [player.pos[0] - 1, player.pos[1]]
+            else:
+                print("ERROR: Wrong direction input")
+                return False
+            # validate the move
+            if self.is_valid_move(new_pos[0], new_pos[1]):
+                player.move(new_pos)
+                self.board[new_pos[0]][new_pos[1]] = player.name
+                self.board[old_pos[0]][old_pos[1]] = EMPTY
+                return True
+            else:
+                return False
+
+        else:  # for the machine player
+            if self.is_valid_move(x, y):
+                old_pos = player.pos
+                player.move([x, y])
+                self.board[x][y] = player.name
+                self.board[old_pos[0]][old_pos[1]] = EMPTY
+                return True
+            else:
+                return False
+
+    def is_valid_move(self, x, y):
+        if 0 <= x < self.width and 0 <= y < self.height and self.board[x][y] == EMPTY:
+            return True
+        return False
+
 
 class Player:
 
     def __init__(self, player_type, name, x, y):
         self.type = player_type  # 1 for human, 0 for computer
         self.name = name  # the name of the specific drone - rigid1 for example
-        self.loc = [x, y]  # where the player is located on the board
+        self.pos = [x, y]  # the player's position on the board
         return
+
+    def move(self, new_pos):
+        self.pos = new_pos
+        return
+
+    def get_move(self):
+        """ if it's the human player - get direction from user
+            otherwise - ask the computer to generate a move using
+            the algorithm """
+        pass
+
