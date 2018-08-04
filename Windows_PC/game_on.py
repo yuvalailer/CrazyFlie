@@ -1,5 +1,6 @@
 import game_utils as gu
 from game_utils import *
+import sys
 
 
 def game_loop():
@@ -11,13 +12,24 @@ def game_loop():
         pygame.display.update()
 
 
-
 def run_game():
     # create the board and the players
-    board = Board()
-    player1 = {"rigid1": (0, board.board_height / 2 - 1), "rigid2": (0, board.board_height / 2)}
-    player2 = {"rigid3": (board.board_width - 1, board.board_height / 2 - 1), "rigid4": (board.board_width - 1, board.board_height / 2)}
-    board.add_players(player1, player2)
+    board = Board(11, 11)
+
+    # create players
+    x1, y1 = board.convert_xy(0, board.height / 2)
+    x2, y2 = board.convert_xy(0, board.height / 2 + 1)
+    p1 = Player(1, "rigid1", x1, y1)
+    p2 = Player(1, "rigid2", x2, y2)
+    human = [p1, p2]
+
+    x3, y3 = board.convert_xy(board.width, board.height / 2)
+    x4, y4 = board.convert_xy(board.width, board.height / 2 + 1)
+    p3 = Player(0, "rigid3", x3, y3)
+    p4 = Player(0, "rigid4", x4, y4)
+    machine = [p3, p4]
+
+    board.add_players(human, machine)
 
     # Draw the starting board
     board.draw_board()

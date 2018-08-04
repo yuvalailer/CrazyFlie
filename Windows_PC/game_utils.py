@@ -1,11 +1,14 @@
 import pygame
 from pygame.locals import *
+import numpy as np
 
 PLAYER = 1  # 1 for HUMAN, 0 for MACHINE
 
 WINDOW_WIDTH = 1000  # width of the program's window, in pixels
 WINDOW_HEIGHT = 800  # height in pixels
-EMPTY = ""  # an arbitrary but unique value
+BOARD_WIDTH = 550  # width of the board's visualization
+BOARD_HEIGHT = 550  # height of the board's visualization
+SAFE_ZONE = 15.0  # minimal distance between 2 drones
 
 # colors: R    G    B
 WHITE = (255, 255, 255)
@@ -20,33 +23,19 @@ class Board:
 
     DISPLAYSURF = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-    def __init__(self, width, height, space_size):
-        # Creates a brand new, empty board data structure.
-        self.board = []
+    def __init__(self, width, height):
+        # Creates a brand new, empty board data structure
         self.turns = 0
         self.time = 0
+        self.players = None
         self.width, self.height = width, height
-        self.space_size = space_size
-        self.x_margin = int(int((WINDOW_WIDTH - (width * space_size)) / 2) / 3)
-        self.y_margin = int((WINDOW_HEIGHT - (height * space_size)) / 2)
+        self.x_margin = int(int(WINDOW_WIDTH / 10))
+        self.y_margin = int(int(WINDOW_HEIGHT / 10))
         self.grid_line_color = BLUE
-        for i in range(self.width):
-            self.board.append([EMPTY] * self.height)
         return
 
     def add_players(self, player1, player2):
-        self.board[player1["rigid1"][0]][player1["rigid1"][1]] = "A"
-        self.board[player1["rigid2"][0]][player1["rigid2"][1]] = "B"
-        self.board[player2["rigid3"][0]][player2["rigid3"][1]] = "a"
-        self.board[player2["rigid4"][0]][player2["rigid4"][1]] = "b"
-
-    def draw_item(self, text, x, y, color):
-        large_text = pygame.font.Font('freesansbold.ttf', 30)
-        text_surf = large_text.render(text, True, color)
-        text_rect = text_surf.get_rect()
-        text_rect.center = ((self.space_size / 2) + self.x_margin + x * self.space_size, (self.space_size / 2) +
-                           self.y_margin + y * self.space_size)
-        self.DISPLAYSURF.blit(text_surf, text_rect)
+        self.players = player1 + player2
 
     def draw_text(self, text, x, y, color):
         large_text = pygame.font.Font('freesansbold.ttf', 30)
@@ -55,6 +44,16 @@ class Board:
         text_rect.center = (x, y)
         self.DISPLAYSURF.blit(text_surf, text_rect)
 
+    def convert_xy(self, x, y):
+        """ convert real world coordinates to board's coordinates
+            where (0,0) is top-right corner of real-world game field
+            positive X is directed right and positive Y is directed down"""
+        x_unit = BOARD_WIDTH/self.width
+        y_unit = BOARD_HEIGHT/self.height
+        new_x = self.x_margin + BOARD_WIDTH - (x * x_unit)
+        new_y = self.y_margin + (y * y_unit)
+        return new_x, new_y
+
     def draw_board(self):
         pygame.init()
         pygame.display.set_caption('Crazy Hell Game')
@@ -62,41 +61,35 @@ class Board:
         # the color of the board is blue on the human player's turn, and red on the computer's turn
         self.grid_line_color = BLUE if PLAYER else RED
 
-        # Draw grid lines of the board.
-        for x in range(self.width + 1):
-            # Draw the horizontal lines.
-            start_x = (x * self.space_size) + self.x_margin
-            start_y = self.y_margin
-            end_x = (x * self.space_size) + self.x_margin
-            end_y = self.y_margin + (self.height * self.space_size)
-            pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (start_x, start_y), (end_x, end_y))
-        for y in range(self.height + 1):
-            # Draw the vertical lines.
-            start_x = self.x_margin
-            start_y = (y * self.space_size) + self.y_margin
-            end_x = self.x_margin + (self.width * self.space_size)
-            end_y = (y * self.space_size) + self.y_margin
-            pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (start_x, start_y), (end_x, end_y))
+        # Draw high board line
+        pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (self.x_margin, self.y_margin),
+                         (self.x_margin + BOARD_WIDTH, self.y_margin))
+        # Draw low board line
+        pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (self.x_margin, self.y_margin + BOARD_HEIGHT),
+                         (self.x_margin + BOARD_WIDTH, self.y_margin + BOARD_HEIGHT))
+        # Draw left board line
+        pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (self.x_margin, self.y_margin),
+                         (self.x_margin, self.y_margin + BOARD_HEIGHT))
+        # Draw right board line
+        pygame.draw.line(self.DISPLAYSURF, self.grid_line_color, (self.x_margin + BOARD_WIDTH, self.y_margin),
+                         (self.x_margin + BOARD_WIDTH, self.y_margin + BOARD_HEIGHT))
 
-        # Add starting pieces to the center
-        for i in range(self.width):
-            for j in range(self.height):
-                if self.board[i][j] != EMPTY:
-                    if self.board[i][j].isupper():
-                        self.draw_item(self.board[i][j], i, j, WHITE)
-                    else:
-                        self.draw_item(self.board[i][j], i, j, GREEN)
+        # Draw players' drones
+        for player in self.players:
+            if player.type:  # if human
+                pygame.draw.circle(self.DISPLAYSURF, GREEN, (int(round(player.pos[0])), int(round(player.pos[1]))), 3)
+            else:
+                pygame.draw.circle(self.DISPLAYSURF, WHITE, (int(round(player.pos[0])), int(round(player.pos[1]))), 3)
 
         # Draw Game Info
-        self.draw_text("Turns:  " + str(self.turns), WINDOW_WIDTH * 0.75, self.y_margin, BROWN)
-        self.draw_text("Time:  " + str(self.time), WINDOW_WIDTH * 0.75, 2*self.y_margin, BROWN)
+        self.draw_text("Turns:  " + str(self.turns), WINDOW_WIDTH - self.x_margin, self.y_margin, BROWN)
+        self.draw_text("Time:  " + str(self.time), WINDOW_WIDTH - self.x_margin, 2*self.y_margin, BROWN)
 
     def move_player(self, player, direction, x=0, y=0):
         """ moves player on the board while updating player's info
             unless move isn't valid then an error is printed to the user
             @return: 0 if not a valid move, 1 else """
-        old_pos = player.pos
-        if player.type == 1:  # for the human player
+        if player.type:  # for the human player
             if direction == "UP":
                 new_pos = [player.pos[0], player.pos[1] + 1]
             elif direction == "DOWN":
@@ -109,26 +102,25 @@ class Board:
                 print("ERROR: Wrong direction input")
                 return False
             # validate the move
-            if self.is_valid_move(new_pos[0], new_pos[1]):
+            if self.is_valid_move(player.name, new_pos):
                 player.move(new_pos)
-                self.board[new_pos[0]][new_pos[1]] = player.name
-                self.board[old_pos[0]][old_pos[1]] = EMPTY
                 return True
             else:
                 return False
 
         else:  # for the machine player
-            if self.is_valid_move(x, y):
-                old_pos = player.pos
+            if self.is_valid_move(player.name, [x, y]):
                 player.move([x, y])
-                self.board[x][y] = player.name
-                self.board[old_pos[0]][old_pos[1]] = EMPTY
                 return True
             else:
                 return False
 
-    def is_valid_move(self, x, y):
-        if 0 <= x < self.width and 0 <= y < self.height and self.board[x][y] == EMPTY:
+    def is_valid_move(self, name, new_pos):
+        if 0 <= new_pos[0] < self.width and 0 <= new_pos[1] < self.height:
+            for player in self.players:
+                if name != player.name:
+                    if np.linalg.norm([player.pos[i]-new_pos[i] for i in range(2)]) <= SAFE_ZONE:
+                        return False
             return True
         return False
 
