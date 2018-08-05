@@ -76,7 +76,7 @@ class Board:
 
     def draw_board(self, cur_player, cur_drone):
 
-        self.DISPLAYSURF.fill(GREY)  # clear board (critical to avoid overlapping)
+        self.DISPLAYSURF.fill(BLACK)  # clear board (critical to avoid overlapping)
 
         # the color of the board is green on the human player's turn, and white on the computer's turn
         grid_line_color = WHITE if cur_player else GREEN
