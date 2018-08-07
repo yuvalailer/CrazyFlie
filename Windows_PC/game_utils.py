@@ -1,9 +1,8 @@
 import pygame
 import numpy as np
 import sys
+from shapely.geometry import Point
 
-HUMAN = 0
-MACHINE = 1
 
 WINDOW_WIDTH = 1000  # width of the program's window, in pixels
 WINDOW_HEIGHT = 800  # height in pixels
@@ -30,26 +29,23 @@ class Board:
         # Creates a brand new, empty board data structure
         self.turns = 1
         self.time = 0
-        self.players = []  # players is a list of lists, each list is a player containing its drones
-        self.width, self.height = width, height
+        self.players = []  # players is a list of Players
+        self.width, self.height = width, height  # real world width and height
         self.x_margin = int(int(WINDOW_WIDTH / 10))
         self.y_margin = int(int(WINDOW_HEIGHT / 10))
-        self.square_x = BOARD_WIDTH//self.width  # the relative movement unit on the board horizontally
-        self.square_y = BOARD_HEIGHT//self.height  # the relative movement unit on the board vertically
-
+        self.x_unit = BOARD_WIDTH/self.width  # the relative movement unit on the board horizontally
+        self.y_unit = BOARD_HEIGHT/self.height  # the relative movement unit on the board vertically
         self.turn_sign = Text("Turn:  1", BROWN)
         self.time_sign = Text("Time:  0", BROWN)
         self.msg = Text("It's your Turn!", GREEN)
 
-        self.time = 0
         return
 
     def reset_time(self):
         self.time = pygame.time.get_ticks()
 
     def add_players(self, player1, player2):
-        self.players.append(player1)  # each player is a list
-        self.players.append(player2)
+        self.players = [player1, player2]
 
     def convert_xy(self, x, y):
         """
@@ -60,10 +56,8 @@ class Board:
         :param y: y coordinate of real-world perspective
         :return: new (x, y) according to game screen perspective
         """
-        x_unit = BOARD_WIDTH/self.width
-        y_unit = BOARD_HEIGHT/self.height
-        new_x = self.x_margin + BOARD_WIDTH - (x * x_unit)
-        new_y = self.y_margin + (y * y_unit)
+        new_x = self.x_margin + BOARD_WIDTH - (x * self.x_unit)
+        new_y = self.y_margin + (y * self.y_unit)
         return new_x, new_y
 
     def welcome(self):
@@ -74,12 +68,20 @@ class Board:
         self.DISPLAYSURF.blit(surf, center)
         pygame.display.update()
 
-    def draw_board(self, cur_player, cur_drone):
+    def finish(self):
+        font = pygame.font.SysFont('arial', 80)
+        surf = font.render("OMG!!!!!!!! We Have A Winner!", True, GOLD)
+        rect = surf.get_rect()
+        center = ((WINDOW_WIDTH-rect.width)//2, (WINDOW_HEIGHT-rect.height)//2)
+        self.DISPLAYSURF.blit(surf, center)
+        pygame.display.update()
+
+    def draw_board(self):
 
         self.DISPLAYSURF.fill(BLACK)  # clear board (critical to avoid overlapping)
 
         # the color of the board is green on the human player's turn, and white on the computer's turn
-        grid_line_color = WHITE if cur_player else GREEN
+        grid_line_color = WHITE
 
         # Draw high board line
         pygame.draw.line(self.DISPLAYSURF, grid_line_color, (self.x_margin, self.y_margin),
@@ -95,15 +97,9 @@ class Board:
                          (self.x_margin + BOARD_WIDTH, self.y_margin + BOARD_HEIGHT))
 
         # Draw players' drones
-        for player in range(2):
-            for drone in range(2):
-                cur = self.players[player][drone]
-                if player == cur_player and drone == cur_drone:  # current drone marked blue
-                    pygame.draw.circle(self.DISPLAYSURF, BLUE, (int(round(cur.pos[0])), int(round(cur.pos[1]))), 3)
-                elif player == HUMAN:  # TODO change player to cur.type
-                    pygame.draw.circle(self.DISPLAYSURF, GREEN, (int(round(cur.pos[0])), int(round(cur.pos[1]))), 3)
-                else:  # MACHINE player
-                    pygame.draw.circle(self.DISPLAYSURF, WHITE, (int(round(cur.pos[0])), int(round(cur.pos[1]))), 3)
+        for player in self.players:
+            for drone in player.drones:
+                pygame.draw.circle(self.DISPLAYSURF, player.color, (int(round(drone.pos.x)), int(round(drone.pos.y))), 3)
 
         # Draw Game Info
         self.DISPLAYSURF.blit(self.turn_sign.surf, (WINDOW_WIDTH - 2*self.x_margin, self.y_margin))
@@ -132,39 +128,71 @@ class Board:
         sign.update("Time:  " + time_string, BROWN)
         return  # assuming we won't reach for an hour game...........
 
-    def move_player(self, player, direction, x=0, y=0):
+    def update_drone(self, color, old_radius, new_radius, pos):
+        pygame.draw.circle(self.DISPLAYSURF, BLACK, (int(round(pos.x)), int(round(pos.y))), old_radius)
+        pygame.draw.circle(self.DISPLAYSURF, color, (int(round(pos.x)), int(round(pos.y))), new_radius)
+        pygame.display.update()
+
+    def choose_drone(self, player):
+        while True:
+            for drone in player.drones:
+                loop = True
+                pygame.draw.circle(self.DISPLAYSURF, BLUE, (int(round(drone.pos.x)), int(round(drone.pos.y))), 4)
+                pygame.display.update()
+                while loop:
+                    for event in pygame.event.get():
+                        if not loop:
+                            break
+                        if event.type == pygame.QUIT:
+                            pygame.quit()
+                            sys.exit()
+                        if event.type == pygame.KEYDOWN:
+                            if event.key == pygame.K_RETURN:
+                                self.update_drone(player.color, 4, 3, drone.pos)
+                                return drone
+                            elif event.key == pygame.K_DOWN:
+                                self.update_drone(player.color, 4, 3, drone.pos)
+                                loop = False
+
+    def move_drone(self, drone, direction):
         """
-        moves player on the board while updating player's info
+        moves drone on the board while updating drone's info
             unless move isn't valid then an error is printed to the user
-        :param player: the Player instance to be moved
-        :param direction: String indicating the direction
-        :param x: TBD
-        :param y: TBD
+        :param drone: the drone instance to be moved
+        :param direction: String indicating the direction, or a Point(x, y)
         :return: 0 if not a valid move, 1 else
         """
-        if player.type == HUMAN:  # for the human player
+
+        if drone.type == "human":  # for the human player
             if direction == "UP":
-                new_pos = [player.pos[0], player.pos[1] - self.square_y]
+                new_pos = Point(drone.pos.x, drone.pos.y - self.y_unit)
             elif direction == "DOWN":
-                new_pos = [player.pos[0], player.pos[1] + self.square_y]
+                new_pos = Point(drone.pos.x, drone.pos.y + self.y_unit)
             elif direction == "LEFT":
-                new_pos = [player.pos[0] - self.square_x, player.pos[1]]
+                new_pos = Point(drone.pos.x - self.x_unit, drone.pos.y)
             elif direction == "RIGHT":
-                new_pos = [player.pos[0] + self.square_x, player.pos[1]]
+                new_pos = Point(drone.pos.x + self.x_unit, drone.pos.y)
             else:
                 print("ERROR: Wrong direction input: " + direction)
                 return False
             # validate the move
-            if self.is_valid_move(player.name, new_pos):
-                player.move(new_pos)
+            if self.is_valid_move(drone.name, new_pos):
+                drone.move(new_pos)
+                self.draw_board()  # NOTICE: this line happens even if the player doesn't press nothing
+                # update turns:
+                self.turns += 1
+                self.turn_sign.update("Turn:  " + str(self.turns), BROWN)
                 return True
             else:
                 self.msg.update("Illegal move! Try again...", RED)  # indicate the player fo wrong move
                 return False
 
-        else:  # for the machine player
-            if self.is_valid_move(player.name, [x, y]):
-                player.move([x, y])
+        else:  # for the machine drone, now the direction is a Point(x, y)
+            if self.is_valid_move(drone.name, direction):
+                drone.move(direction)
+                # update turns:
+                self.turns += 1
+                self.turn_sign.update("Turn:  " + str(self.turns), BROWN)
                 return True
             else:
                 return False
@@ -178,9 +206,9 @@ class Board:
         """
         if self.is_in_board(new_pos):  # first check for boundaries
             for player in self.players:
-                for drone in player:
+                for drone in player.drones:
                     if name != drone.name:  # then check for collision
-                        if np.linalg.norm([drone.pos[i]-new_pos[i] for i in range(2)]) <= SAFE_ZONE:
+                        if np.linalg.norm([np.abs(drone.pos.x-new_pos.x), np.abs(drone.pos.y-new_pos.y)]) <= SAFE_ZONE:
                             return False
             return True
         return False
@@ -191,10 +219,39 @@ class Board:
         :param new_pos: list [x, y]
         :return: True if new_pos is inside the board, False otherwise
         """
-        return self.x_margin <= new_pos[0] <= BOARD_WIDTH+self.x_margin \
-            and self.y_margin <= new_pos[1] <= self.y_margin+BOARD_HEIGHT
+        return self.x_margin <= new_pos.x <= BOARD_WIDTH+self.x_margin \
+            and self.y_margin <= new_pos.y <= self.y_margin+BOARD_HEIGHT
 
-    def get_move(self, player, drone):
+
+class Drone:
+    """
+    A class to represent a single entity of the game (drone)
+    """
+    def __init__(self, player_type, name, x, y):
+        self.type = player_type  # 0 for human, 1 for computer
+        self.name = name  # the name of the specific drone - rigid1 for example
+        self.pos = Point(x, y)  # the player's position on the board
+        return
+
+    def move(self, new_pos):
+        self.pos = new_pos
+        return
+
+
+class Player:
+    """
+    A class to represent a single player of the game (human VS machine)
+    """
+    def __init__(self, player_type, target, color):
+        self.type = player_type
+        self.target = target
+        self.color = color
+        self.drones = None
+
+    def add_drones(self, drones):
+        self.drones = [drone for drone in drones]
+
+    def get_move(self, drone):
         """
         if it's the human player - get direction from user
             otherwise - ask the computer to generate a move using
@@ -203,70 +260,35 @@ class Board:
         :param drone: int - index of drone of player
         :return: void
         """
-        # TODO TEMP
-        self.get_move_human(player, drone)
-        if player == 0:
-            self.msg.update("Player 2's Turn! Go Ahead", WHITE)
+        if drone.type == "human":
+            return self.get_direction()
         else:
-            self.msg.update("Player 1's Turn! Go Ahead", GREEN)
-        # TODO END TEMP
+            pass
 
-        # TODO delete temp and uncomment this when MACHINE implemented
-        '''
-        if self.players[player][drone].type == HUMAN:  # Human turn
-            self.get_move_human(player, drone)
-            self.msg.update("Computer's Turn! Please wait", WHITE)
-        else:  # player == MACHINE
-            self.msg.update("It's your Turn!", GREEN)
-        '''
-        # update turns:
-        self.turns += 1
-        self.turn_sign.update("Turn:  "+str(self.turns), BROWN)
-
-    def get_move_human(self, player, drone):
+    def get_direction(self):
         """
         Get the move from the player
         :param player: int - index of player
         :param drone: int - index of drone of player
         :return: void
         """
-        cur = self.players[player][drone]  # get the Player instance of current playing drone
-        valid = False  # loop indicator
-        while not valid:
+        while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == pygame.KEYDOWN:
+                elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:  # Exit at any point by pressing Q
                         pygame.quit()
                         sys.exit()
-                    # If the move was good, valid will turn True
-                    # and the loop will terminate and the turn will be over
                     if event.key == pygame.K_LEFT:
-                        valid = self.move_player(cur, "LEFT")
+                        return "LEFT"
                     if event.key == pygame.K_RIGHT:
-                        valid = self.move_player(cur, "RIGHT")
+                        return "RIGHT"
                     if event.key == pygame.K_UP:
-                        valid = self.move_player(cur, "UP")
+                        return "UP"
                     if event.key == pygame.K_DOWN:
-                        valid = self.move_player(cur, "DOWN")
-            self.draw_board(player, drone)  # NOTICE: this line happens even if the player doesn't press nothing
-
-
-class Player:
-    """
-    A class to represent a single entity of the game (drone)
-    """
-    def __init__(self, player_type, name, x, y):
-        self.type = player_type  # 0 for human, 1 for computer
-        self.name = name  # the name of the specific drone - rigid1 for example
-        self.pos = [x, y]  # the player's position on the board
-        return
-
-    def move(self, new_pos):
-        self.pos = new_pos
-        return
+                        return "DOWN"
 
 
 class Text:
