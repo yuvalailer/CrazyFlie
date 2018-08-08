@@ -1,8 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import socket, sys, time
-#sys.path.insert(0,'/home/bitcraze/crazyflie_ws/src/crazyflie_ros/crazyflie_demo/scripts/')
-import crazyflie, rospy, tf
+#sys.path.insert(0,'/home/bitcraze/crazyflie_ws/src/crazyflie_ros/crazyflie_demo/scripts/') # XXX
+if sys.version_info[0] > 2:
+	print "If you can see this message, Then you are running Python 3 instead of 2"
+	exit(0)
+try:
+	import crazyflie, rospy, tf
+except:
+	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	print "!!!!              OFFLINE mode is ON              !!!!"
+	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	print "!!!! Warning, You don't have the crazyflie files  !!!!"
+	print "!!!! Loading dummy files for testing purposes     !!!!"
+	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	from Simulator import crazyflie, rospy, tf
 
 ##### Editable part #####
 TCP_IP = '127.0.0.1'
