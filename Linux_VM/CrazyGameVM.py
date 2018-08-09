@@ -72,7 +72,7 @@ class CrazyFlieObject(object):
 		self._cf.goTo(goal=[target_pos[0],target_pos[1],FLIGHT_HEIGHT], yaw=0.0, duration=2, relative=False)
 		time.sleep(2)
 		_real_pos,rot = self._listener.lookupTransform("/world", "/{}".format(self._name), rospy.Time(0))
-		print "{} is at ({:.2f},{:.2f},{:.2f}), Should be ({:.2f},{:.2f},{:.2f})".format(self._name,_real_pos[0],_real_pos[1],_real_pos[2],target_pos[0],target_pos[1],FLIGHT_HEIGHT)
+		print "{} is at ({:.2f},{:.2f},{:.2f}), Should be ({:.2f},{:.2f},{:.2f}), Cell ({},{})".format(self._name,_real_pos[0],_real_pos[1],_real_pos[2],target_pos[0],target_pos[1],FLIGHT_HEIGHT,self._pos[0],self._pos[1])
 	def goTo(self, x, y):
 		self._pos = [x,y]
 		self.doMovement()
@@ -148,10 +148,9 @@ def handleSocket():
 						loop_ret = "OK"
 				elif loop_command[1] in VALID_DIRECTIONS: # "UP", "DOWN", "RIGHT", "LEFT"
 					if (loop_command[0] in KNOWN_CRAZYFLIES) and (KNOWN_CRAZYFLIES[loop_command[0]].getStatus() == "UP"):
-						print "{} moved {}".format(loop_command[0],loop_command[1]),
+						print "{} moved {}".format(loop_command[0],loop_command[1])
 						KNOWN_CRAZYFLIES[loop_command[0]].move(loop_command[1])
 						cur_cell = KNOWN_CRAZYFLIES[loop_command[0]].getPos()
-						print ", location ({},{})".format(cur_cell[0],cur_cell[1])
 						loop_ret = "OK"
 				else:
 					print "Received invalid command: {} => {}".format(loop_command[0],loop_command[1])
