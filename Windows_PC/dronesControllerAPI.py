@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logger, socket, time
+cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
 DEFAULT_TCP_IP = "127.0.0.1"
 DEFAULT_TCP_PORT = 51951
 DEFAULT_BUFFER_SIZE = 1024
-
-cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
 class DronesControllerAPI(object):
 	_tcp_ip = None

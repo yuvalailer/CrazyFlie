@@ -1,6 +1,5 @@
 import logging, os, sys
 from logging.handlers import TimedRotatingFileHandler
-#from logging.handlers import RotatingFileHandler
 
 FORMATTER = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s") # Create a logging format
 LOG_FOLDER = "log"
