@@ -4,14 +4,15 @@ import matplotlib.pyplot as plt
 
 NUMBER_OF_LEDS = 6
 try:
-    c = controlBoardAPI.ControlBoardAPI()
-except:
-    c = None
-joystick = joystick.Joystick(c)
-plt.figure(figsize=(7,7))
+    control_board_api = controlBoardAPI.ControlBoardAPI()
+except Exception as e:
+    print('connection to Board failed by Exception - %s'%e)
+    control_board_api = None
+joystick = joystick.Joystick(control_board_api)
+plt.figure(figsize=(7, 7))
 
 ax = plt.gca()
-circle =  plt.Circle((0,0), 1, color='black', fill=False)
+circle = plt.Circle((0, 0), 1, color='black', fill=False)
 ax.add_artist(circle)
 plt.xlim(-2, 2)
 plt.ylim(-2, 2)
@@ -24,7 +25,7 @@ counter = 0
 lastLn = None
 while True:
     dir = joystick.get_normalize_direction()
-    if lastLn is not None:
+    if lastLn:
         ax.lines.remove(lastLn)
         lastLn = None
 
@@ -35,15 +36,16 @@ while True:
     plt.draw()
     plt.pause(0.001)
 
-    if c and c.get_button():
+    if joystick.get_click():
         break
-    counter+=1
-    if c and counter%100 == 0:
-        c.set_led(currentLed,0,0,0)
-        currentLed+=1
+
+    counter += 1
+    if control_board_api and counter % 100 == 0:
+        control_board_api.set_led(currentLed, 0, 0, 0)
+        currentLed += 1
         if currentLed == NUMBER_OF_LEDS:
             currentLed = 0
-        c.set_led(currentLed, 255, 0, 0)
+            control_board_api.set_led(currentLed, 255, 0, 0)
 
 plt.close()
-c.disconnect()
+control_board_api.disconnect()
