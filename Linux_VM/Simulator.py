@@ -33,5 +33,5 @@ class tf(object):
 	def TransformListener():
 		return internal_listener()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	print "This is not the way to do it..."

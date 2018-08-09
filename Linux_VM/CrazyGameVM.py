@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import socket, sys, time
-#sys.path.insert(0,'/home/bitcraze/crazyflie_ws/src/crazyflie_ros/crazyflie_demo/scripts/') # XXX
 if sys.version_info[0] > 2:
 	print "If you can see this message, Then you are running Python 3 instead of 2"
 	exit(0)
@@ -17,7 +16,7 @@ except:
 	from Simulator import crazyflie, rospy, tf
 
 ##### Editable part #####
-TCP_IP = '127.0.0.1'
+TCP_IP = "127.0.0.1"
 TCP_PORT = 51951
 BUFFER_SIZE = 1024
 WORLD_RANGE = {"X":[-0.7,1.0], "Y":[-0.9,0.5]}
@@ -25,7 +24,7 @@ WORLD_CELLS_COUNT = {"X":5, "Y":5}
 FLIGHT_HEIGHT = 0.5
 #########################
 
-WORLD_STEPS = {"X":-1, "Y":-1} # Will be automaticly generated based on 'WORLD_RANGE' and 'WORLD_CELLS_COUNT'
+WORLD_STEPS = {"X":-1, "Y":-1} # Will be automaticly generated based on "WORLD_RANGE" and "WORLD_CELLS_COUNT"
 WORLD_ORIGIN = {"X":-1, "Y":-1} # Will be automaticly generated
 KNOWN_CRAZYFLIES = {}
 VALID_DIRECTIONS = ["UP", "DOWN", "RIGHT", "LEFT"]
@@ -166,8 +165,8 @@ def main():
 	WORLD_STEPS["Y"] = round(abs(WORLD_RANGE["Y"][1]-WORLD_RANGE["Y"][0])/WORLD_CELLS_COUNT["Y"],2) # Y
 	WORLD_ORIGIN["X"] = min(WORLD_RANGE["X"][0],WORLD_RANGE["X"][1])
 	WORLD_ORIGIN["Y"] = min(WORLD_RANGE["Y"][0],WORLD_RANGE["Y"][1])
-	rospy.init_node('the_new_gofetch')
+	rospy.init_node("the_new_gofetch")
 	handleSocket()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	main()

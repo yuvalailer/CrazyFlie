@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import logger, socket, time
 
-DEFAULT_TCP_IP = '127.0.0.1'
+DEFAULT_TCP_IP = "127.0.0.1"
 DEFAULT_TCP_PORT = 51951
 DEFAULT_BUFFER_SIZE = 1024
 
@@ -57,5 +57,5 @@ class DronesControllerAPI(object):
 	def disconnect(self):
 		self._socket.close()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	print "This is not the way to do it..."

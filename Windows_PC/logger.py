@@ -14,8 +14,6 @@ def get_file_handler():
 	if not os.path.isdir(LOG_FOLDER):
 		os.mkdir(LOG_FOLDER)
 	file_handler = TimedRotatingFileHandler(LOG_FILE, when="midnight", utc=True)
-#	file_handler = RotatingFileHandler(LOG_FILE)
-#	file_handler.doRollover()
 	file_handler.setFormatter(FORMATTER)
 	return file_handler
 def get_logger(logger_name):
@@ -26,5 +24,5 @@ def get_logger(logger_name):
 	logger.propagate = False # With this pattern, it's rarely necessary to propagate the error up to parent
 	return logger
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	print "This is not the way to do it..."

@@ -22,7 +22,7 @@ def main():
 		time.sleep(1)
 	dronesController.disconnect()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	cf_logger.info("######################################################")
 	cf_logger.info("####                   Started                    ####")
 	cf_logger.info("######################################################")
