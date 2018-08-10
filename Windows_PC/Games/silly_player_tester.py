@@ -3,6 +3,7 @@ import logger
 
 logger.set_default_debug_level(logging.INFO)
 cf_logger = logger.get_logger(__name__)
+cf_logger.info("#### start silly player tester ####")
 
 from shapely.geometry import Point
 import matplotlib.pyplot as plt

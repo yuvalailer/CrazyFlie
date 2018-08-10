@@ -93,7 +93,7 @@ def _diajstra_path_finder(start, target, points, segment_query):
                 temp_node.last = current_node
                 queue.put(temp_node)
     else:
-        cf_logger.warn("no path found!")
+        cf_logger.warning("no path found!")
         return None
 
     path = []
@@ -186,6 +186,8 @@ def silly_player_move(friend_drones, opponent_drones, target, allowed_distance=2
         path, target_moved_distance = _find_path(drone, target, temp_drones)
         if path:
             paths.append(Path(path, target_moved_distance))
+            cf_logger.debug('found path from %s. path distance - %d. target_moved - %d'%
+                            (drone, paths[-1].distance, target_moved_distance))
 
     paths = sorted(paths)
     return _cut_path(paths[0].path, allowed_distance)
