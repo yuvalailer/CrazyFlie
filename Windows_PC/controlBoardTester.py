@@ -1,3 +1,8 @@
+import logger
+
+cf_logger = logger.get_logger(__name__)
+cf_logger.info("#### start silly player tester ####")
+
 import controlBoardAPI
 import joystick
 import matplotlib.pyplot as plt
@@ -6,7 +11,7 @@ NUMBER_OF_LEDS = 6
 try:
     control_board_api = controlBoardAPI.ControlBoardAPI()
 except Exception as e:
-    print('connection to Board failed by Exception - %s'%e)
+    cf_logger.warning('connection to Board failed by Exception - %s' % e)
     control_board_api = None
 joystick = joystick.Joystick(control_board_api)
 plt.figure(figsize=(7, 7))
