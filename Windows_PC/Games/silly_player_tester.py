@@ -7,7 +7,7 @@ cf_logger = logger.get_logger(__name__)
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 import silly_player
-
+from datetime import datetime
 
 
 
@@ -15,12 +15,16 @@ def plot_player(ax, p, r, c):
     circle =  plt.Circle((p.x, p.y), r, color=c, fill=False)
     ax.add_artist(circle)
 
-friend_drones = [Point(3,4), Point(50,4)]
-opponent_drones = [Point(20,25), Point(22,20), Point(12,20)]
-target = Point(22,30)
+friend_drones = [Point(3,4), Point(50,4), Point(50,50)]
+opponent_drones = [Point(25,35), Point(22,20), Point(12,20)]
+target = Point(25,27)
 
-
+start_time = datetime.now()
 path = silly_player.silly_player_move(friend_drones, opponent_drones, target, 32)
+end_time = datetime.now()
+
+elapsed_time = end_time - start_time
+cf_logger.info('finding path took %f seconds'%elapsed_time.total_seconds())
 
 plt.figure(figsize=(7,7))
 ax = plt.gca()
