@@ -48,7 +48,38 @@ def _cut_path(path, allowed_distance):
     return new_path
 
 
-def _diajstra_path_finder(start, target, points, segment_query):
+def _handle_edge(current_node, temp_node, queue, segment_query):
+    cf_logger.debug('\t temp node %s ' % temp_node.point)
+    if temp_node.visited or temp_node == current_node:
+        cf_logger.debug('\t\tvisited')
+        return
+
+    temp_line = LineString([current_node.point, temp_node.point])
+    if not segment_query(temp_line):
+        cf_logger.debug('\t\tnot allowed')
+        return
+
+    temp_dis = current_node.distance + current_node.point.distance(temp_node.point)
+    if temp_dis < temp_node.distance:
+        cf_logger.debug('\t\tadd edge')
+        temp_node.distance = temp_dis
+        temp_node.last = current_node
+        queue.put(temp_node)
+
+
+def _extract_path(end_node, start_node):
+    path = []
+    current_node = end_node
+    while current_node is not start_node:
+        path.append(current_node.point)
+        current_node = current_node.last
+
+    path.append(start_node.point)
+    path.reverse()
+    return path
+
+
+def _set_diajstra_base_conditions(start, target, points):
     class Node:
         def __init__(self, p, distance=math.inf):
             self.point = p
@@ -64,7 +95,11 @@ def _diajstra_path_finder(start, target, points, segment_query):
     queue = PriorityQueue()
     queue.put(start_node)
 
-    nodes = [Node(x) for x in points] + [end_node]
+    return queue, start_node, end_node, [Node(x) for x in points] + [end_node]
+
+
+def _diajstra_path_finder(start, target, points, segment_query):
+    queue, start_node, end_node, nodes = _set_diajstra_base_conditions(start, target, points)
 
     while not queue.empty():
         current_node = queue.get()
@@ -76,35 +111,13 @@ def _diajstra_path_finder(start, target, points, segment_query):
             break
 
         for temp_node in nodes:
-            cf_logger.debug('\t temp node %s '%temp_node.point)
-            if temp_node.visited or temp_node == current_node:
-                cf_logger.debug('\t\tvisited')
-                continue
+            _handle_edge(current_node, temp_node, queue, segment_query)
 
-            temp_line = LineString([current_node.point, temp_node.point])
-            if not segment_query(temp_line):
-                cf_logger.debug('\t\tnot allowed')
-                continue
-
-            temp_dis = current_node.distance + current_node.point.distance(temp_node.point)
-            if temp_dis < temp_node.distance:
-                cf_logger.debug('\t\tadd edge')
-                temp_node.distance = temp_dis
-                temp_node.last = current_node
-                queue.put(temp_node)
     else:
         cf_logger.warning("no path found!")
         return None
 
-    path = []
-    current_node = end_node
-    while current_node is not start_node:
-        path.append(current_node.point)
-        current_node = current_node.last
-
-    path.append(start)
-    path.reverse()
-    return path
+    return _extract_path(end_node, start_node)
 
 
 def _get_points_around_obstacle(obstacle):
@@ -141,25 +154,18 @@ def _find_path(start, target, obstacles):
     point_query = functools.partial(_is_point_legal, circle_obstacles)
     points = []
     for obstacle in obstacles:
-        cf_logger.debug('get obstackes %s points:'%obstacle)
-        obstacle_points = _get_points_around_obstacle(obstacle)
-        obstacle_points = list(filter(point_query, obstacle_points))
-        for p in obstacle_points:
-            points.append(p)
+        points.extend(list(filter(point_query, _get_points_around_obstacle(obstacle))))
 
     if not point_query(target):
-        cf_logger.info('obstacle not reacable!')
+        cf_logger.info('target not reacable!')
         new_target = sorted(points, key=lambda k: target.distance(k))[0]
-        target_moved_distance = target.distance(new_target)
-        target = new_target
+        target_moved_distance, target = target.distance(new_target), new_target
     else:
         target_moved_distance=0
 
     segment_query = functools.partial(_segment_intersection_query, circle_obstacles)
     cf_logger.debug('run diajstra:')
     path = _diajstra_path_finder(start, target, points, segment_query)
-    if not path:
-        return None, 0
 
     return path, target_moved_distance
 
