@@ -4,6 +4,9 @@ from queue import PriorityQueue
 import functools
 import numpy as np
 import math
+import logger
+
+cf_logger = logger.get_logger(__name__)
 
 MIN_X = 2
 MIN_Y = 2
@@ -26,7 +29,6 @@ def _in_minkowski_board(p):
 
 
 def _cut_path(path, allowed_distance):
-    print(path)
     new_path = [path[0]]
     total_distance = 0
     for p,q in zip(path[:-1],path[1:]):
@@ -66,7 +68,7 @@ def _diajstra_path_finder(start, target, points, segment_query):
 
     while not queue.empty():
         current_node = queue.get()
-        print(current_node.point)
+        cf_logger.debug(current_node.point)
         if current_node.visited:
             pass
 
@@ -74,27 +76,26 @@ def _diajstra_path_finder(start, target, points, segment_query):
             break
 
         for temp_node in nodes:
-            print('\t temp node %s '%temp_node.point, end='')
+            cf_logger.debug('\t temp node %s '%temp_node.point)
             if temp_node.visited or temp_node == current_node:
-                print('visited')
+                cf_logger.debug('\t\tvisited')
                 continue
 
             temp_line = LineString([current_node.point, temp_node.point])
             if not segment_query(temp_line):
-                print('not allowed')
+                cf_logger.debug('\t\tnot allowed')
                 continue
 
             temp_dis = current_node.distance + current_node.point.distance(temp_node.point)
             if temp_dis < temp_node.distance:
-                print('add edge')
+                cf_logger.debug('\t\tadd edge')
                 temp_node.distance = temp_dis
                 temp_node.last = current_node
                 queue.put(temp_node)
     else:
-        print("no path found!")
+        cf_logger.warn("no path found!")
         return None
 
-    print('last for end - %d %d' % (end_node.last.point.x, end_node.last.point.y)) #TODO->TO LOGGER
     path = []
     current_node = end_node
     while current_node is not start_node:
@@ -128,7 +129,6 @@ def _is_point_legal(circle_obstacles, p):
 def _segment_intersection_query(circle_obstacles, line): #assumes line points are legal
     for circle in circle_obstacles:
         inter = circle.intersection(line)
-        print(' %s '%inter.type, end='')
         if inter.type == 'LineString':
             return False
 
@@ -136,20 +136,19 @@ def _segment_intersection_query(circle_obstacles, line): #assumes line points ar
 
 
 def _find_path(start, target, obstacles):
-    print('find path from %s to %s'%(start, target))
+    cf_logger.info('find path from %s to %s'%(start, target))
     circle_obstacles = _points_to_circle_obstacles(obstacles)
     point_query = functools.partial(_is_point_legal, circle_obstacles)
     points = []
     for obstacle in obstacles:
-        print('get obstackes %s points:'%obstacle)
+        cf_logger.debug('get obstackes %s points:'%obstacle)
         obstacle_points = _get_points_around_obstacle(obstacle)
         obstacle_points = list(filter(point_query, obstacle_points))
         for p in obstacle_points:
-            print(p)
             points.append(p)
 
     if not point_query(target):
-        print('obstacle not reacable!')
+        cf_logger.info('obstacle not reacable!')
         new_target = sorted(points, key=lambda k: target.distance(k))[0]
         target_moved_distance = target.distance(new_target)
         target = new_target
@@ -157,7 +156,7 @@ def _find_path(start, target, obstacles):
         target_moved_distance=0
 
     segment_query = functools.partial(_segment_intersection_query, circle_obstacles)
-    print('diajstra:')
+    cf_logger.debug('run diajstra:')
     path = _diajstra_path_finder(start, target, points, segment_query)
     if not path:
         return None, 0
@@ -179,14 +178,6 @@ def silly_player_move(friend_drones, opponent_drones, target, allowed_distance=2
 
             return self.distance < other.distance
 
-        def __eq__(self, other):
-            if len(self.path) != len(other.path):
-                return False
-            for i in range(len(self.path)):
-                if self.path[i] != other.path[i]:
-                    return False
-            return True
-
     paths = []
     drones = friend_drones + opponent_drones
     for drone in friend_drones:
@@ -196,8 +187,5 @@ def silly_player_move(friend_drones, opponent_drones, target, allowed_distance=2
         if path:
             paths.append(Path(path, target_moved_distance))
 
-    for path in paths:
-        print('%d %d'%(path.target_moved_distance, path.distance))
     paths = sorted(paths)
-    print('%d %d' % (paths[0].target_moved_distance, paths[0].distance))
     return _cut_path(paths[0].path, allowed_distance)

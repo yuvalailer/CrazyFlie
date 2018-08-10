@@ -1,6 +1,15 @@
+import logging
+import logger
+
+logger.set_default_debug_level(logging.INFO)
+cf_logger = logger.get_logger(__name__)
+
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 import silly_player
+
+
+
 
 def plot_player(ax, p, r, c):
     circle =  plt.Circle((p.x, p.y), r, color=c, fill=False)
@@ -26,9 +35,9 @@ for drone in opponent_drones:
     plt.plot(drone.x, drone.y, color='red', marker='o')
     plot_player(ax, drone, silly_player.DRONE_RADIUS, 'red')
 
-print("path:")
+cf_logger.info("path:")
 for p,q in zip(path[:-1], path[1:]):
-    print('%d %d -> %d %d' % (p.x, p.y, q.x, q.y))
+    cf_logger.info('%d %d -> %d %d' % (p.x, p.y, q.x, q.y))
     plt.plot([p.x, q.x], [p.y, q.y], color='yellow')
 
 plt.xlim(-10, 60)
