@@ -17,10 +17,7 @@ arduino_message_regex = re.compile(arduino_message_format)
 def _get_port():
     if os.name == 'nt':  # if run on windows
         ports = list(serial.tools.list_ports.comports())
-        print(ports)
         ports = [str(p) for p in ports if 'USB Serial Port' in str(p)]
-        print(ports)
-        exit(0)
         assert len(ports) > 0, 'no serial port found'
         if len(ports) == 1:
             return ports[0].split('-')[0].strip()

@@ -8,7 +8,7 @@ cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), e
 
 NUM_DRONES = 2
 VM_IP = "172.16.1.2"
-AVAILABLE_DRONES = ["crazyflie2", "crazyflie1", "crazyflie6", "crazyflie4"]
+AVAILABLE_DRONES = ["crazyflie2", "crazyflie1", "crazyflie3", "crazyflie4"]
 
 def quit_game():
 	pygame.quit()

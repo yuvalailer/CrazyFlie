@@ -21,7 +21,7 @@ class DronesControllerAPI(object):
 		for retry in range(5): # Keep trying to establish a connection with the VM
 			try:
 				self._socket.connect((self._tcp_ip, self._tcp_port))
-				self._socket.settimeout(5)  # socket operation will timeout after 2secs
+				self._socket.settimeout(10)  # socket operation will timeout after 2secs
 				return True
 			except:
 				cf_logger.error("Failure {}/5, No response from {}:{}, Trying again in 5 seconds...".format(retry+1,self._tcp_ip,self._tcp_port))
