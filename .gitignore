@@ -1,6 +1,7 @@
 .idea/
 *.whl
 *.pyc
+*.log
 
 # Prerequisites
 *.d

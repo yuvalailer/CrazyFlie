@@ -1,23 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import socket, sys, time
-#sys.path.insert(0,'/home/bitcraze/crazyflie_ws/src/crazyflie_ros/crazyflie_demo/scripts/') # XXX
+import logger, socket, sys, time
+cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 if sys.version_info[0] > 2:
+	cf_logger.warning("Please use Python 2.x")
 	print "If you can see this message, Then you are running Python 3 instead of 2"
 	exit(0)
 try:
 	import crazyflie, rospy, tf
 except:
-	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-	print "!!!!              OFFLINE mode is ON              !!!!"
-	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-	print "!!!! Warning, You don't have the crazyflie files  !!!!"
-	print "!!!! Loading dummy files for testing purposes     !!!!"
-	print "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+	cf_logger.warning("######################################################")
+	cf_logger.warning("####              OFFLINE mode is ON              ####")
+	cf_logger.warning("######################################################")
+	cf_logger.warning("#### Warning, You don't have the crazyflie files  ####")
+	cf_logger.warning("#### Loading dummy files for testing purposes     ####")
+	cf_logger.warning("######################################################")
 	from Simulator import crazyflie, rospy, tf
 
 ##### Editable part #####
-TCP_IP = '127.0.0.1'
+TCP_IP = "127.0.0.1"
 TCP_PORT = 51951
 BUFFER_SIZE = 1024
 WORLD_RANGE = {"X":[-0.7,1.0], "Y":[-0.9,0.5]}
@@ -25,7 +26,7 @@ WORLD_CELLS_COUNT = {"X":5, "Y":5}
 FLIGHT_HEIGHT = 0.5
 #########################
 
-WORLD_STEPS = {"X":-1, "Y":-1} # Will be automaticly generated based on 'WORLD_RANGE' and 'WORLD_CELLS_COUNT'
+WORLD_STEPS = {"X":-1, "Y":-1} # Will be automaticly generated based on "WORLD_RANGE" and "WORLD_CELLS_COUNT"
 WORLD_ORIGIN = {"X":-1, "Y":-1} # Will be automaticly generated
 KNOWN_CRAZYFLIES = {}
 VALID_DIRECTIONS = ["UP", "DOWN", "RIGHT", "LEFT"]
@@ -50,7 +51,7 @@ class CrazyFlieObject(object):
 			return
 		_real_pos,rot = self._listener.lookupTransform("/world", "/{}".format(self._name), rospy.Time(0))
 		if _real_pos[2] < 0.1:
-			print "Drone height too low, Aborting..."
+			cf_logger.critical("Drone height too low, Aborting...")
 			self._status = "OFF"
 	def getStatus(self):
 		return self._status
@@ -64,15 +65,14 @@ class CrazyFlieObject(object):
 		try:
 			self._cf.stop()
 		except Exception as e:
-			print "Failed to stop CrazyFlie"
-			print e
+			cf_logger.exception("Failed to stop CrazyFlie")
 		self._status = "OFF"
 	def doMovement(self):
 		target_pos = cell2pos(self._pos)
 		self._cf.goTo(goal=[target_pos[0],target_pos[1],FLIGHT_HEIGHT], yaw=0.0, duration=2, relative=False)
 		time.sleep(2)
 		_real_pos,rot = self._listener.lookupTransform("/world", "/{}".format(self._name), rospy.Time(0))
-		print "{} is at ({:.2f},{:.2f},{:.2f}), Should be ({:.2f},{:.2f},{:.2f})".format(self._name,_real_pos[0],_real_pos[1],_real_pos[2],target_pos[0],target_pos[1],FLIGHT_HEIGHT)
+		cf_logger.info("{} is at ({:.2f},{:.2f},{:.2f}), Should be ({:.2f},{:.2f},{:.2f}), Cell ({},{})".format(self._name,_real_pos[0],_real_pos[1],_real_pos[2],target_pos[0],target_pos[1],FLIGHT_HEIGHT,self._pos[0],self._pos[1]))
 	def goTo(self, x, y):
 		self._pos = [x,y]
 		self.doMovement()
@@ -99,22 +99,26 @@ def handleSocket():
 	s.bind((TCP_IP, TCP_PORT))
 	s.listen(1) # Accept only one connection at a time
 	while True: # Keep waiting for connection
-		print "Waiting for incoming connection"
+		cf_logger.info("Waiting for incoming connection")
 		try:
 			conn, addr = s.accept()
 		except KeyboardInterrupt:
-			print "Keyboard Interrupt"
+			cf_logger.warning("Keyboard Interrupt")
 			break
-		print "#"*40 + "\nNew connection from: {}:{}".format(addr[0],addr[1])
+		except Exception as e:
+			cf_logger.exception("Exception occurred")
+			break
+		cf_logger.info("######################################################")
+		cf_logger.info("New connection from: {}:{}".format(addr[0],addr[1]))
 		while 1:
 			data = conn.recv(BUFFER_SIZE)
 			if not data:
 				if KNOWN_CRAZYFLIES: # There are still registered drones
 					for cf_name,cf_object in KNOWN_CRAZYFLIES.iteritems():
 						if cf_object.getStatus() == "UP":
-							print "Warning, Emergency landing for {}".format(cf_name)
+							cf_logger.warning("Emergency landing for {}".format(cf_name))
 							cf_object.land() # WTF
-						print "Warning, Remove registered drone '{}'".format(cf_name)
+						cf_logger.warning("Auto remove registered drone '{}'".format(cf_name))
 						del cf_object
 				break
 			if 1 <= data.count("$"):
@@ -123,43 +127,41 @@ def handleSocket():
 				if loop_command[1] == VALID_COMMANDS[0]: # Register
 					if loop_command[0] not in KNOWN_CRAZYFLIES:
 						try:
-							print "Add new drone: {}".format(loop_command[0])
+							cf_logger.info("Add new drone: {}".format(loop_command[0]))
 							KNOWN_CRAZYFLIES[loop_command[0]] = CrazyFlieObject(loop_command[0]) # Drone is new
 							loop_ret = "OK"
 						except Exception as e:
-							print "Failed to create CrazyFlie"
-							print e
+							cf_logger.exception("Failed to create CrazyFlie")
 				elif loop_command[1] == VALID_COMMANDS[1]: # UnRegister
 					if (loop_command[0] in KNOWN_CRAZYFLIES) and (KNOWN_CRAZYFLIES[loop_command[0]].getStatus() == "OFF"):
-						print "Remove drone: {}".format(loop_command[0])
+						cf_logger.info("Remove drone: {}".format(loop_command[0]))
 						del KNOWN_CRAZYFLIES[loop_command[0]] # Drone is known and down
 						loop_ret = "OK"
 				elif loop_command[1] == VALID_COMMANDS[2]: # TakeOff
 					if len(loop_command) == 4:
 						if (loop_command[0] in KNOWN_CRAZYFLIES) and (KNOWN_CRAZYFLIES[loop_command[0]].getStatus() == "OFF"):
-							print "Takeoff {} and go to ({},{})".format(loop_command[0],loop_command[2],loop_command[3])
+							cf_logger.debug("Takeoff {} and go to ({},{})".format(loop_command[0],loop_command[2],loop_command[3]))
 							KNOWN_CRAZYFLIES[loop_command[0]].takeOff() # Drone is known and down
 							KNOWN_CRAZYFLIES[loop_command[0]].goTo(int(loop_command[2]),int(loop_command[3]))
 							loop_ret = "OK"
 				elif loop_command[1] == VALID_COMMANDS[3]: # Land
 					if (loop_command[0] in KNOWN_CRAZYFLIES) and (KNOWN_CRAZYFLIES[loop_command[0]].getStatus() == "UP"):
-						print "Land {}".format(loop_command[0])
+						cf_logger.debug("Land {}".format(loop_command[0]))
 						KNOWN_CRAZYFLIES[loop_command[0]].land() # Drone is known and up
 						loop_ret = "OK"
 				elif loop_command[1] in VALID_DIRECTIONS: # "UP", "DOWN", "RIGHT", "LEFT"
 					if (loop_command[0] in KNOWN_CRAZYFLIES) and (KNOWN_CRAZYFLIES[loop_command[0]].getStatus() == "UP"):
-						print "{} moved {}".format(loop_command[0],loop_command[1]),
+						cf_logger.debug("{} moved {}".format(loop_command[0],loop_command[1]))
 						KNOWN_CRAZYFLIES[loop_command[0]].move(loop_command[1])
 						cur_cell = KNOWN_CRAZYFLIES[loop_command[0]].getPos()
-						print ", location ({},{})".format(cur_cell[0],cur_cell[1])
 						loop_ret = "OK"
 				else:
-					print "Received invalid command: {} => {}".format(loop_command[0],loop_command[1])
+					cf_logger.error("Received invalid command: {} => {}".format(loop_command[0],loop_command[1]))
 				conn.send(loop_ret)
 			else:
-				print "Invalid data received: '{}'".format(data)
+				cf_logger.error("Invalid data received: '{}'".format(data))
 				conn.send("FORMAT")
-		print "Closing connection with {}:{}".format(addr[0],addr[1])
+		cf_logger.info("Closing connection with {}:{}".format(addr[0],addr[1]))
 		conn.close()
 
 def main():
@@ -167,8 +169,11 @@ def main():
 	WORLD_STEPS["Y"] = round(abs(WORLD_RANGE["Y"][1]-WORLD_RANGE["Y"][0])/WORLD_CELLS_COUNT["Y"],2) # Y
 	WORLD_ORIGIN["X"] = min(WORLD_RANGE["X"][0],WORLD_RANGE["X"][1])
 	WORLD_ORIGIN["Y"] = min(WORLD_RANGE["Y"][0],WORLD_RANGE["Y"][1])
-	rospy.init_node('the_new_gofetch')
+	rospy.init_node("the_new_gofetch")
 	handleSocket()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+	cf_logger.info("######################################################")
+	cf_logger.info("####                   Started                    ####")
+	cf_logger.info("######################################################")
 	main()

@@ -8,7 +8,7 @@ WINDOW_WIDTH = 1000  # width of the program's window, in pixels
 WINDOW_HEIGHT = 800  # height in pixels
 BOARD_WIDTH = 550  # width of the board's visualization
 BOARD_HEIGHT = 550  # height of the board's visualization
-SAFE_ZONE = 15.0  # minimal distance between 2 drones
+SAFE_ZONE = 1.0  # minimal distance between 2 drones
 
 # colors: R    G    B
 WHITE = (255, 255, 255)
@@ -22,14 +22,13 @@ GREY = (105, 105, 105)
 
 
 class Board:
-
     DISPLAYSURF = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-
     def __init__(self, width, height):
         # Creates a brand new, empty board data structure
         self.turns = 1
         self.time = 0
         self.players = []  # players is a list of Players
+        self.drones_set = set()  #  set of drones in game
         self.width, self.height = width, height  # real world width and height
         self.x_margin = int(int(WINDOW_WIDTH / 10))
         self.y_margin = int(int(WINDOW_HEIGHT / 10))
@@ -38,7 +37,6 @@ class Board:
         self.turn_sign = Text("Turn:  1", BROWN)
         self.time_sign = Text("Time:  0", BROWN)
         self.msg = Text("It's your Turn!", GREEN)
-
         return
 
     def reset_time(self):
@@ -46,6 +44,10 @@ class Board:
 
     def add_players(self, player1, player2):
         self.players = [player1, player2]
+
+    def add_drones(self, drones):
+        for drone in drones:
+            self.drones_set.add(drone)
 
     def convert_xy(self, x, y):
         """
@@ -70,19 +72,16 @@ class Board:
 
     def finish(self):
         font = pygame.font.SysFont('arial', 80)
-        surf = font.render("OMG!!!!!!!! We Have A Winner!", True, GOLD)
+        surf = font.render("OMG!!!!!!!1 We Have A Winner!", True, GOLD)
         rect = surf.get_rect()
         center = ((WINDOW_WIDTH-rect.width)//2, (WINDOW_HEIGHT-rect.height)//2)
         self.DISPLAYSURF.blit(surf, center)
         pygame.display.update()
 
     def draw_board(self):
-
         self.DISPLAYSURF.fill(BLACK)  # clear board (critical to avoid overlapping)
-
         # the color of the board is green on the human player's turn, and white on the computer's turn
         grid_line_color = WHITE
-
         # Draw high board line
         pygame.draw.line(self.DISPLAYSURF, grid_line_color, (self.x_margin, self.y_margin),
                          (self.x_margin + BOARD_WIDTH, self.y_margin))
@@ -95,19 +94,17 @@ class Board:
         # Draw right board line
         pygame.draw.line(self.DISPLAYSURF, grid_line_color, (self.x_margin + BOARD_WIDTH, self.y_margin),
                          (self.x_margin + BOARD_WIDTH, self.y_margin + BOARD_HEIGHT))
-
         # Draw players' drones
         for player in self.players:
             for drone in player.drones:
-                pygame.draw.circle(self.DISPLAYSURF, player.color, (int(round(drone.pos.x)), int(round(drone.pos.y))), 3)
-
+                x_new, y_new = self.convert_xy(drone.pos.x, drone.pos.y) # Return tuple of x and y
+                pygame.draw.circle(self.DISPLAYSURF, player.color, (int(round(x_new)), int(round(y_new))), 3)
         # Draw Game Info
         self.DISPLAYSURF.blit(self.turn_sign.surf, (WINDOW_WIDTH - 2*self.x_margin, self.y_margin))
         self.update_time(self.time_sign)  # set the new time
         self.DISPLAYSURF.blit(self.time_sign.surf, (WINDOW_WIDTH - 2*self.x_margin, 2*self.y_margin))  # paint new time
         center_x = (BOARD_WIDTH-self.msg.surf.get_rect().width)//2  # centralize msg respective to board
         self.DISPLAYSURF.blit(self.msg.surf, (self.x_margin + center_x, self.y_margin + BOARD_HEIGHT))
-
         pygame.display.update()  # repaint board
 
     def update_time(self, sign):
@@ -121,7 +118,6 @@ class Board:
         if sec_time < 60:
             sign.update("Time:  "+str(int(sec_time)), BROWN)
             return
-
         min_time = sec_time // 60  # minutes passed
         sec_time %= 60  # sec_time is now relative to the minute
         time_string = "%d:%02d" % (min_time, sec_time)
@@ -129,15 +125,17 @@ class Board:
         return  # assuming we won't reach for an hour game...........
 
     def update_drone(self, color, old_radius, new_radius, pos):
-        pygame.draw.circle(self.DISPLAYSURF, BLACK, (int(round(pos.x)), int(round(pos.y))), old_radius)
-        pygame.draw.circle(self.DISPLAYSURF, color, (int(round(pos.x)), int(round(pos.y))), new_radius)
+        x_new, y_new = self.convert_xy(pos.x, pos.y)
+        pygame.draw.circle(self.DISPLAYSURF, BLACK, (int(round(x_new)), int(round(y_new))), old_radius)
+        pygame.draw.circle(self.DISPLAYSURF, color, (int(round(x_new)), int(round(y_new))), new_radius)
         pygame.display.update()
 
     def choose_drone(self, player):
         while True:
             for drone in player.drones:
                 loop = True
-                pygame.draw.circle(self.DISPLAYSURF, BLUE, (int(round(drone.pos.x)), int(round(drone.pos.y))), 4)
+                x_new, y_new = self.convert_xy(drone.pos.x, drone.pos.y)
+                pygame.draw.circle(self.DISPLAYSURF, BLUE, (int(round(x_new)), int(round(y_new))), 4)
                 pygame.display.update()
                 while loop:
                     for event in pygame.event.get():
@@ -162,19 +160,19 @@ class Board:
         :param direction: String indicating the direction, or a Point(x, y)
         :return: 0 if not a valid move, 1 else
         """
-
         if drone.type == "human":  # for the human player
             if direction == "UP":
-                new_pos = Point(drone.pos.x, drone.pos.y - self.y_unit)
+                new_pos = Point(drone.pos.x, drone.pos.y - 1)
             elif direction == "DOWN":
-                new_pos = Point(drone.pos.x, drone.pos.y + self.y_unit)
+                new_pos = Point(drone.pos.x, drone.pos.y + 1)
             elif direction == "LEFT":
-                new_pos = Point(drone.pos.x - self.x_unit, drone.pos.y)
+                new_pos = Point(drone.pos.x + 1, drone.pos.y)
             elif direction == "RIGHT":
-                new_pos = Point(drone.pos.x + self.x_unit, drone.pos.y)
+                new_pos = Point(drone.pos.x - 1, drone.pos.y)
             else:
                 print("ERROR: Wrong direction input: " + direction)
                 return False
+            print(new_pos.x, new_pos.y)
             # validate the move
             if self.is_valid_move(drone.name, new_pos):
                 drone.move(new_pos)
@@ -186,7 +184,6 @@ class Board:
             else:
                 self.msg.update("Illegal move! Try again...", RED)  # indicate the player fo wrong move
                 return False
-
         else:  # for the machine drone, now the direction is a Point(x, y)
             if self.is_valid_move(drone.name, direction):
                 drone.move(direction)
@@ -208,7 +205,8 @@ class Board:
             for player in self.players:
                 for drone in player.drones:
                     if name != drone.name:  # then check for collision
-                        if np.linalg.norm([np.abs(drone.pos.x-new_pos.x), np.abs(drone.pos.y-new_pos.y)]) <= SAFE_ZONE:
+                        #if np.linalg.norm([np.abs(drone.pos.x-new_pos.x), np.abs(drone.pos.y-new_pos.y)]) <= SAFE_ZONE:
+                        if drone.pos == new_pos:  # TODO: change back to euclidian distance
                             return False
             return True
         return False
@@ -219,8 +217,7 @@ class Board:
         :param new_pos: list [x, y]
         :return: True if new_pos is inside the board, False otherwise
         """
-        return self.x_margin <= new_pos.x <= BOARD_WIDTH+self.x_margin \
-            and self.y_margin <= new_pos.y <= self.y_margin+BOARD_HEIGHT
+        return 0.0 <= new_pos.x <= self.width and 0.0 <= new_pos.y <= self.height
 
 
 class Drone:
