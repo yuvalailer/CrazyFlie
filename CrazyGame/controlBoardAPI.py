@@ -27,10 +27,19 @@ def _get_port():
         assert len(ports) > 0, 'no serial port found'
         return ports[-1].split('-')[0].strip()
     else:  # linux support
-        return '/dev/ttyUSB1'
+        return '/dev/ttyUSB0'
 
 
 class ControlBoardAPI:
+    _instance = None
+    @staticmethod
+    def get_control_board_api():
+        _first_try = True
+        if _first_try:
+            _first_try = False
+            ControlBoardAPI._instance = ControlBoardAPI()
+        return ControlBoardAPI._instance
+
     def __init__(self):
         self._serial_port = _get_port()
         cf_logger.info('serial port name is %s' % self._serial_port)
