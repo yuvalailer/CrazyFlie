@@ -4,6 +4,9 @@ import time
 import threading
 import re
 import os
+import logger
+cf_logger = logger.get_logger(__name__)
+
 
 TIME_BETWEEN_MESSAGES = 0.01
 LED_MESSAGE_PREFIX = 17
@@ -17,10 +20,11 @@ arduino_message_regex = re.compile(arduino_message_format)
 def _get_port():
     if os.name == 'nt':  # if run on windows
         ports = list(serial.tools.list_ports.comports())
-        ports = [str(p) for p in ports if 'USB Serial Port' in str(p)]
+
+        cf_logger.debug("serial ports found:")
+        cf_logger.debug(ports)
+
         assert len(ports) > 0, 'no serial port found'
-        if len(ports) == 1:
-            return ports[0].split('-')[0].strip()
         return ports[-1].split('-')[0].strip()
     else:  # linux support
         return '/dev/ttyUSB1'
@@ -29,7 +33,7 @@ def _get_port():
 class ControlBoardAPI:
     def __init__(self):
         self._serial_port = _get_port()
-        print('serial port name is %s' % self._serial_port)
+        cf_logger.info('serial port name is %s' % self._serial_port)
 
         self.ser = serial.Serial(self._serial_port, 9600)
         self._data = None
@@ -107,7 +111,7 @@ class ControlBoardAPI:
             try:
                 line = line.decode('UTF-8').rstrip("\r\n")
             except:
-                print(line)
+                cf_logger.warning('decodeing line failed %s'%line)
                 continue
 
             if arduino_message_regex.match(line):
@@ -115,6 +119,6 @@ class ControlBoardAPI:
                 self._data = line
                 self._valuesMutex.release()
             else:
-                print(line)
+                cf_logger.warning('wrong line format - %s'%line)
 
             time.sleep(TIME_BETWEEN_MESSAGES / 2)

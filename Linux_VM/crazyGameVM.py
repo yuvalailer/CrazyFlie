@@ -15,7 +15,7 @@ except:
 	cf_logger.warning("#### Warning, You don't have the crazyflie files  ####")
 	cf_logger.warning("#### Loading dummy files for testing purposes     ####")
 	cf_logger.warning("######################################################")
-	from Simulator import crazyflie, rospy, tf
+	from simulator import crazyflie, rospy, tf
 
 ##### Editable part #####
 TCP_IP = "127.0.0.1"

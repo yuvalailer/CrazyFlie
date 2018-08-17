@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import logger, time
 from dronesControllerAPI import DronesControllerAPI
+
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
 COMMANDS = ["crazyflie2$Register", "crazyflie3$Register", "crazyflie2$TakeOff$7$7", "crazyflie3$TakeOff$3$3",
