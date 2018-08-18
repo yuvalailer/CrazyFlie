@@ -4,7 +4,7 @@ from queue import PriorityQueue
 import functools
 import numpy as np
 import math
-import logger
+from CrazyGame import logger
 
 cf_logger = logger.get_logger(__name__)
 

@@ -1,16 +1,19 @@
 # import sys
-# sys.path.insert(0, "..")
-from gameUtils import *
-# sys.path.insert(0, "..\..") # TODO - At the end we will have to re-arenge the files hierarchy, So this is just a temporary fix
-import logger
-from dronesControllerAPI import DronesControllerAPI
+from CrazyGame.Games.gameUtils import *
+from CrazyGame import logger
 
 cf_logger = logger.get_logger(__name__)  # debug(), info(), warning(), error(), exception(), critical()
 
 NUM_DRONES = 4
-VM_IP = "172.16.1.2"
 AVAILABLE_DRONES = ["crazyflie2", "crazyflie1", "crazyflie3", "crazyflie4"]
 
+
+class SillyGame():
+    def __init__(self):
+        pass
+
+    def run(self):
+        pass
 
 def quit_game():
     pygame.quit()

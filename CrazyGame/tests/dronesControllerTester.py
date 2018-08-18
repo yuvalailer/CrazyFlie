@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logger, time
-from dronesControllerAPI import DronesControllerAPI
+from dronesController import DronesControllerAPI
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
