@@ -1,5 +1,8 @@
 import pygame
 import numpy as np
+from CrazyGame import logger
+
+cp_logger = logger.get_logger(__name__)
 
 
 class Joystick:
@@ -25,20 +28,17 @@ class Joystick:
 
 
 def _get_keyboard_click():
-    return False # TODO -> NEVER TESTED - SHOULD WORK AS FOLLOWING:
     keys = pygame.key.get_pressed()
     return keys[pygame.K_KP_ENTER]
 
 
 def _get_keyboard_direction():
-    return 0, 0  # TODO -> NEVER TESTED - SHOULD WORK AS FOLLOWING:
     keys = pygame.key.get_pressed()
-    print(keys)
     ax, ay = 0, 0
     if keys[pygame.K_UP]:
-        ay += 1
-    if keys[pygame.K_DOWN]:
         ay -= 1
+    if keys[pygame.K_DOWN]:
+        ay += 1
     if keys[pygame.K_LEFT]:
         ax -= 1
     if keys[pygame.K_RIGHT]:

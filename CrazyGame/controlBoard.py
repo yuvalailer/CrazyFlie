@@ -27,10 +27,10 @@ def _get_port():
         assert len(ports) > 0, 'no serial port found'
         return ports[-1].split('-')[0].strip()
     else:  # linux support
-        return '/dev/ttyUSB1'
+        return '/dev/ttyUSB0'
 
 
-class ControlBoardAPI:
+class ControlBoard:
     def __init__(self):
         self._serial_port = _get_port()
         cf_logger.info('serial port name is %s' % self._serial_port)
@@ -47,8 +47,11 @@ class ControlBoardAPI:
         self._set_defaults()
 
     def disconnect(self):
+        cf_logger.info('disconnection')
         self._run_thread = False
         time.sleep(0.2)
+        cf_logger.info('close serial port')
+        self.ser.close()
 
     def set_led(self, led, r, g, b):
         checksum = (LED_MESSAGE_PREFIX + led + r + g + b) % 256
@@ -74,7 +77,7 @@ class ControlBoardAPI:
             return [0, 0]
 
         ax = ax - self._default_x
-        ay = ay - self._default_y
+        ay = -(ay - self._default_y)
 
         return [ax, ay]
 
@@ -122,3 +125,4 @@ class ControlBoardAPI:
                 cf_logger.warning('wrong line format - %s'%line)
 
             time.sleep(TIME_BETWEEN_MESSAGES / 2)
+        cf_logger.info('read joystick thread ended')

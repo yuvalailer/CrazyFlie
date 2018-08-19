@@ -6,7 +6,7 @@ FORMATTER = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(messag
 LOG_FOLDER = "log"
 LOG_FILE = "{}/crazy_game.log".format(LOG_FOLDER)
 
-DEFAULT_LOGGING_LEVEL = logging.DEBUG
+DEFAULT_LOGGING_LEVEL = logging.INFO
 
 
 def get_console_handler():
@@ -23,9 +23,9 @@ def get_file_handler():
     return file_handler
 
 
-def set_default_debug_level(logging_level):
-    global DEFAULT_DEBUG_LEVEL
-    DEFAULT_DEBUG_LEVEL = logging_level
+def set_default_logging_level(logging_level):
+    global DEFAULT_LOGGING_LEVEL
+    DEFAULT_LOGGING_LEVEL = logging_level
 
 
 def get_logger(logger_name, logging_level=None):

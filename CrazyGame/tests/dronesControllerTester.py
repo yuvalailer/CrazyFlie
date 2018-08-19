@@ -12,10 +12,10 @@ COMMANDS = ["crazyflie2$Register", "crazyflie3$Register", "crazyflie2$TakeOff$7$
             "crazyflie2$Land", "crazyflie3$Land", "crazyflie2$UnRegister", "crazyflie3$UnRegister"]
 
 def main():
-	dronesController = DronesControllerAPI(ip="172.16.1.2") # Optional variables: "ip", "port" and "buffer_size"
-	if not dronesController.connect(): # Return True on success and False otherwise
+	dronesController = DronesControllerAPI() # Optional variables: "ip", "port" and "buffer_size"
+	if not dronesController.connect():
 		cf_logger.critical("Communication error")
-		exit(0)
+		return
 	for command in COMMANDS:
 		loop_status = dronesController.send(command) # Return 0 on success, 1 if the VM report on an error and -1 if the connection is closed
 		if loop_status == 1:

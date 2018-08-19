@@ -1,5 +1,6 @@
 import logging
-import logger
+
+from CrazyGame import logger
 
 logger.set_default_logging_level(logging.INFO)
 cf_logger = logger.get_logger(__name__)
@@ -7,7 +8,7 @@ cf_logger.info("#### start silly player tester ####")
 
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
-import silly_player
+from SillyGame import sillyPlayer
 from datetime import datetime
 
 
@@ -21,7 +22,7 @@ opponent_drones = [Point(25,35), Point(22,20), Point(12,20)]
 target = Point(25,27)
 
 start_time = datetime.now()
-path = silly_player.silly_player_move(friend_drones, opponent_drones, target, 32)
+path = sillyPlayer.silly_player_move(friend_drones, opponent_drones, target, 32)
 end_time = datetime.now()
 
 elapsed_time = end_time - start_time
@@ -34,11 +35,11 @@ ax = plt.gca()
 plt.plot(target.x, target.y, color='black', marker='o')
 for drone in friend_drones:
     plt.plot(drone.x, drone.y, color='blue', marker='o')
-    plot_player(ax, drone, silly_player.DRONE_RADIUS, 'b')
+    plot_player(ax, drone, sillyPlayer.DRONE_RADIUS, 'b')
 
 for drone in opponent_drones:
     plt.plot(drone.x, drone.y, color='red', marker='o')
-    plot_player(ax, drone, silly_player.DRONE_RADIUS, 'red')
+    plot_player(ax, drone, sillyPlayer.DRONE_RADIUS, 'red')
 
 cf_logger.info("path:")
 for p,q in zip(path[:-1], path[1:]):
