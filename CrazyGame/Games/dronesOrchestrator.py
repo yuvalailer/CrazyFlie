@@ -5,9 +5,6 @@ from CrazyGame import logger
 
 cf_logger = logger.get_logger(__name__)
 
-DEFAULT_POS = (200,50)
-DEFAULT_SIZE = (600,400)
-
 class Board:
     def __init__(self, pos=DEFAULT_POS, size=DEFAULT_SIZE):
         self.drones = []
