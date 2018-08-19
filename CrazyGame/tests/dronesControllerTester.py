@@ -1,18 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logger, time
-from dronesController import DronesController
-from joystick import Joystick
+from dronesControllerAPI import DronesControllerAPI
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
-COMMANDS = ["crazyflie3$Register", "crazyflie3$TakeOff$3$3", "crazyflie3$UP", "crazyflie3$UP", "crazyflie3$LEFT", "crazyflie3$LEFT", "crazyflie3$Land", "crazyflie3$UnRegister"]
+COMMANDS = ["crazyflie2$Register", "crazyflie3$Register", "crazyflie2$TakeOff$7$7", "crazyflie3$TakeOff$3$3",
+            "crazyflie3$UP", "crazyflie2$UP", "crazyflie3$UP", "crazyflie2$UP", "crazyflie3$DOWN", "crazyflie2$DOWN",
+			"crazyflie3$LEFT", "crazyflie2$DOWN", "crazyflie3$DOWN", "crazyflie2$UP", "crazyflie3$DOWN", "crazyflie2$DOWN",
+			"crazyflie3$RIGHT", "crazyflie3$UP",
+            "crazyflie2$Land", "crazyflie3$Land", "crazyflie2$UnRegister", "crazyflie3$UnRegister"]
 
 def main():
-	dronesController = DronesController() # Optional variables: "ip", "port" and "buffer_size"
-	if not dronesController.connect(): # Return True on success and False otherwise
+	dronesController = DronesControllerAPI() # Optional variables: "ip", "port" and "buffer_size"
+	if not dronesController.connect():
 		cf_logger.critical("Communication error")
-		exit(0)
+		return
 	for command in COMMANDS:
 		loop_status = dronesController.send(command) # Return 0 on success, 1 if the VM report on an error and -1 if the connection is closed
 		if loop_status == 1:
