@@ -1,3 +1,4 @@
+import pygame
 from CrazyGame import logger
 from CrazyGame.Games import dronesBoard
 
@@ -7,14 +8,12 @@ NUM_DRONES = 4
 AVAILABLE_DRONES = ["crazyflie2", "crazyflie1", "crazyflie3", "crazyflie4"]
 
 
-class SillyGame():
+class SillyGame:
     def __init__(self):
         self.board = dronesBoard.Board()
 
     def run(self):
         pass
-
-
 
 def game_loop(board, dronesController):
     game_is_on = True

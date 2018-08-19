@@ -7,7 +7,7 @@ import pygame
 import drawer
 from CrazyGame import controlBoard
 from CrazyGame import dronesController
-#from CrazyGame import dronesControllerSimulator
+from CrazyGame import dronesControllerSimulator
 from CrazyGame import joystick
 from CrazyGame import logger
 from CrazyGame.Games.JoystickDemo import joystickDemo
@@ -15,11 +15,11 @@ from CrazyGame.Games.SillyGame import sillyGame
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
-GAMES = {'silly game':sillyGame.SillyGame,
+GAMES = {'silly game': sillyGame.SillyGame,
          'joystick demo': joystickDemo.JoystickDemo, }
 
 
-class CrazyGame():
+class CrazyGame:
     def run_crzay_game(self):
         self.initialization_process()
 
@@ -32,7 +32,6 @@ class CrazyGame():
             game_result = game.run()
             if game_result == 'exit':
                 break
-
         self.tear_down()
 
     def initialization_process(self):
@@ -99,7 +98,7 @@ class CrazyGame():
                     self.drone_controller = None
             elif drone_controller_type == 'demo':
                 cf_logger.info('connect to demo drone controller...')
-                self.drone_controller = '1'#dronesControllerSimulator.DronesController()
+                self.drone_controller = dronesControllerSimulator.DronesController()
 
     def run_starting_animation(self):
         if not self.drone_controller:
