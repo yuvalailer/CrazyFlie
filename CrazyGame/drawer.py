@@ -20,7 +20,7 @@ TEXT_LINE_RECT = pygame.Rect(0, WINDOW_RECT[1]-TEXT_LINE_HEIGHT,WINDOW_RECT[0],T
 MAIN_RECT = pygame.Rect(0, 0, WINDOW_RECT[0], WINDOW_RECT[1] - TEXT_LINE_HEIGHT)
 
 
-class Drawer():
+class Drawer:
     def __init__(self):
         pygame.init()
         pygame.font.init()
