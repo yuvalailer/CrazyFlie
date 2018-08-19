@@ -1,19 +1,16 @@
 import pygame
 from CrazyGame import logger
-from CrazyGame.Games import dronesBoard
+from CrazyGame.Games import dronesOrchestrator
 
 cf_logger = logger.get_logger(__name__)
-
-NUM_DRONES = 4
-AVAILABLE_DRONES = ["crazyflie2", "crazyflie1", "crazyflie3", "crazyflie4"]
 
 
 class SillyGame:
     def __init__(self):
-        self.board = dronesBoard.Board()
+        self.board = dronesOrchestrator.Board()
 
     def run(self):
-        pass
+        player1 = self.orchestrator.drones[0]
 
 def game_loop(board, dronesController):
     game_is_on = True

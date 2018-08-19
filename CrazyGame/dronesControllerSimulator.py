@@ -13,6 +13,7 @@ SPEED = 20
 
 DRONES_NUM = 4
 
+
 class DronesController:
     def __init__(self):
         self._world_size = [WORLD_X, WORLD_Y]

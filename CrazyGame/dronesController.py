@@ -36,6 +36,9 @@ class DronesControllerAPI:
     def disconnect(self):
         self._socket.close()
 
+    def set_speed(self, speed):
+        pass
+
     def get_world_size(self):
         res = self._send("WorldSize")
         if res and (res.count("$") == 1):
