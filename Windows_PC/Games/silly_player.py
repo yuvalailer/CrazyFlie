@@ -139,7 +139,7 @@ def _is_point_legal(circle_obstacles, p):
     return True
 
 
-def _segment_intersection_query(circle_obstacles, line): #assumes line points are legal
+def _segment_intersection_query(circle_obstacles, line):  # assumes line points are legal
     for circle in circle_obstacles:
         inter = circle.intersection(line)
         if inter.type == 'LineString':
