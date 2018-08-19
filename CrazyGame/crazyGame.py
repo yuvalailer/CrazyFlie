@@ -7,6 +7,7 @@ import pygame
 import drawer
 from CrazyGame import controlBoard
 from CrazyGame import dronesController
+#from CrazyGame import dronesControllerSimulator
 from CrazyGame import joystick
 from CrazyGame import logger
 from CrazyGame.Games.JoystickDemo import joystickDemo
@@ -54,16 +55,51 @@ class CrazyGame():
 
         self.joystick = joystick.Joystick(self.control_board)
 
+    def set_drone_controller_buttons(self):
+        BUTTON_SIZE = (200, 100)
+        DIS_FROM_EDGE = 200
+        Y_POS = 400
+        VM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
+        DEMO_BUTTON_POS = (drawer.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
+
+        self.drawer.add_button(drawer.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
+        self.drawer.add_button(drawer.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
+
+        self.drawer.render_buttons()
+
+    def get_drone_controller_type(self):
+        self.set_drone_controller_buttons()
+
+        while True:
+            event = pygame.event.wait()
+            if event.type == pygame.QUIT:
+                self.tear_down()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.drawer.check_buttons_mouse_event(event.type)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                button = self.drawer.check_buttons_mouse_event(event.type)
+                if button:
+                    cf_logger.debug('button %s clicked' % button.text)
+                    if button.text == 'exit':
+                        self.tear_down()
+                    return button.text
+
     def set_drone_controller(self):
-        cf_logger.info('connect to drone vm controller...')
-        self.drawer.set_text_line('connecting to drone vm controller')
-        self.drone_controller = dronesController.DronesController()
-        try:
-            self.drone_controller.connect()
-            cf_logger.info('connection to drone vm controller established')
-        except ConnectionError:
-            cf_logger.info('fail to connect drone vm controller')
-            self.drone_controller = None
+        self.drone_controller = None
+        while not self.drone_controller:
+            self.drawer.set_text_line('choose drones controller', update_display=False)
+            drone_controller_type = self.get_drone_controller_type()
+            if drone_controller_type == 'vm':
+                self.drone_controller = dronesController.DronesController()
+                cf_logger.info('connect to drone vm controller...')
+                try:
+                    self.drone_controller.connect()
+                except ConnectionError:
+                    cf_logger.info('fail to connect drone vm controller')
+                    self.drone_controller = None
+            elif drone_controller_type == 'demo':
+                cf_logger.info('connect to demo drone controller...')
+                self.drone_controller = '1'#dronesControllerSimulator.DronesController()
 
     def run_starting_animation(self):
         if not self.drone_controller:
