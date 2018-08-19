@@ -15,23 +15,23 @@ DRONES_NUM = 4
 
 class DronesController:
     def __init__(self):
-        self.world_size = [WORLD_X, WORLD_Y]
-        self.objects = {}
+        self._world_size = [WORLD_X, WORLD_Y]
+        self._objects = {}
         for i in range(1, DRONES_NUM):
-            self.objects["crazyflie{}".format(i)] = munch.Munch(pos=(0, 0, 0),
-                                                                on_the_go=False,
-                                                                start_pos=(0, 0, 0),
-                                                                start_time=0.0)
+            self._objects["crazyflie{}".format(i)] = munch.Munch(pos=(0, 0, 0), # TODO set starting pos
+                                                                 on_the_go=False,
+                                                                 start_pos=(0, 0, 0),
+                                                                 start_time=0.0)
         cf_logger.info("Demo drone controller connected")
 
     def get_world_size(self):
-        return self.world_size
+        return self._world_size
 
     def get_objects(self):
-        return self.objects.keys()
+        return list(self._objects.keys())
 
     def get_object_position(self, object_name):
-        object = self.objects[object_name]
+        object = self._objects[object_name]
         if not object.on_the_go:
             return object.pos
 
@@ -45,7 +45,7 @@ class DronesController:
                   object.pos[2] )
 
     def move_drone(self, drone_name, direction_vector): # direction_vector = [x, y]
-        drone = self.objects[drone_name]
+        drone = self._objects[drone_name]
         drone.start_pos = self.get_object_position(drone_name)
         drone.start_time = time.time()
         drone.on_the_go = True
@@ -54,18 +54,18 @@ class DronesController:
                      drone.start_pos[2])
 
     def goto(self, drone_name, pos): # pos = [x, y]
-        self.objects[drone_name].pos = (pos[0],
+        self._objects[drone_name].pos = (pos[0],
                                         pos[1],
-                                        self.objects[drone_name][2])
+                                        self._objects[drone_name][2])
 
     def take_off(self, drone_name):
-        self.objects[drone_name].pos = (self.objects[drone_name][0],
-                                        self.objects[drone_name][1],
+        self._objects[drone_name].pos = (self._objects[drone_name][0],
+                                        self._objects[drone_name][1],
                                         TAKEOFF_HEIGHT)
 
     def land(self, drone_name):
-        self.objects[drone_name].pos = (self.objects[drone_name][0],
-                                        self.objects[drone_name][1],
+        self._objects[drone_name].pos = (self._objects[drone_name][0],
+                                        self._objects[drone_name][1],
                                         0)
 
     def battery_status(self, drone_name):
