@@ -1,4 +1,3 @@
-import os
 import time
 import pygame
 from CrazyGame import logger
@@ -28,6 +27,7 @@ class Drawer():
         self.display_surf = pygame.display.set_mode(WINDOW_RECT, pygame.HWSURFACE)
         self.text_line_font = pygame.font.SysFont("arial", 30)
         self.buttons = []
+        self.board = None
         pygame.display.set_caption('Crazy Game')
         self.reset_main_rect(update_display=False)
         self.set_text_line('Welcome To Crazy Game', update_display=False)
@@ -36,9 +36,12 @@ class Drawer():
     def reset_main_rect(self, update_display=True):
         #backgroundimage = pygame.image.load(os.path.join(PICTURE_DIRECTORY, "background.png")) #TODO -> choose a background picture or pattern
         #backgroundimage = pygame.transform.scale(backgroundimage, MAIN_RECT)
+        # self.display_surf.blit(backgroundimage, [0, 0]) TODO -> choose a background picture or pattern
+
         pygame.draw.rect(self.display_surf, RED, MAIN_RECT)
         self.buttons = []
-        #self.display_surf.blit(backgroundimage, [0, 0]) TODO -> choose a background picture or pattern
+        if update_display:
+            pygame.display.update()
 
     def set_text_line(self, text='', update_display=True):
         pygame.draw.rect(self.display_surf, WHITE, TEXT_LINE_RECT)
@@ -50,7 +53,8 @@ class Drawer():
             pygame.display.update()
 
     def add_button(self, button):
-        button._display_surf = self.display_surf
+        button.display_surf = self.display_surf
+        button.render()
         self.buttons.append(button)
 
     def render_buttons(self, update_display=True):
@@ -68,6 +72,10 @@ class Drawer():
 
         return None
 
+    def add_board(self, board):
+        board.display_surf = self.display_surf
+        self.board = board
+        self.board.render()
 
 class Button():
     BUTTON_COLORS = {'idle': GREEN, 'down':BLUE}
@@ -85,12 +93,12 @@ class Button():
         self.state = 'idle'
 
     def render(self):
-        pygame.draw.rect(self._display_surf, Button.BUTTON_COLORS[self.state], self.rect)
-        self._display_surf.blit(self.text_surface, self.text_position)
+        pygame.draw.rect(self.display_surf, Button.BUTTON_COLORS[self.state], self.rect)
+        self.display_surf.blit(self.text_surface, self.text_position)
 
     def handle_mouse_event(self, event_type, mouse_location):
         if self.rect.collidepoint(mouse_location):
-            cf_logger.info('mouse event %s occured on button %s'%(event_type, self.text))
+            cf_logger.info('mouse event %s occurred on button %s'%(event_type, self.text))
             if event_type == pygame.MOUSEBUTTONDOWN:
                 self.state = 'down'
             elif event_type == pygame.MOUSEBUTTONUP:

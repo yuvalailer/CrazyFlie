@@ -77,7 +77,7 @@ class ControlBoard:
             return [0, 0]
 
         ax = ax - self._default_x
-        ay = ay - self._default_y
+        ay = -(ay - self._default_y)
 
         return [ax, ay]
 

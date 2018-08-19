@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import logger, socket, time
+import logger
+import socket
+import time
 
-cf_logger = logger.get_logger(__name__)  # debug(), info(), warning(), error(), exception(), critical()
+cf_logger = logger.get_logger(__name__)
 
 DEFAULT_TCP_IP = "127.0.0.1"
 VM_IP = "172.16.1.2"
@@ -67,7 +67,3 @@ class DronesController(object):
     def disconnect(self):
         cf_logger.info('disconnect')
         self._socket.close()
-
-
-if __name__ == "__main__":
-    print("This is not the way to do it...")

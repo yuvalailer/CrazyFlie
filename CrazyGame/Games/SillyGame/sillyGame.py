@@ -1,8 +1,7 @@
-# import sys
-from CrazyGame.Games.gameUtils import *
 from CrazyGame import logger
+from CrazyGame.Games import dronesBoard
 
-cf_logger = logger.get_logger(__name__)  # debug(), info(), warning(), error(), exception(), critical()
+cf_logger = logger.get_logger(__name__)
 
 NUM_DRONES = 4
 AVAILABLE_DRONES = ["crazyflie2", "crazyflie1", "crazyflie3", "crazyflie4"]
@@ -10,14 +9,11 @@ AVAILABLE_DRONES = ["crazyflie2", "crazyflie1", "crazyflie3", "crazyflie4"]
 
 class SillyGame():
     def __init__(self):
-        pass
+        self.board = dronesBoard.Board()
 
     def run(self):
         pass
 
-def quit_game():
-    pygame.quit()
-    sys.exit()
 
 
 def game_loop(board, dronesController):
@@ -117,15 +113,3 @@ def run_game():
                 drone.name)) != 0:  # Return 0 on success, 1 if the VM report on an error and -1 if the connection is closed
             # TODO - Print/log error and then "quit_game"
             return False
-
-
-def main():
-    pygame.init()
-    run_game()
-
-
-if __name__ == "__main__":
-    cf_logger.info("######################################################")
-    cf_logger.info("####                   Started                    ####")
-    cf_logger.info("######################################################")
-    main()

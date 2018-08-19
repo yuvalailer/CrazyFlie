@@ -1,35 +1,41 @@
-import pygame
-import time
-import sys
 import logging
-from CrazyGame import logger
-from CrazyGame import dronesController
+import sys
+import time
+
+import pygame
+
+import drawer
 from CrazyGame import controlBoard
+from CrazyGame import dronesController
 from CrazyGame import joystick
-from CrazyGame import drawer
+from CrazyGame import logger
+from CrazyGame.Games.JoystickDemo import joystickDemo
 from CrazyGame.Games.SillyGame import sillyGame
-from CrazyGame.Games.DemoGame import demoGame
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
 GAMES = {'silly game':sillyGame.SillyGame,
-         'demo game': demoGame.DemoGame, }
+         'joystick demo': joystickDemo.JoystickDemo, }
 
 
 class CrazyGame():
     def run_crzay_game(self):
         self.initialization_process()
+
         while True:
-            game = self.choose_game()
+            game_name = self.choose_game()
+            game = GAMES[game_name]()
             game.joystick = self.joystick
             game.droneController = self.drone_controller
             game.drawer = self.drawer
-            game.run()
+            game_result = game.run()
+            if game_result == 'exit':
+                break
 
         self.tear_down()
 
     def initialization_process(self):
-        cf_logger.info('start initlization process')
+        cf_logger.info('start initialization process')
         self.drawer = drawer.Drawer()
         time.sleep(0.5)
         self.set_control_board()
@@ -40,13 +46,13 @@ class CrazyGame():
         cf_logger.info('connecting to control board')
         self.drawer.set_text_line('connecting to control board')
         try:
-            self._control_board = controlBoard.ControlBoard()
+            self.control_board = controlBoard.ControlBoard()
         except:
             cf_logger.info('fail to connect control board')
             self.drawer.set_text_line('connecting to control board')
-            self._control_board = None
+            self.control_board = None
 
-        self.joystick = joystick.Joystick(self._control_board)
+        self.joystick = joystick.Joystick(self.control_board)
 
     def set_drone_controller(self):
         cf_logger.info('connect to drone vm controller...')
@@ -98,8 +104,8 @@ class CrazyGame():
                     return button.text
 
     def tear_down(self):
-        if self._control_board:
-            self._control_board.disconnect()
+        if self.control_board:
+            self.control_board.disconnect()
         if self.drone_controller:
             self.drone_controller.disconnect()
         pygame.quit()
