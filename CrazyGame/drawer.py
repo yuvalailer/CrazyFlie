@@ -77,7 +77,7 @@ class Drawer:
         self.board = board
         self.board.render()
 
-class Button():
+class Button:
     BUTTON_COLORS = {'idle': GREEN, 'down':BLUE}
     BUTTON_TEXT_COLOR = WHITE
 
