@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logger, time
-from dronesControllerAPI import DronesControllerAPI
+import time
+from fixSysPath import test_sys_path
+test_sys_path()
+from CrazyGame import logger
+from CrazyGame.dronesController import DronesController
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
@@ -12,8 +15,8 @@ COMMANDS = ["crazyflie2$Register", "crazyflie3$Register", "crazyflie2$TakeOff$7$
             "crazyflie2$Land", "crazyflie3$Land", "crazyflie2$UnRegister", "crazyflie3$UnRegister"]
 
 def main():
-	dronesController = DronesControllerAPI() # Optional variables: "ip", "port" and "buffer_size"
-	if not dronesController.connect():
+	dronesController = DronesController() # Optional variables: "ip", "port" and "buffer_size"
+	if not dronesController.connect(number_of_trials=5, time_between_trails=3):
 		cf_logger.critical("Communication error")
 		return
 	for command in COMMANDS:

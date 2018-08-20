@@ -1,9 +1,11 @@
 import logger
 import sys
 import pygame
+import time
+from fixSysPath import test_sys_path
+test_sys_path()
 from CrazyGame.dronesController import DronesController
 from CrazyGame.joystick import Joystick
-import time
 
 cf_logger = logger.get_logger(__name__)  # debug(), info(), warning(), error(), exception(), critical()
 
