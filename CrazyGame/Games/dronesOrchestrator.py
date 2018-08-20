@@ -10,13 +10,13 @@ cf_logger = logger.get_logger(__name__)
 DRONE_VELOCITY = 20
 DRONE_MOVE_TIME_OUT = 1
 DRONE_DISTANCE_IN_TIME_OUT = DRONE_VELOCITY * DRONE_MOVE_TIME_OUT
-DRONE_RADIUS = 5
 
 
 class DronesOrchestrator:
     def __init__(self, drones_controller):
         self.drones_controller = drones_controller
         self.size = self.drones_controller.get_world_size()
+        self.drone_radius = 10 # TODO temp value
 
         self.drones = []
 
@@ -43,7 +43,7 @@ class DronesOrchestrator:
         line = LineString([drone, target])
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                temp_circle = temp_drone.position.buffer(DRONE_RADIUS*2)
+                temp_circle = temp_drone.position.buffer(self.drone_radius*2)
                 inter = temp_circle.intersection(line)
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
@@ -89,7 +89,7 @@ class DronesOrchestrator:
         line = LineString([drone.position, target])
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                temp_circle = temp_drone.position.buffer(DRONE_RADIUS*2)
+                temp_circle = temp_drone.position.buffer(self.drone_radius*2)
                 inter = temp_circle.intersection(line)
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))

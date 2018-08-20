@@ -7,7 +7,6 @@ from CrazyGame import logger
 cf_logger = logger.get_logger(__name__)
 
 BOARD_BOUND_RECT = pygame.Rect(300, 50, drawer.MAIN_RECT.width-350, drawer.MAIN_RECT.height-100)
-RADIUS = 4
 
 
 class DisplayBoard:
@@ -15,6 +14,7 @@ class DisplayBoard:
         self.display_surf = display_surf
         self._orch = orchestrator
         self.rect = self.get_display_board_rect()
+        self.radius = self.get_relative_radius()
         self.inner_rect = self.get_inner_rect()
 
     def get_display_board_rect(self):
@@ -32,9 +32,13 @@ class DisplayBoard:
         return rect
 
     def get_inner_rect(self):
-        rect = pygame.Rect(0, 0, self.rect.width-2*RADIUS, self.rect.height-2*RADIUS)
+        rect = pygame.Rect(0, 0, self.rect.width - 2*self.radius, self.rect.height - 2*self.radius)
         rect.center = self.rect.center
         return rect
+
+    def get_relative_radius(self):
+        ratio = self.rect.width/self._orch.width
+        return round(ratio * self._orch.drone_radius)
 
     def render(self):
         cf_logger.info("rendering board...")
@@ -57,4 +61,4 @@ class DisplayBoard:
         if drone.grounded:
             width = 1
         cf_logger.info("drawing {} at ({}, {})".format(drone.name, x, y))
-        pygame.draw.circle(self.display_surf, drone.color, (x, y), 4, width)
+        pygame.draw.circle(self.display_surf, drone.color, (x, y), self.radius, width)
