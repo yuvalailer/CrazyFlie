@@ -1,6 +1,6 @@
 import pygame
 
-import drawer
+from pygameUtils import drawer
 
 CIRCLE_RADIUS = 150
 BACK_BUTTON_SIZE = (100, 50)

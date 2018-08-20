@@ -17,11 +17,19 @@ class DronesOrchestrator:
         self.size = size
         self.drones = {}
 
+    @property
+    def width(self):
+        return self.size[0]
+
+    @property
+    def height(self):
+        return self.size[1]
+
     def add_drones(self, drones):
         for drone in drones:
             self.drones[drone] = Munch(name=drone, grounded=False)
 
-    def try_move_drone(self, drone, direction):
+    def try_move_drone(self, drone, direction):  # TODO -> consider board limits
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
@@ -54,7 +62,7 @@ class DronesOrchestrator:
 
         drone.grounded = False
 
-    def land(self, drone, blocking):
+    def land(self, drone, blocking=False):
         if not drone.up:
             cf_logger.warning('try to land a grounded drone %s' % drone.name)
             return
@@ -65,7 +73,7 @@ class DronesOrchestrator:
 
         drone.grounded = True
 
-    def try_goto(self, drone, target, blocking):
+    def try_goto(self, drone, target, blocking=False):
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False

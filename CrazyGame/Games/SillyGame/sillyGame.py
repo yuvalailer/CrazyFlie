@@ -6,9 +6,6 @@ cf_logger = logger.get_logger(__name__)
 
 
 class SillyGame:
-    def __init__(self):
-        self.board = dronesOrchestrator.Board()
-
     def run(self):
         player1 = self.orchestrator.drones[0]
 

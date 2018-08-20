@@ -64,7 +64,7 @@ class DronesControllerAPI:
             return False
 
     def move_drone(self, drone_name, direction_vector):  # direction_vector = [x, y]
-        pass # TODO
+        pass  # TODO
 
     def goto(self, drone_name, pos):  # pos = [x, y]
         self._send("GoTo${}${}${}".format(drone_name, pos[0], pos[1]))

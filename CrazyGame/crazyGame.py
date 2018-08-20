@@ -4,7 +4,6 @@ import time
 
 import pygame
 
-import drawer
 from CrazyGame import controlBoard
 from CrazyGame import dronesController
 from CrazyGame import dronesControllerSimulator
@@ -12,6 +11,7 @@ from CrazyGame import joystick
 from CrazyGame import logger
 from CrazyGame.Games.JoystickDemo import joystickDemo
 from CrazyGame.Games.SillyGame import sillyGame
+from pygameUtils import drawer
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
