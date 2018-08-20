@@ -20,6 +20,10 @@ NOISE_EXPECTATION_MOVE = 0
 NOISE_VAR_MOVE = 1
 NOISE_MOVE = False
 
+NOISE_DIR = {'posnoise': (NOISE_EXPECTATION_POS, NOISE_VAR_POS, NOISE_POS),
+             'move': (NOISE_EXPECTATION_MOVE, NOISE_VAR_MOVE, NOISE_MOVE)}
+
+
 class DronesController:
     def __init__(self):
         self._world_size = [WORLD_X, WORLD_Y]
@@ -87,13 +91,9 @@ class DronesController:
         return
 
     def add_noise(self, noisesource):
-        if noisesource == "positionNoise":
-            if not NOISE_POS:
-                return 0
-            return np.random.normal(NOISE_EXPECTATION_POS, NOISE_VAR_POS, 1)
-        elif noisesource == "movetonoise":
-            if not NOISE_MOVE:
-                return 0
-            return np.random.normal(NOISE_EXPECTATION_MOVE, NOISE_VAR_MOVE, 1)
+        exp, var, use_noise = NOISE_DIR[noisesource]
+        if not use_noise:
+            return 0
+        return np.random.normal(exp, var, 1)
 
 
