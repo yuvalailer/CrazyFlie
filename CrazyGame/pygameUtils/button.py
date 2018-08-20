@@ -12,8 +12,7 @@ PRESSED_BUTTON_IMAGE = 'button_pressed.png'
 class Button:
     BUTTON_TEXT_COLOR = displaysConsts.WHITE
 
-    def __init__(self, position, size, text, unpressed_image_name=UNPRESSED_BUTTON_IMAGE , pressed_image_name=PRESSED_BUTTON_IMAGE):
-        self.multi_mode = True
+    def __init__(self, position, size, text, unpressed_image_name=UNPRESSED_BUTTON_IMAGE, pressed_image_name=PRESSED_BUTTON_IMAGE):
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
         self.font = pygame.font.SysFont("arial", min(30, self.rect.height - 5))
         self.text = text

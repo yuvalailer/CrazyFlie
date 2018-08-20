@@ -40,7 +40,7 @@ def _get_keyboard_direction():
     if keys[pygame.K_DOWN]:
         ay += 1
     if keys[pygame.K_LEFT]:
-        ax -= 1
-    if keys[pygame.K_RIGHT]:
         ax += 1
+    if keys[pygame.K_RIGHT]:
+        ax -= 1
     return ax, ay

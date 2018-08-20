@@ -8,26 +8,21 @@ from CrazyGame.dronesController import DronesController
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
-COMMANDS = ["crazyflie2$Register", "crazyflie3$Register", "crazyflie2$TakeOff$7$7", "crazyflie3$TakeOff$3$3",
-            "crazyflie3$UP", "crazyflie2$UP", "crazyflie3$UP", "crazyflie2$UP", "crazyflie3$DOWN", "crazyflie2$DOWN",
-			"crazyflie3$LEFT", "crazyflie2$DOWN", "crazyflie3$DOWN", "crazyflie2$UP", "crazyflie3$DOWN", "crazyflie2$DOWN",
-			"crazyflie3$RIGHT", "crazyflie3$UP",
-            "crazyflie2$Land", "crazyflie3$Land", "crazyflie2$UnRegister", "crazyflie3$UnRegister"]
-
 def main():
-	dronesController = DronesController() # Optional variables: "ip", "port" and "buffer_size"
-	if not dronesController.connect(number_of_trials=5, time_between_trails=3):
+	drones_controller = DronesController() # Optional variables: "ip", "port" and "buffer_size"
+	if not drones_controller.connect(number_of_trials=5, time_between_trails=3):
 		cf_logger.critical("Communication error")
 		return
-	for command in COMMANDS:
-		loop_status = dronesController.send(command) # Return 0 on success, 1 if the VM report on an error and -1 if the connection is closed
-		if loop_status == 1:
-			cf_logger.error("dronesControllerTester: Failed to execute command: {}".format(command))
-		elif loop_status == -1:
-			cf_logger.critical("Communication error")
-			exit(0)
-		time.sleep(1)
-	dronesController.disconnect()
+	drones_list = drones_controller.get_objects()
+	cf_logger.info("drones_list: {}".format(drones_list))
+	cf_logger.info("get_world_size: {}".format(drones_controller.get_world_size()))
+	cf_logger.info("battery_status: {}".format(drones_controller.battery_status("crazyflie2")))
+	drones_controller.take_off("crazyflie2")
+	cf_logger.debug("get_object_position: {}".format(drones_controller.get_object_position("crazyflie2")))
+	drones_controller.goto("crazyflie2", [1,1])
+	cf_logger.debug("get_object_position: {}".format(drones_controller.get_object_position("crazyflie2")))
+	drones_controller.land("crazyflie2")
+	drones_controller.disconnect()
 
 if __name__ == "__main__":
 	cf_logger.info("######################################################")

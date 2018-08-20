@@ -3,24 +3,37 @@ import time
 
 from pygameUtils import drawer
 from pygameUtils import button
+from pygameUtils import displaysConsts
+from CrazyGame import logger
 
-CIRCLE_RADIUS = 150
+cf_logger = logger.get_logger(__name__)
+
 BACK_BUTTON_SIZE = (100, 50)
-BACK_BUTTON_POS = (50, drawer.MAIN_RECT.height / 2 - BACK_BUTTON_SIZE[1] / 2)
+BACK_BUTTON_POS = (50, drawer.MAIN_RECT.height - 100)
 
 
 class DronesControlDemo:
     def __init__(self):
         self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, 'back')
-        self.circle_position = (int(drawer.MAIN_RECT.width / 2), int(drawer.MAIN_RECT.height / 2))
 
     def run(self):
         self.drawer.reset_main_rect(update_display=False)
         self.drawer.add_button(self.back_button)
         self.drawer.render()
+        self.current_drone_index = 0
+        self.current_drone = self.orch.drones[self.current_drone_index]
+        self.current_drone.color = displaysConsts.GREEN
 
+        self.drawer.render()
+        current_time = time.time()
         while True:
-            joystick_dir = self.joystick.get_normalize_direction()
+            if time.time() - current_time > 0.1:
+                self.orch.update_drones_positions()
+                self.drawer.render()
+                joystick_dir = self.joystick.get_normalize_direction()
+                self.orch.try_move_drone(self.current_drone, joystick_dir)
+                current_time = time.time()
+
             event_result = self.manage_events()
             if event_result != 'continue':
                 return event_result
@@ -35,14 +48,20 @@ class DronesControlDemo:
                 button = self.drawer.check_buttons_mouse_event(event.type)
                 if button == self.back_button:
                     return 'game ended'
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    self.next_drone()
+
+                elif event.key == pygame.K_u:
+                    self.orch.try_take_off(self.current_drone)
+                elif event.key == pygame.K_l:
+                    self.orch.land(self.current_drone)
         return 'continue'
 
-    def draw_joystick_circle(self, joystick_dir):
-        pygame.draw.circle(self.drawer.display_surf, drawer.BLUE, self.circle_position, CIRCLE_RADIUS)
-        if joystick_dir != [0, 0]:
-            line_end_position = (self.circle_position[0] + 0.9*joystick_dir[0]*CIRCLE_RADIUS,
-                                 self.circle_position[1] + 0.9*joystick_dir[1] * CIRCLE_RADIUS)
-            pygame.draw.line(self.drawer.display_surf, drawer.GREEN, self.circle_position, line_end_position)
-        else:
-            pygame.draw.circle(self.drawer.display_surf, drawer.BLUE, self.circle_position, 3)
-        pygame.display.update()
+    def next_drone(self):
+        self.current_drone.color = displaysConsts.BLACK
+        self.current_drone_index = (self.current_drone_index + 1) % len(self.orch.drones)
+        self.current_drone = self.orch.drones[self.current_drone_index]
+        cf_logger.info('change to drone %s'%self.current_drone.name)
+        self.current_drone.color = displaysConsts.GREEN
+
