@@ -2,6 +2,7 @@ import pygame
 import time
 
 from pygameUtils import drawer
+from pygameUtils import button
 
 CIRCLE_RADIUS = 150
 BACK_BUTTON_SIZE = (100, 50)
@@ -10,7 +11,7 @@ BACK_BUTTON_POS = (50, drawer.MAIN_RECT.height / 2 - BACK_BUTTON_SIZE[1] / 2)
 
 class DronesControlDemo:
     def __init__(self):
-        self.back_button = drawer.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, 'back')
+        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, 'back')
         self.circle_position = (int(drawer.MAIN_RECT.width / 2), int(drawer.MAIN_RECT.height / 2))
 
     def run(self):

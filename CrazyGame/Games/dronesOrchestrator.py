@@ -1,6 +1,6 @@
 import time
 from CrazyGame import logger
-from CrazyGame.pygameUtils import colors
+from CrazyGame.pygameUtils import displaysConsts
 from shapely.geometry import Point
 from shapely.geometry import LineString
 from munch import Munch
@@ -28,7 +28,7 @@ class DronesOrchestrator:
 
     def add_drones(self, drones):
         for drone in drones:
-            self.drones.append(Munch(name=drone, grounded=True, color=colors.BLACK))
+            self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK))
 
     def try_move_drone(self, drone, direction):  # TODO -> consider board limits
         if drone.grounded:

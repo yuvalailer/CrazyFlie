@@ -1,6 +1,6 @@
 import pygame
 from CrazyGame.pygameUtils import drawer
-from CrazyGame.pygameUtils import colors
+from CrazyGame.pygameUtils import displaysConsts
 from CrazyGame import logger
 
 
@@ -19,7 +19,7 @@ class DisplayBoard:
         return BOARD_BOUND_RECT
 
     def render(self):
-        pygame.draw.rect(self.display_surf, colors.WHITE, self.rect)
+        pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
 
     def _render_drone(self, drone):
         pass

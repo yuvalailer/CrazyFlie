@@ -14,6 +14,7 @@ from CrazyGame.Games.JoystickDemo import joystickDemo
 from CrazyGame.Games.SillyGame import sillyGame
 from CrazyGame.Games.DronesControlDemo import dronesControlDemo
 from CrazyGame.pygameUtils import drawer
+from CrazyGame.pygameUtils import button
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
@@ -70,9 +71,9 @@ class CrazyGame:
         VM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
         DEMO_BUTTON_POS = (drawer.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
 
-        self.drawer.add_button(drawer.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
+        self.drawer.add_button(button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
 
-        self.drawer.add_button(drawer.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
+        self.drawer.add_button(button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
 
         self.drawer.render_buttons()
 
@@ -126,12 +127,12 @@ class CrazyGame:
         self.drawer.reset_main_rect()
         for i, key in enumerate(GAMES):
             pos = (BUTTON_X_POS, BUTTON_Y_START_POS + i * BUTTONS_Y_DISTANCES)
-            button = drawer.Button(pos, BUTTON_SIZE, key)
-            self.drawer.add_button(button)
+            temp_button = button.Button(pos, BUTTON_SIZE, key)
+            self.drawer.add_button(temp_button)
 
         pos = (BUTTON_X_POS, drawer.MAIN_RECT.height - BUTTON_SIZE[1] - 50)
-        button = drawer.Button(pos, BUTTON_SIZE, 'exit', 'button_unpressed_exit.png', 'button_pressed_exit.png')
-        self.drawer.add_button(button)
+        temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'button_unpressed_exit.png', 'button_pressed_exit.png')
+        self.drawer.add_button(temp_button)
         self.drawer.render_buttons()
 
     def choose_game(self):
