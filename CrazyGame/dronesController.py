@@ -11,7 +11,7 @@ DEFAULT_BUFFER_SIZE = 1024
 CONNECTION_TIME_OUT = 2
 
 class DronesController:
-    def __init__(self, ip=DEFAULT_LOCAL_IP, port=DEFAULT_TCP_PORT, buffer_size=DEFAULT_BUFFER_SIZE):
+    def __init__(self, ip=DEFAULT_VM_IP, port=DEFAULT_TCP_PORT, buffer_size=DEFAULT_BUFFER_SIZE):
         self._tcp_ip = ip
         self._tcp_port = port
         self._buffer_size = buffer_size
@@ -33,21 +33,23 @@ class DronesController:
         raise ConnectionError
 
     def disconnect(self):
+        cf_logger.debug("disconnect")
         self._socket.close()
 
     def set_speed(self, speed):
-        pass
+        self._send("SetSpeed${}".format(speed))
 
     def get_world_size(self):
         res = self._send("WorldSize")
         if res and (res.count("$") == 1):
-            return res.split("$")
+            return [float(x) for x in res.split("$")]
         else:
             cf_logger.error("Failed to get world size")
             return False
 
     def get_objects(self):
         res = self._send("GetObjects")
+        cf_logger.debug("GetObjects got{}".format(res))
         if res and (res != "FATAL"):
             return res.split("$")
         else:
@@ -57,15 +59,15 @@ class DronesController:
     def get_object_position(self, object_name):
         res = self._send("GetPos${}".format(object_name))
         if res and (res.count("$") == 2):
-            return res.split("$")
+            return [float(x) for x in res.split("$")]
         else:
             cf_logger.error("Failed to get position for {}".format(object_name))
             return False
 
-    def move_drone(self, drone_name, direction_vector):  # direction_vector = [x, y]
-        pass  # TODO
+    def move_drone(self, drone_name, direction_vector): # direction_vector = [x, y]
+        self._send("MoveDrone${}${}${}".format(drone_name, direction_vector[0], direction_vector[1]))
 
-    def goto(self, drone_name, pos):  # pos = [x, y]
+    def goto(self, drone_name, pos): # pos = [x, y]
         self._send("GoTo${}${}${}".format(drone_name, pos[0], pos[1]))
         cf_logger.debug("{} go to ({},{})".format(drone_name, pos[0], pos[1]))
 

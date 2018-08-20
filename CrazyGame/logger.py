@@ -1,12 +1,11 @@
 import logging, os, sys
 from logging.handlers import TimedRotatingFileHandler
 
-DEFAULT_DEBUG_LEVEL = logging.DEBUG
 FORMATTER = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")  # Set the logging format
 LOG_FOLDER = "log"
 LOG_FILE = "{}/crazy_game.log".format(LOG_FOLDER)
 
-DEFAULT_LOGGING_LEVEL = logging.INFO
+DEFAULT_LOGGING_LEVEL = logging.DEBUG
 
 
 def get_console_handler():
