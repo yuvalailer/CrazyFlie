@@ -11,7 +11,7 @@ DEFAULT_BUFFER_SIZE = 1024
 CONNECTION_TIME_OUT = 2
 
 
-class DronesControllerAPI:
+class DronesController:
     def __init__(self, ip=DEFAULT_LOCAL_IP, port=DEFAULT_TCP_PORT, buffer_size=DEFAULT_BUFFER_SIZE):
         self._tcp_ip = ip
         self._tcp_port = port

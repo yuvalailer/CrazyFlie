@@ -1,7 +1,7 @@
-import logger
-import socket
 import time
 import munch
+import numpy as np
+import logger
 
 cf_logger = logger.get_logger(__name__)
 
@@ -13,6 +13,12 @@ SPEED = 20
 
 DRONES_NUM = 4
 
+NOISE_EXPECTATION_POS = 0
+NOISE_VAR_POS = 1
+NOISE_POS = False
+NOISE_EXPECTATION_MOVE = 0
+NOISE_VAR_MOVE = 1
+NOISE_MOVE = False
 
 class DronesController:
     def __init__(self):
@@ -34,6 +40,8 @@ class DronesController:
     def get_object_position(self, object_name):
         object = self._objects[object_name]
         if not object.on_the_go:
+            for el in object.pos:
+                el += self.add_noise("posnoise")
             return object.pos
 
         diff = time.time() - object.start_time
@@ -41,10 +49,9 @@ class DronesController:
             object.on_the_go = False
             return object.pos
 
-
-        return ( object.start_pos[0] + (object.pos[0] - object.start_pos[0]) * diff,
-                 object.start_pos[1] + (object.pos[1] - object.start_pos[1]) * diff,
-                  object.pos[2] )
+        return ( object.start_pos[0] + (object.pos[0] - object.start_pos[0]) * diff + self.add_noise("posnoise"),
+                 object.start_pos[1] + (object.pos[1] - object.start_pos[1]) * diff + self.add_noise("posnoise"),
+                  object.pos[2] + self.add_noise("posnoise"))
 
     def move_drone(self, drone_name, direction_vector):  # direction_vector = [x, y]
         drone = self._objects[drone_name]
@@ -52,8 +59,8 @@ class DronesController:
         cf_logger.info("start pos - {}".format(drone.start_pos))
         drone.start_time = time.time()
         drone.on_the_go = True
-        drone.pos = (drone.start_pos[0] + direction_vector[0] * SPEED,
-                     drone.start_pos[1] + direction_vector[1] * SPEED,
+        drone.pos = (drone.start_pos[0] + direction_vector[0] * SPEED + self.add_noise("movetonoise"),
+                     drone.start_pos[1] + direction_vector[1] * SPEED + self.add_noise("movetonoise"),
                      drone.start_pos[2])
 
     def goto(self, drone_name, pos):  # pos = [x, y]
@@ -78,3 +85,15 @@ class DronesController:
 
     def disconnect(self):
         return
+
+    def add_noise(self, noisesource):
+        if noisesource == "positionNoise":
+            if not NOISE_POS:
+                return 0
+            return np.random.normal(NOISE_EXPECTATION_POS, NOISE_VAR_POS, 1)
+        elif noisesource == "movetonoise":
+            if not NOISE_MOVE:
+                return 0
+            return np.random.normal(NOISE_EXPECTATION_MOVE, NOISE_VAR_MOVE, 1)
+
+
