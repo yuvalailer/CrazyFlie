@@ -69,8 +69,9 @@ class CrazyGame:
         VM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
         DEMO_BUTTON_POS = (drawer.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
 
-        self.drawer.add_button(drawer.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
-        self.drawer.add_button(drawer.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
+        self.drawer.add_button(drawer.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm', 'button_unpressed.png', 'button_pressed.png'))
+
+        self.drawer.add_button(drawer.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo', 'button_unpressed.png', 'button_pressed.png'))
 
         self.drawer.render_buttons()
 

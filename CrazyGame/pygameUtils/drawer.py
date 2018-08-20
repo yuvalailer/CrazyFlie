@@ -1,5 +1,6 @@
 import time
 import pygame
+import os
 from CrazyGame import logger
 from CrazyGame.pygameUtils import colors
 from CrazyGame.pygameUtils import displayBoard
@@ -26,10 +27,12 @@ class Drawer:
         pygame.display.set_caption('Crazy Game')
         self.reset_main_rect(update_display=False)
         self.set_text_line('Welcome To Crazy Game', update_display=False)
+        self.image_name = ''
         pygame.display.update()
 
     def reset_main_rect(self, update_display=True):
-        pygame.draw.rect(self.display_surf, colors.RED, MAIN_RECT)
+        backgroundimage = pygame.image.load(os.path.join(PICTURE_DIRECTORY, 'main_crazyflie.png'))
+        self.display_surf.blit(backgroundimage, (0,0))
         self.buttons = []
         if update_display:
             pygame.display.update()
@@ -77,42 +80,69 @@ class Drawer:
         self.render_board()
         pygame.display.update()
 
+
 class Button:
-    BUTTON_COLORS = {'idle': colors.GREEN, 'down':colors.BLUE}
     BUTTON_TEXT_COLOR = colors.WHITE
 
-    def __init__(self, position, size, text, image_name=None):
+    def __init__(self, position, size, text, unpressed_image_name=None , pressed_image_name=None):
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
         self.font = pygame.font.SysFont("arial", min(30, self.rect.height - 5))
         self.text = text
+        self.size = size
         self.text_surface = self.font.render(self.text, False, Button.BUTTON_TEXT_COLOR)
         self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
                               self.rect.centery - self.text_surface.get_height() / 2)
-        self.image_name = image_name
-        self.color = colors.GREEN
-        self.state = 'idle'
+
+        self.has_image = unpressed_image_name is not None
+        self.unpressed_image_name = unpressed_image_name
+        self.pressed_image_name = pressed_image_name
+        self._set_images()
+        self.set_pressed(False)
+
 
     def render(self):
-        pygame.draw.rect(self.display_surf, Button.BUTTON_COLORS[self.state], self.rect)
+        if self.has_image:
+            self.display_surf.blit(self.current_image, self.rect.topleft)
+        else:
+            pygame.draw.rect(self.display_surf, self.current_color, self.rect)
+
         self.display_surf.blit(self.text_surface, self.text_position)
 
-    def handle_mouse_event(self, event_type, mouse_location):
+    def set_pressed(self, state):
+        self.pressed = state
+        if self.pressed:
+            self.current_color = colors.BLUE
+            if self.has_image:
+                self.current_image = self.pressed_image
+        else:
+            self.current_color = colors.GREEN
+            if self.has_image:
+                self.current_image = self.not_pressed_image
+
+    def handle_mouse_event(self, event_type, mouse_location): #add or not  * before mouse
+
         if self.rect.collidepoint(*mouse_location):
             cf_logger.info('mouse event %s occurred on button %s'%(event_type, self.text))
             if event_type == pygame.MOUSEBUTTONDOWN:
-                self.state = 'down'
+                self.set_pressed(True)
             elif event_type == pygame.MOUSEBUTTONUP:
-                if self.state == 'idle':
+                if not self.pressed:
                     return False
-                self.state = 'idle'
+                self.set_pressed(False)
             self.render()
-            time.sleep(0.1)
             pygame.display.update()
             return True
 
-        if self.state == 'down':
-            self.state = 'idle'
+        elif self.pressed:
+            self.set_pressed(False)
             self.render()
             pygame.display.update()
 
         return False
+
+    def _set_images(self):
+        if self.has_image:
+            button_unpressed_image = pygame.image.load(os.path.join(PICTURE_DIRECTORY, self.unpressed_image_name))
+            self.not_pressed_image = pygame.transform.scale(button_unpressed_image, self.size)
+            button_pressed_image = pygame.image.load(os.path.join(PICTURE_DIRECTORY, self.pressed_image_name))
+            self.pressed_image = pygame.transform.scale(button_pressed_image, self.size)
