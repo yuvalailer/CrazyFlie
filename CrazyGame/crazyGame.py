@@ -9,14 +9,18 @@ from CrazyGame import dronesController
 from CrazyGame import dronesControllerSimulator
 from CrazyGame import joystick
 from CrazyGame import logger
+from CrazyGame.Games import dronesOrchestrator
 from CrazyGame.Games.JoystickDemo import joystickDemo
 from CrazyGame.Games.SillyGame import sillyGame
-from pygameUtils import drawer
+from CrazyGame.Games.DronesControlDemo import dronesControlDemo
+from CrazyGame.pygameUtils import drawer
+from CrazyGame.pygameUtils import displayBoard
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
 GAMES = {'silly game': sillyGame.SillyGame,
-         'joystick demo': joystickDemo.JoystickDemo, }
+         'joystick demo': joystickDemo.JoystickDemo,
+         'drones control demo': dronesControlDemo.DronesControlDemo}
 
 
 class CrazyGame:
@@ -29,6 +33,7 @@ class CrazyGame:
             game.joystick = self.joystick
             game.droneController = self.drone_controller
             game.drawer = self.drawer
+            game.orch = self.orch
             game_result = game.run()
             if game_result == 'exit':
                 break
@@ -40,6 +45,9 @@ class CrazyGame:
         time.sleep(0.5)
         self.set_control_board()
         self.set_drone_controller()
+        self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller.get_world_size())
+        self.orch.add_drones(self.drone_controller.get_objects())  # TODO -> support other object than drone
+        self.drawer.set_board(self.orch)
         self.run_starting_animation()
 
     def set_control_board(self):

@@ -7,6 +7,7 @@ cf_logger = logger.get_logger(__name__)
 POSITION_ALLOWED_RADIUS = 5
 MIN_TIME_BETWEEN_DIRECTION_UPDATES = 0.1
 
+
 class pathFollower:
     def __init__(self, drone, path, orchestrator):
         cf_logger('start new path follower for %s from %s to %s' % (drone.name, path[0], path[-1]))

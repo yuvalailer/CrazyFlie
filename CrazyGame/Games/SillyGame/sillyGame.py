@@ -7,7 +7,8 @@ cf_logger = logger.get_logger(__name__)
 
 class SillyGame:
     def run(self):
-        player1 = self.orchestrator.drones[0]
+        pass
+        #player1 = self.orchestrator.drones[0]
 
 def game_loop(board, dronesController):
     game_is_on = True
