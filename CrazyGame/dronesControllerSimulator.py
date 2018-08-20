@@ -40,7 +40,7 @@ class DronesController:
         return self._world_size
 
     def set_speed(self, speed):
-        self._send("SetSpeed${}".format(speed))
+        pass #TODO -> update
 
     def get_objects(self):
         return list(self._objects.keys())

@@ -17,15 +17,15 @@ class DronesOrchestrator:
         self.drones_controller = drones_controller
         self.size = self.drones_controller.get_world_size()
         cf_logger.info('world size is %s'%self.size)
-        self.drone_radius = 0.1 # TODO temp value
+        self.drone_radius = 0.1
         self.drones_controller.set_speed(DRONE_VELOCITY)
 
         self.drones = []
         for drone in self.drones_controller.get_objects():
             self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK))
-            self.try_take_off(self.drones[-1])
 
         self.update_drones_positions()
+
     @property
     def width(self):
         return self.size[0]
@@ -39,7 +39,6 @@ class DronesOrchestrator:
 
     def update_drone_xy_pos(self, drone):
         pos = self.drones_controller.get_object_position(drone.name)
-        cf_logger.info('current pos is %s'%pos)
         drone.position = Point(pos[:2])
         return drone.position
 
