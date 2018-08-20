@@ -98,7 +98,7 @@ class DronesOrchestrator:
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
-        line = LineString([drone.position, (target.x,target.y)])
+        line = LineString([drone.position, (target.x, target.y)])
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
                 temp_circle = temp_drone.position.buffer(self.drone_radius*2)

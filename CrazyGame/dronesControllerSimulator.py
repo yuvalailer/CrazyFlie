@@ -5,8 +5,8 @@ import logger
 
 cf_logger = logger.get_logger(__name__)
 
-WORLD_X = 1.5
-WORLD_Y = 1.5
+WORLD_X = 2.2
+WORLD_Y = 1.25
 
 TAKEOFF_HEIGHT = 0.5
 VELOCITY = 0.1
@@ -31,7 +31,7 @@ class DronesController:
         for i in range(1, DRONES_NUM+1):
             player = (i-1)//2
             drone = (i-1)%2
-            self._objects["crazyflie{}".format(i)] = munch.Munch(pos=(0 + WORLD_X*player, WORLD_Y/2 + drone*50, 0),
+            self._objects["crazyflie{}".format(i)] = munch.Munch(pos=(0 + WORLD_X*player, WORLD_Y/2 + drone*0.4, 0),
                                                                  on_the_go=False,
                                                                  start_pos=(0, 0, 0),
                                                                  start_time=0.0)
