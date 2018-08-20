@@ -14,8 +14,9 @@ DRONE_RADIUS = 5
 
 
 class DronesOrchestrator:
-    def __init__(self, size):
+    def __init__(self, size, controller):
         self.size = size
+        self.drones_controller = controller
         self.drones = []
 
     @property
@@ -29,6 +30,9 @@ class DronesOrchestrator:
     def add_drones(self, drones):
         for drone in drones:
             self.drones.append(Munch(name=drone, grounded=True, color=colors.BLACK))
+
+    def get_drone_pos(self, drone):
+        return self.drones_controller.get_object_position(drone.name)
 
     def try_move_drone(self, drone, direction):  # TODO -> consider board limits
         if drone.grounded:
@@ -58,7 +62,7 @@ class DronesOrchestrator:
         self.drones_controller.take_off(drone.name)
 
         if blocking:
-            while self.drones.get_object_position(drone.name)[2] < 0.3:
+            while self.get_drone_pos(drone)[2] < 0.3:
                 time.sleep(0.2)
 
         drone.grounded = False
@@ -69,7 +73,7 @@ class DronesOrchestrator:
             return
         self.drones_controller.land(drone.name)
         if blocking:
-            while self.drones.get_object_position(drone.name)[2] > 0.2:
+            while self.get_drone_pos(drone)[2] > 0.2:
                 time.sleep(0.2)
 
         drone.grounded = True
@@ -90,7 +94,7 @@ class DronesOrchestrator:
         self.drones_controller.goto(drone.name, target)
 
         if blocking:
-            while Point(self.drones.get_object_position(drone.name)[:2]).distance(target) > 10:
+            while Point(self.get_drone_pos(drone)[:2]).distance(target) > 10:
                 time.sleep(0.2)
         return True
 

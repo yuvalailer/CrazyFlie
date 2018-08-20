@@ -23,13 +23,14 @@ NOISE_MOVE = False
 NOISE_DIR = {'posnoise': (NOISE_EXPECTATION_POS, NOISE_VAR_POS, NOISE_POS),
              'move': (NOISE_EXPECTATION_MOVE, NOISE_VAR_MOVE, NOISE_MOVE)}
 
-
 class DronesController:
     def __init__(self):
         self._world_size = [WORLD_X, WORLD_Y]
         self._objects = {}
         for i in range(1, DRONES_NUM+1):
-            self._objects["crazyflie{}".format(i)] = munch.Munch(pos=(0, 0, 0), # TODO set starting pos
+            player = (i-1)//2
+            drone = (i-1)%2
+            self._objects["crazyflie{}".format(i)] = munch.Munch(pos=(0 + WORLD_X*player, WORLD_Y/2 + drone*50, 0),
                                                                  on_the_go=False,
                                                                  start_pos=(0, 0, 0),
                                                                  start_time=0.0)
