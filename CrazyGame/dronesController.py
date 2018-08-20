@@ -38,6 +38,9 @@ class DronesController:
 
     def set_speed(self, speed):
         self._send("SetSpeed${}".format(speed))
+    
+    def set_step_size(self, step_size):
+        self._send("SetStepSize${}".format(step_size))
 
     def get_world_size(self):
         res = self._send("WorldSize")
