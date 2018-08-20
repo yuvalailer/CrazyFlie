@@ -15,6 +15,7 @@ from CrazyGame.Games.SillyGame import sillyGame
 from CrazyGame.Games.DronesControlDemo import dronesControlDemo
 from CrazyGame.pygameUtils import drawer
 from CrazyGame.pygameUtils import button
+from CrazyGame.pygameUtils import multiButton
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
@@ -71,10 +72,10 @@ class CrazyGame:
         VM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
         DEMO_BUTTON_POS = (drawer.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
 
-        self.drawer.add_button(button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
-
-        self.drawer.add_button(button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
-
+        vm_button = button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm')
+        demo_button = button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo')
+        self.drawer.add_button(vm_button)
+        self.drawer.add_button(demo_button)
         self.drawer.render_buttons()
 
     def get_drone_controller_type(self):

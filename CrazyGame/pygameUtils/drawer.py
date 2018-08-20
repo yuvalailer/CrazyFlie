@@ -21,6 +21,7 @@ class Drawer:
         self.display_surf = pygame.display.set_mode(WINDOW_RECT, pygame.HWSURFACE)
         self.text_line_font = pygame.font.SysFont("arial", 30)
         self.buttons = []
+        self.multiButtons = []
         self.board = None
         pygame.display.set_caption('Crazy Game')
         self.reset_main_rect(update_display=False)
@@ -49,9 +50,18 @@ class Drawer:
         button.render()
         self.buttons.append(button)
 
+    def add_multi_button(self, multi_button):
+        for button in multi_button.buttons:
+            button.display_surf = self.display_surf
+            button.render()
+        self.multiButtons.append(multi_button)
+
     def render_buttons(self, update_display=True):
         for button in self.buttons:
             button.render()
+
+        for multi_button in self.multiButtons:
+            multi_button.render()
 
         if update_display:
             pygame.display.update()
@@ -61,6 +71,9 @@ class Drawer:
         for button in self.buttons:
             if button.handle_mouse_event(event_type, pos):
                 return button
+        for mbutton in self.multiButtons:
+            if mbutton.handle_mouse_event(event_type, pos):
+                return mbutton
 
         return None
 
