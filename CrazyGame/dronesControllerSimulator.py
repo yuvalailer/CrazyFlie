@@ -5,8 +5,8 @@ import munch
 
 cf_logger = logger.get_logger(__name__)
 
-WORLD_X = 800
-WORLD_Y = 1000
+WORLD_X = 1000
+WORLD_Y = 800
 
 TAKEOFF_HEIGHT = 0.5
 SPEED = 20
