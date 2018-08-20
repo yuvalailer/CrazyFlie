@@ -21,6 +21,8 @@ GAMES = {'silly game': sillyGame.SillyGame,
          'joystick demo': joystickDemo.JoystickDemo,
          'drones control demo': dronesControlDemo.DronesControlDemo}
 
+MOUSE_LEFT_BUTTON = 1
+
 
 class CrazyGame:
     def run_crzay_game(self):
@@ -69,6 +71,7 @@ class CrazyGame:
         DEMO_BUTTON_POS = (drawer.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
 
         self.drawer.add_button(drawer.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
+
         self.drawer.add_button(drawer.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
 
         self.drawer.render_buttons()
@@ -80,9 +83,9 @@ class CrazyGame:
             event = pygame.event.wait()
             if event.type == pygame.QUIT:
                 self.tear_down()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == MOUSE_LEFT_BUTTON:
                 self.drawer.check_buttons_mouse_event(event.type)
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == MOUSE_LEFT_BUTTON:
                 button = self.drawer.check_buttons_mouse_event(event.type)
                 if button:
                     cf_logger.debug('button %s clicked' % button.text)
@@ -127,7 +130,7 @@ class CrazyGame:
             self.drawer.add_button(button)
 
         pos = (BUTTON_X_POS, drawer.MAIN_RECT.height - BUTTON_SIZE[1] - 50)
-        button = drawer.Button(pos, BUTTON_SIZE, 'exit')
+        button = drawer.Button(pos, BUTTON_SIZE, 'exit', 'button_unpressed_exit.png', 'button_pressed_exit.png')
         self.drawer.add_button(button)
         self.drawer.render_buttons()
 
@@ -138,9 +141,9 @@ class CrazyGame:
             event = pygame.event.wait()
             if event.type == pygame.QUIT:
                 self.tear_down()
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == MOUSE_LEFT_BUTTON:
                 self.drawer.check_buttons_mouse_event(event.type)
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == MOUSE_LEFT_BUTTON:
                 button = self.drawer.check_buttons_mouse_event(event.type)
                 if button:
                     cf_logger.debug('button %s clicked' % button.text)
