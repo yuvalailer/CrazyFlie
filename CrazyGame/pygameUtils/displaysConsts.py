@@ -1,3 +1,5 @@
+PICTURE_DIRECTORY = 'pictures'
+
 WHITE = (255, 255, 255)
 RED = (200, 0, 0)
 GREEN = (0, 200, 0)

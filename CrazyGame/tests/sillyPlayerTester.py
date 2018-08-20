@@ -1,17 +1,14 @@
+from fixSysPath import test_sys_path
+test_sys_path()
 import logging
-
 from CrazyGame import logger
-
 logger.set_default_logging_level(logging.INFO)
 cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start silly player tester ####")
-
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 from SillyGame import sillyPlayer
 from datetime import datetime
-
-
 
 def plot_player(ax, p, r, c):
     circle =  plt.Circle((p.x, p.y), r, color=c, fill=False)
