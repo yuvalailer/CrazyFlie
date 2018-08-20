@@ -7,6 +7,7 @@ from CrazyGame import dronesControllerSimulator
 cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start controller sim tester ####")
 
+
 def main():
     controller = dronesControllerSimulator.DronesController()
     cf_logger.info("*** world size is - " + str(controller.get_world_size()))

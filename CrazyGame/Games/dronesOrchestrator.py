@@ -17,6 +17,7 @@ class DronesOrchestrator:
         self.drones_controller = drones_controller
         self.size = self.drones_controller.get_world_size()
         self.drone_radius = 10 # TODO temp value
+        self.drones_controller.set_speed(DRONE_VELOCITY)
 
         self.drones = []
         for drone in self.drones_controller.get_objects():
@@ -31,8 +32,8 @@ class DronesOrchestrator:
     def height(self):
         return self.size[1]
 
-    def get_drone_pos(self, drone):
-        return self.drones_controller.get_object_position(drone.name)
+    def get_drone_altitude(self, drone):
+        return self.drones_controller.get_object_position(drone.name)[2]
 
     def update_drone_xy_pos(self, drone):
         drone.position = Point(self.drones_controller.get_object_position(drone.name)[:2])
@@ -42,7 +43,7 @@ class DronesOrchestrator:
         for drone in self.drones:
             self.update_drone_xy_pos(drone)
 
-    def try_move_drone(self, drone, direction):  # TODO -> consider board limits
+    def try_move_drone(self, drone, direction):
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
@@ -56,9 +57,9 @@ class DronesOrchestrator:
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
                     return False
-        if not self.check_if_leaving_bounds(target, drone):
+        if not self.check_point_in_bounds(target, drone):
             return False
-        self.drones_controller.move_drone(drone.name, direction)
+        self.drones_controller.move_drone(drone.name, (direction[0], direction[1]))
         return True
 
     def try_take_off(self, drone, blocking=False):
@@ -67,7 +68,7 @@ class DronesOrchestrator:
             return False
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                if drone.position.distance(temp_drone.position):
+                if drone.position.distance(temp_drone.position) < self.drone_radius*2:
                     cf_logger.warning('unable to take off %s because of %s' % (drone.name, temp_drone.name))
                     return False
 
@@ -80,7 +81,7 @@ class DronesOrchestrator:
         drone.grounded = False
 
     def land(self, drone, blocking=False):
-        if not drone.up:
+        if drone.grounded:
             cf_logger.warning('try to land a grounded drone %s' % drone.name)
             return
         self.drones_controller.land(drone.name)
@@ -94,7 +95,7 @@ class DronesOrchestrator:
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
-        line = LineString([drone.position, target])
+        line = LineString([drone.position, (target.x,target.y)])
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
                 temp_circle = temp_drone.position.buffer(self.drone_radius*2)
@@ -102,10 +103,10 @@ class DronesOrchestrator:
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
                     return False
-        if not self.check_if_leaving_bounds(target, drone):
+        if not self.check_point_in_bounds(target, drone):
             return False
 
-        self.drones_controller.goto(drone.name, target)
+        self.drones_controller.goto(drone.name, (target.x,target.y))
 
         if blocking:
             while self.update_drone_xy_pos(drone).distance(target) > 10:
@@ -113,15 +114,14 @@ class DronesOrchestrator:
         return True
 
     def _get_drone_proximity_position(self, drone, direction):
-        return Point(drone.position.x + direction[0]*DRONE_DISTANCE_IN_TIME_OUT,
+        return Point(drone.position.x + direction[0] * DRONE_DISTANCE_IN_TIME_OUT,
                      drone.position.y + direction[1] * DRONE_DISTANCE_IN_TIME_OUT)
 
-    def check_if_leaving_bounds(self, target, drone):
+    def check_point_in_bounds(self, target, drone):
         if not 0 <= target.x <= self.width:
             cf_logger.warning('drone %s is trying to move out of x bounds' % drone.name)
             return False
         if not 0 <= target.y <= self.height:
             cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
             return False
-
         return True

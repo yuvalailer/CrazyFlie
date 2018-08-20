@@ -9,7 +9,7 @@ WORLD_X = 1000
 WORLD_Y = 800
 
 TAKEOFF_HEIGHT = 0.5
-SPEED = 20
+VELOCITY = 20
 
 DRONES_NUM = 4
 
@@ -27,6 +27,7 @@ class DronesController:
     def __init__(self):
         self._world_size = [WORLD_X, WORLD_Y]
         self._objects = {}
+        self.velocity = VELOCITY
         for i in range(1, DRONES_NUM+1):
             player = (i-1)//2
             drone = (i-1)%2
@@ -41,6 +42,9 @@ class DronesController:
 
     def get_objects(self):
         return list(self._objects.keys())
+
+    def set_speed(self, speed):
+        self.velocity = speed
 
     def get_object_position(self, object_name):
         object = self._objects[object_name]
@@ -64,8 +68,8 @@ class DronesController:
         cf_logger.debug("start pos - {}".format(drone.start_pos))
         drone.start_time = time.time()
         drone.on_the_go = True
-        drone.pos = (drone.start_pos[0] + direction_vector[0] * SPEED + self.add_noise("movetonoise"),
-                     drone.start_pos[1] + direction_vector[1] * SPEED + self.add_noise("movetonoise"),
+        drone.pos = (drone.start_pos[0] + direction_vector[0] * self.velocity + self.add_noise("movetonoise"),
+                     drone.start_pos[1] + direction_vector[1] * self.velocity + self.add_noise("movetonoise"),
                      drone.start_pos[2])
 
     def goto(self, drone_name, pos):  # pos = [x, y]
