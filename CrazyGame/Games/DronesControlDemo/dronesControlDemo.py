@@ -20,15 +20,14 @@ class DronesControlDemo:
         self.drawer.reset_main_rect(update_display=False)
         self.drawer.add_button(self.back_button)
         self.drawer.render()
-
-        self.current_drone = self.orch.drones[0]
+        self.current_drone_index = 0
+        self.current_drone = self.orch.drones[self.current_drone_index]
         self.current_drone.color = displaysConsts.GREEN
 
-        self.orch.try_take_off(self.current_drone)
         self.drawer.render()
         current_time = time.time()
         while True:
-            if time.time() - current_time > 0.02:
+            if time.time() - current_time > 0.1:
                 self.orch.update_drones_positions()
                 self.drawer.render()
                 joystick_dir = self.joystick.get_normalize_direction()
@@ -50,4 +49,20 @@ class DronesControlDemo:
                 button = self.drawer.check_buttons_mouse_event(event.type)
                 if button == self.back_button:
                     return 'game ended'
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    self.next_drone()
+
+                elif event.key == pygame.K_u:
+                    self.orch.try_take_off(self.current_drone)
+                elif event.key == pygame.K_l:
+                    self.orch.land(self.current_drone)
         return 'continue'
+
+    def next_drone(self):
+        self.current_drone.color = displaysConsts.BLACK
+        self.current_drone_index = (self.current_drone_index + 1) % len(self.orch.drones)
+        self.current_drone = self.orch.drones[self.current_drone_index]
+        cf_logger.info('change to drone %s'%self.current_drone.name)
+        self.current_drone.color = displaysConsts.GREEN
+

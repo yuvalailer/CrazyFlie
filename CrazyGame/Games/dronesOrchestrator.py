@@ -67,7 +67,7 @@ class DronesOrchestrator:
             return False
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                if drone.position.distance(temp_drone.position):
+                if drone.position.distance(temp_drone.position) < self.drone_radius*2:
                     cf_logger.warning('unable to take off %s because of %s' % (drone.name, temp_drone.name))
                     return False
 
@@ -80,7 +80,7 @@ class DronesOrchestrator:
         drone.grounded = False
 
     def land(self, drone, blocking=False):
-        if not drone.up:
+        if drone.grounded:
             cf_logger.warning('try to land a grounded drone %s' % drone.name)
             return
         self.drones_controller.land(drone.name)
