@@ -38,7 +38,7 @@ class DisplayBoard:
 
     def render(self):
         cf_logger.info("rendering board...")
-        pygame.draw.rect(self.display_surf, colors.WHITE, self.rect)
+        pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
         for drone in self._orch.drones:
             self._render_drone(drone)
 
