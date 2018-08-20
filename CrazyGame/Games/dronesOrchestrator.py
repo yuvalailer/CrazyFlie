@@ -10,14 +10,14 @@ cf_logger = logger.get_logger(__name__)
 DRONE_VELOCITY = 20
 DRONE_MOVE_TIME_OUT = 1
 DRONE_DISTANCE_IN_TIME_OUT = DRONE_VELOCITY * DRONE_MOVE_TIME_OUT
-DRONE_RADIUS = 5
 
 
 class DronesOrchestrator:
     def __init__(self, drones_controller):
-
         self.drones_controller = drones_controller
-        self.size = drones_controller.get_world_size()
+        self.size = self.drones_controller.get_world_size()
+        self.drone_radius = 10 # TODO temp value
+
         self.drones = []
         for drone in self.drones_controller.get_objects():
             self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK))
@@ -46,14 +46,18 @@ class DronesOrchestrator:
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
-        line = LineString([drone.position, self._get_drone_proximity_position(drone,direction)])
+        target = self._get_drone_proximity_position(drone, direction)
+        line = LineString([drone.position, target])
+
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                temp_circle = temp_drone.position.buffer(DRONE_RADIUS*2)
+                temp_circle = temp_drone.position.buffer(self.drone_radius*2)
                 inter = temp_circle.intersection(line)
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
                     return False
+        if not self.check_if_leaving_bounds(target, drone):
+            return False
         self.drones_controller.move_drone(drone.name, direction)
         return True
 
@@ -93,11 +97,13 @@ class DronesOrchestrator:
         line = LineString([drone.position, target])
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                temp_circle = temp_drone.position.buffer(DRONE_RADIUS*2)
+                temp_circle = temp_drone.position.buffer(self.drone_radius*2)
                 inter = temp_circle.intersection(line)
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
                     return False
+        if not self.check_if_leaving_bounds(target, drone):
+            return False
 
         self.drones_controller.goto(drone.name, target)
 
@@ -109,3 +115,13 @@ class DronesOrchestrator:
     def _get_drone_proximity_position(self, drone, direction):
         return Point(drone.position.x + direction[0]*DRONE_DISTANCE_IN_TIME_OUT,
                      drone.position.y + direction[1] * DRONE_DISTANCE_IN_TIME_OUT)
+
+    def check_if_leaving_bounds(self, target, drone):
+        if not 0 <= target.x <= self.width:
+            cf_logger.warning('drone %s is trying to move out of x bounds' % drone.name)
+            return False
+        if not 0 <= target.y <= self.height:
+            cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
+            return False
+
+        return True

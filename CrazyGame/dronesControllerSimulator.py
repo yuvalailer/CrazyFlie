@@ -14,10 +14,10 @@ SPEED = 20
 DRONES_NUM = 4
 
 NOISE_EXPECTATION_POS = 0
-NOISE_VAR_POS = 1
+NOISE_VAR_POS = 10
 NOISE_POS = False
 NOISE_EXPECTATION_MOVE = 0
-NOISE_VAR_MOVE = 1
+NOISE_VAR_MOVE = 10
 NOISE_MOVE = False
 
 NOISE_DIR = {'posnoise': (NOISE_EXPECTATION_POS, NOISE_VAR_POS, NOISE_POS),
@@ -56,7 +56,7 @@ class DronesController:
 
         return ( object.start_pos[0] + (object.pos[0] - object.start_pos[0]) * diff + self.add_noise("posnoise"),
                  object.start_pos[1] + (object.pos[1] - object.start_pos[1]) * diff + self.add_noise("posnoise"),
-                  object.pos[2] + self.add_noise("posnoise"))
+                  object.pos[2])
 
     def move_drone(self, drone_name, direction_vector):  # direction_vector = [x, y]
         drone = self._objects[drone_name]

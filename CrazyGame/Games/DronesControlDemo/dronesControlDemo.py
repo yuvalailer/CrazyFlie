@@ -25,12 +25,16 @@ class DronesControlDemo:
         self.current_drone.color = displaysConsts.GREEN
 
         self.orch.try_take_off(self.current_drone)
-
+        self.drawer.render()
+        current_time = time.time()
         while True:
-            self.orch.update_drones_positions()
-            joystick_dir = self.joystick.get_normalize_direction()
-            self.orch.try_move_drone(self.current_drone, joystick_dir)
-            self.drawer.render()
+            if time.time() - current_time > 0.02:
+                self.orch.update_drones_positions()
+                self.drawer.render()
+                joystick_dir = self.joystick.get_normalize_direction()
+                if joystick_dir != [0, 0]:
+                    self.orch.try_move_drone(self.current_drone, joystick_dir)
+                current_time = time.time()
 
             event_result = self.manage_events()
             if event_result != 'continue':
