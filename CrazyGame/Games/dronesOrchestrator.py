@@ -14,8 +14,9 @@ DRONE_RADIUS = 5
 
 
 class DronesOrchestrator:
-    def __init__(self, size):
-        self.size = size
+    def __init__(self, drone_controller):
+        self.drone_controller = drone_controller
+        self.size = drone_controller.size
         self.drones = []
 
     @property
@@ -34,7 +35,8 @@ class DronesOrchestrator:
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
-        line = LineString([drone, self._get_drone_approximity_position(drone,direction)])
+        target = self._get_drone_approximity_position(drone, direction)
+        line = LineString([drone, target])
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
                 temp_circle = temp_drone.position.buffer(DRONE_RADIUS*2)
@@ -42,6 +44,8 @@ class DronesOrchestrator:
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
                     return False
+        if not self.check_if_leaving_bounds(target, drone):
+            return False
         self.drones_controller.move_drone(drone.name, direction)
         return True
 
@@ -86,6 +90,8 @@ class DronesOrchestrator:
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
                     return False
+        if not self.check_if_leaving_bounds(target, drone):
+            return False
 
         self.drones_controller.goto(drone.name, target)
 
@@ -95,5 +101,13 @@ class DronesOrchestrator:
         return True
 
     def _get_drone_approximity_position(self, drone, direction):
-        return Point(drone.position.x + direction[0]*DRONE_DISTANCE_IN_TIME_OUT,
+        return Point(drone.position.x + direction[0] * DRONE_DISTANCE_IN_TIME_OUT,
                      drone.position.y + direction[1] * DRONE_DISTANCE_IN_TIME_OUT)
+
+    def check_if_leaving_bounds(self, target, drone):
+        if target[0] > self.width() or target[0] < 0:
+            cf_logger.warning('drone %s is trying to move out of width/x bounds' % (drone.name))
+            return False
+        if target[1] > self.height() or target[1] < 0:
+            cf_logger.warning('drone %s is trying to move out of height/y bounds' % (drone.name))
+            return False
