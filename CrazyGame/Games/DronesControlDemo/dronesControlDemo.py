@@ -31,8 +31,7 @@ class DronesControlDemo:
                 self.orch.update_drones_positions()
                 self.drawer.render()
                 joystick_dir = self.joystick.get_normalize_direction()
-                if joystick_dir != [0, 0]:
-                    self.orch.try_move_drone(self.current_drone, joystick_dir)
+                self.orch.try_move_drone(self.current_drone, joystick_dir)
                 current_time = time.time()
 
             event_result = self.manage_events()

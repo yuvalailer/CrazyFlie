@@ -5,11 +5,11 @@ import logger
 
 cf_logger = logger.get_logger(__name__)
 
-WORLD_X = 1000
-WORLD_Y = 800
+WORLD_X = 1.5
+WORLD_Y = 1.5
 
 TAKEOFF_HEIGHT = 0.5
-SPEED = 20
+SPEED = 0.1
 
 DRONES_NUM = 4
 
@@ -38,6 +38,9 @@ class DronesController:
 
     def get_world_size(self):
         return self._world_size
+
+    def set_speed(self, speed):
+        self._send("SetSpeed${}".format(speed))
 
     def get_objects(self):
         return list(self._objects.keys())
