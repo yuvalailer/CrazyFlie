@@ -11,7 +11,7 @@ DEFAULT_BUFFER_SIZE = 1024
 CONNECTION_TIME_OUT = 2
 
 class DronesController:
-    def __init__(self, ip=DEFAULT_LOCAL_IP, port=DEFAULT_TCP_PORT, buffer_size=DEFAULT_BUFFER_SIZE):
+    def __init__(self, ip=DEFAULT_VM_IP, port=DEFAULT_TCP_PORT, buffer_size=DEFAULT_BUFFER_SIZE):
         self._tcp_ip = ip
         self._tcp_port = port
         self._buffer_size = buffer_size
@@ -45,7 +45,7 @@ class DronesController:
     def get_world_size(self):
         res = self._send("WorldSize")
         if res and (res.count("$") == 1):
-            return res.split("$")
+            return [float(x) for x in res.split("$")]
         else:
             cf_logger.error("Failed to get world size")
             return False
@@ -62,7 +62,7 @@ class DronesController:
     def get_object_position(self, object_name):
         res = self._send("GetPos${}".format(object_name))
         if res and (res.count("$") == 2):
-            return res.split("$")
+            return [float(x) for x in res.split("$")]
         else:
             cf_logger.error("Failed to get position for {}".format(object_name))
             return False

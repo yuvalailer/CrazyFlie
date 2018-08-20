@@ -7,7 +7,7 @@ from munch import Munch
 
 cf_logger = logger.get_logger(__name__)
 
-DRONE_VELOCITY = 20
+DRONE_VELOCITY = 0.1
 DRONE_MOVE_TIME_OUT = 1
 DRONE_DISTANCE_IN_TIME_OUT = DRONE_VELOCITY * DRONE_MOVE_TIME_OUT
 
@@ -16,13 +16,16 @@ class DronesOrchestrator:
     def __init__(self, drones_controller):
         self.drones_controller = drones_controller
         self.size = self.drones_controller.get_world_size()
-        self.drone_radius = 10 # TODO temp value
+        cf_logger.info('world size is %s'%self.size)
+        self.drone_radius = 0.1
+        self.drones_controller.set_speed(DRONE_VELOCITY)
 
         self.drones = []
         for drone in self.drones_controller.get_objects():
             self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK))
 
         self.update_drones_positions()
+
     @property
     def width(self):
         return self.size[0]
@@ -35,7 +38,8 @@ class DronesOrchestrator:
         return self.drones_controller.get_object_position(drone.name)
 
     def update_drone_xy_pos(self, drone):
-        drone.position = Point(self.drones_controller.get_object_position(drone.name)[:2])
+        pos = self.drones_controller.get_object_position(drone.name)
+        drone.position = Point(pos[:2])
         return drone.position
 
     def update_drones_positions(self):
@@ -67,7 +71,7 @@ class DronesOrchestrator:
             return False
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                if drone.position.distance(temp_drone.position):
+                if drone.position.distance(temp_drone.position) < self.drone_radius*2:
                     cf_logger.warning('unable to take off %s because of %s' % (drone.name, temp_drone.name))
                     return False
 
@@ -80,7 +84,7 @@ class DronesOrchestrator:
         drone.grounded = False
 
     def land(self, drone, blocking=False):
-        if not drone.up:
+        if drone.grounded:
             cf_logger.warning('try to land a grounded drone %s' % drone.name)
             return
         self.drones_controller.land(drone.name)
