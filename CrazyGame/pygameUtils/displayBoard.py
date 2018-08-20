@@ -37,24 +37,19 @@ class DisplayBoard:
         return rect
 
     def render(self):
-        cf_logger.info("rendering board...")
+        cf_logger.debug("rendering board...")
         pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
         for drone in self._orch.drones:
             self._render_drone(drone)
 
-    def translate_xy(self, x, y):
+    def translate_xy(self, real_world_position):
         ratio = self.inner_rect.width/self._orch.width
-        new_x = self.inner_rect.width - (x * ratio)
-        new_y = y * ratio
-        return new_x, new_y
+        new_x = self.inner_rect.width - (real_world_position.x * ratio)
+        new_y = real_world_position.y * ratio
+        return round(self.inner_rect.left + new_x), round(self.inner_rect.top + new_y)
 
     def _render_drone(self, drone):
-        pos = self._orch.get_drone_pos(drone)
-        new_pos = self.translate_xy(pos[0], pos[1])
-        x = self.inner_rect.left + int(round(new_pos[0]))
-        y = self.inner_rect.top + int(round(new_pos[1]))
-        width = 0
-        if drone.grounded:
-            width = 1
-        cf_logger.info("drawing {} at ({}, {})".format(drone.name, x, y))
+        x, y = self.translate_xy(drone.position)
+        width = 1 if drone.grounded else 0
+        cf_logger.debug("drawing {} at ({}, {})".format(drone.name, x, y))
         pygame.draw.circle(self.display_surf, drone.color, (x, y), 4, width)

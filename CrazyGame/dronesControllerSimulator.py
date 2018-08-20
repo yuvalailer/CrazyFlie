@@ -21,7 +21,7 @@ NOISE_VAR_MOVE = 1
 NOISE_MOVE = False
 
 NOISE_DIR = {'posnoise': (NOISE_EXPECTATION_POS, NOISE_VAR_POS, NOISE_POS),
-             'move': (NOISE_EXPECTATION_MOVE, NOISE_VAR_MOVE, NOISE_MOVE)}
+             'movetonoise': (NOISE_EXPECTATION_MOVE, NOISE_VAR_MOVE, NOISE_MOVE)}
 
 class DronesController:
     def __init__(self):
@@ -61,7 +61,7 @@ class DronesController:
     def move_drone(self, drone_name, direction_vector):  # direction_vector = [x, y]
         drone = self._objects[drone_name]
         drone.start_pos = self.get_object_position(drone_name)
-        cf_logger.info("start pos - {}".format(drone.start_pos))
+        cf_logger.debug("start pos - {}".format(drone.start_pos))
         drone.start_time = time.time()
         drone.on_the_go = True
         drone.pos = (drone.start_pos[0] + direction_vector[0] * SPEED + self.add_noise("movetonoise"),

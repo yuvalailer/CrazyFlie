@@ -14,11 +14,15 @@ DRONE_RADIUS = 5
 
 
 class DronesOrchestrator:
-    def __init__(self, size, controller):
-        self.size = size
-        self.drones_controller = controller
-        self.drones = []
+    def __init__(self, drones_controller):
 
+        self.drones_controller = drones_controller
+        self.size = drones_controller.get_world_size()
+        self.drones = []
+        for drone in self.drones_controller.get_objects():
+            self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK))
+
+        self.update_drones_positions()
     @property
     def width(self):
         return self.size[0]
@@ -27,18 +31,22 @@ class DronesOrchestrator:
     def height(self):
         return self.size[1]
 
-    def add_drones(self, drones):
-        for drone in drones:
-            self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK))
-
     def get_drone_pos(self, drone):
         return self.drones_controller.get_object_position(drone.name)
+
+    def update_drone_xy_pos(self, drone):
+        drone.position = Point(self.drones_controller.get_object_position(drone.name)[:2])
+        return drone.position
+
+    def update_drones_positions(self):
+        for drone in self.drones:
+            self.update_drone_xy_pos(drone)
 
     def try_move_drone(self, drone, direction):  # TODO -> consider board limits
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
-        line = LineString([drone, self._get_drone_approximity_position(drone,direction)])
+        line = LineString([drone.position, self._get_drone_proximity_position(drone,direction)])
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
                 temp_circle = temp_drone.position.buffer(DRONE_RADIUS*2)
@@ -94,10 +102,10 @@ class DronesOrchestrator:
         self.drones_controller.goto(drone.name, target)
 
         if blocking:
-            while Point(self.get_drone_pos(drone)[:2]).distance(target) > 10:
+            while self.update_drone_xy_pos(drone).distance(target) > 10:
                 time.sleep(0.2)
         return True
 
-    def _get_drone_approximity_position(self, drone, direction):
+    def _get_drone_proximity_position(self, drone, direction):
         return Point(drone.position.x + direction[0]*DRONE_DISTANCE_IN_TIME_OUT,
                      drone.position.y + direction[1] * DRONE_DISTANCE_IN_TIME_OUT)
