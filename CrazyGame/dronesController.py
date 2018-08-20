@@ -1,6 +1,6 @@
-import logger
 import socket
 import time
+from CrazyGame import logger
 
 cf_logger = logger.get_logger(__name__)
 
@@ -9,7 +9,6 @@ DEFAULT_VM_IP = "172.16.1.2"
 DEFAULT_TCP_PORT = 51951
 DEFAULT_BUFFER_SIZE = 1024
 CONNECTION_TIME_OUT = 2
-
 
 class DronesController:
     def __init__(self, ip=DEFAULT_LOCAL_IP, port=DEFAULT_TCP_PORT, buffer_size=DEFAULT_BUFFER_SIZE):
@@ -26,7 +25,7 @@ class DronesController:
                 self._socket.settimeout(None)
                 return True
             except:
-                if retry == number_of_trials:
+                if retry != number_of_trials:
                     cf_logger.error("Failure {}/{}, No response from {}:{}, Trying again in {} seconds...".format(retry, number_of_trials, self._tcp_ip, self._tcp_port, time_between_trails))
                     time.sleep(time_between_trails)
                 else:
