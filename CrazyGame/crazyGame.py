@@ -14,7 +14,7 @@ from CrazyGame.Games.JoystickDemo import joystickDemo
 from CrazyGame.Games.SillyGame import sillyGame
 from CrazyGame.Games.DronesControlDemo import dronesControlDemo
 from CrazyGame.pygameUtils import drawer
-from CrazyGame.pygameUtils import displayBoard
+from CrazyGame.pygameUtils import button
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
@@ -47,8 +47,7 @@ class CrazyGame:
         time.sleep(0.5)
         self.set_control_board()
         self.set_drone_controller()
-        self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller.get_world_size())
-        self.orch.add_drones(self.drone_controller.get_objects())  # TODO -> support other object than drone
+        self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller)
         self.drawer.set_board(self.orch)
         self.run_starting_animation()
 
@@ -71,9 +70,9 @@ class CrazyGame:
         VM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
         DEMO_BUTTON_POS = (drawer.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
 
-        self.drawer.add_button(drawer.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
+        self.drawer.add_button(button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm'))
 
-        self.drawer.add_button(drawer.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
+        self.drawer.add_button(button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo'))
 
         self.drawer.render_buttons()
 
@@ -97,18 +96,21 @@ class CrazyGame:
     def set_drone_controller(self):
         self.drone_controller = None
         while not self.drone_controller:
-            self.drawer.set_text_line('choose drones controller', update_display=False)
+            self.drawer.set_text_line('Choose drones controller')
             drone_controller_type = self.get_drone_controller_type()
             if drone_controller_type == 'vm':
                 self.drone_controller = dronesController.DronesController()
-                cf_logger.info('connect to drone vm controller...')
+                cf_logger.info('Connect to drone vm controller...')
+                self.drawer.set_text_line('Connect to drone vm controller...')
                 try:
                     self.drone_controller.connect()
                 except ConnectionError:
-                    cf_logger.info('fail to connect drone vm controller')
+                    cf_logger.info('Fail to connect drone vm controller')
+                    self.drawer.set_text_line('Failed')
+                    time.sleep(1)
                     self.drone_controller = None
             elif drone_controller_type == 'demo':
-                cf_logger.info('connect to demo drone controller...')
+                cf_logger.info('Connect to demo drone controller...')
                 self.drone_controller = dronesControllerSimulator.DronesController()
 
     def run_starting_animation(self):
@@ -124,12 +126,12 @@ class CrazyGame:
         self.drawer.reset_main_rect()
         for i, key in enumerate(GAMES):
             pos = (BUTTON_X_POS, BUTTON_Y_START_POS + i * BUTTONS_Y_DISTANCES)
-            button = drawer.Button(pos, BUTTON_SIZE, key)
-            self.drawer.add_button(button)
+            temp_button = button.Button(pos, BUTTON_SIZE, key)
+            self.drawer.add_button(temp_button)
 
         pos = (BUTTON_X_POS, drawer.MAIN_RECT.height - BUTTON_SIZE[1] - 50)
-        button = drawer.Button(pos, BUTTON_SIZE, 'exit', 'button_unpressed_exit.png', 'button_pressed_exit.png')
-        self.drawer.add_button(button)
+        temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'button_unpressed_exit.png', 'button_pressed_exit.png')
+        self.drawer.add_button(temp_button)
         self.drawer.render_buttons()
 
     def choose_game(self):

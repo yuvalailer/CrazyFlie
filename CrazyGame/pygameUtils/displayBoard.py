@@ -1,6 +1,6 @@
 import pygame
 from CrazyGame.pygameUtils import drawer
-from CrazyGame.pygameUtils import colors
+from CrazyGame.pygameUtils import displaysConsts
 from CrazyGame import logger
 
 
@@ -14,12 +14,46 @@ class DisplayBoard:
         self.display_surf = display_surf
         self._orch = orchestrator
         self.rect = self.get_display_board_rect()
+        self.radius = self.get_relative_radius()
+        self.inner_rect = self.get_inner_rect()
 
     def get_display_board_rect(self):
-        return BOARD_BOUND_RECT
+        ratio = self._orch.width/self._orch.height
+        if ratio >= 1:
+            width = BOARD_BOUND_RECT.width
+            height = width // ratio
+
+        else:
+            height = BOARD_BOUND_RECT.height
+            width = height * ratio
+
+        rect = pygame.Rect(0, 0, width, height)
+        rect.center = BOARD_BOUND_RECT.center
+        return rect
+
+    def get_inner_rect(self):
+        rect = pygame.Rect(0, 0, self.rect.width - 2*self.radius, self.rect.height - 2*self.radius)
+        rect.center = self.rect.center
+        return rect
+
+    def get_relative_radius(self):
+        ratio = self.rect.width/self._orch.width
+        return round(ratio * self._orch.drone_radius)
 
     def render(self):
-        pygame.draw.rect(self.display_surf, colors.WHITE, self.rect)
+        cf_logger.debug("rendering board...")
+        pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
+        for drone in self._orch.drones:
+            self._render_drone(drone)
+
+    def translate_xy(self, real_world_position):
+        ratio = self.inner_rect.width/self._orch.width
+        new_x = self.inner_rect.width - (real_world_position.x * ratio)
+        new_y = real_world_position.y * ratio
+        return round(self.inner_rect.left + new_x), round(self.inner_rect.top + new_y)
 
     def _render_drone(self, drone):
-        pass
+        x, y = self.translate_xy(drone.position)
+        width = 1 if drone.grounded else 0
+        cf_logger.debug("drawing {} at ({}, {})".format(drone.name, x, y))
+        pygame.draw.circle(self.display_surf, drone.color, (x, y), self.radius, width)
