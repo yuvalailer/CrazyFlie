@@ -33,10 +33,11 @@ class DronesController:
         raise ConnectionError
 
     def disconnect(self):
+        cf_logger.debug("disconnect")
         self._socket.close()
 
     def set_speed(self, speed):
-        pass
+        self._send("SetSpeed${}".format(speed))
 
     def get_world_size(self):
         res = self._send("WorldSize")
@@ -48,6 +49,7 @@ class DronesController:
 
     def get_objects(self):
         res = self._send("GetObjects")
+        cf_logger.debug("GetObjects got{}".format(res))
         if res and (res != "FATAL"):
             return res.split("$")
         else:
@@ -62,10 +64,10 @@ class DronesController:
             cf_logger.error("Failed to get position for {}".format(object_name))
             return False
 
-    def move_drone(self, drone_name, direction_vector):  # direction_vector = [x, y]
-        pass  # TODO
+    def move_drone(self, drone_name, direction_vector): # direction_vector = [x, y]
+        self._send("MoveDrone${}${}${}".format(drone_name, direction_vector[0], direction_vector[1]))
 
-    def goto(self, drone_name, pos):  # pos = [x, y]
+    def goto(self, drone_name, pos): # pos = [x, y]
         self._send("GoTo${}${}${}".format(drone_name, pos[0], pos[1]))
         cf_logger.debug("{} go to ({},{})".format(drone_name, pos[0], pos[1]))
 
