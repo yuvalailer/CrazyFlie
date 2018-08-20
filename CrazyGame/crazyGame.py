@@ -14,7 +14,6 @@ from CrazyGame.Games.JoystickDemo import joystickDemo
 from CrazyGame.Games.SillyGame import sillyGame
 from CrazyGame.Games.DronesControlDemo import dronesControlDemo
 from CrazyGame.pygameUtils import drawer
-from CrazyGame.pygameUtils import displayBoard
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
@@ -94,18 +93,21 @@ class CrazyGame:
     def set_drone_controller(self):
         self.drone_controller = None
         while not self.drone_controller:
-            self.drawer.set_text_line('choose drones controller', update_display=False)
+            self.drawer.set_text_line('Choose drones controller')
             drone_controller_type = self.get_drone_controller_type()
             if drone_controller_type == 'vm':
                 self.drone_controller = dronesController.DronesController()
-                cf_logger.info('connect to drone vm controller...')
+                cf_logger.info('Connect to drone vm controller...')
+                self.drawer.set_text_line('Connect to drone vm controller...')
                 try:
                     self.drone_controller.connect()
                 except ConnectionError:
-                    cf_logger.info('fail to connect drone vm controller')
+                    cf_logger.info('Fail to connect drone vm controller')
+                    self.drawer.set_text_line('Failed')
+                    time.sleep(1)
                     self.drone_controller = None
             elif drone_controller_type == 'demo':
-                cf_logger.info('connect to demo drone controller...')
+                cf_logger.info('Connect to demo drone controller...')
                 self.drone_controller = dronesControllerSimulator.DronesController()
 
     def run_starting_animation(self):
