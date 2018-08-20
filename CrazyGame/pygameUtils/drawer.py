@@ -14,6 +14,8 @@ TEXT_LINE_HEIGHT = 50
 TEXT_LINE_RECT = pygame.Rect(0, WINDOW_RECT[1]-TEXT_LINE_HEIGHT,WINDOW_RECT[0],TEXT_LINE_HEIGHT)
 
 MAIN_RECT = pygame.Rect(0, 0, WINDOW_RECT[0], WINDOW_RECT[1] - TEXT_LINE_HEIGHT)
+UNPRESSED_BUTTON_IMAGE = 'button_unpressed.png'
+PRESSED_BUTTON_IMAGE = 'button_pressed.png'
 
 
 class Drawer:
@@ -84,7 +86,7 @@ class Drawer:
 class Button:
     BUTTON_TEXT_COLOR = colors.WHITE
 
-    def __init__(self, position, size, text, unpressed_image_name=None , pressed_image_name=None):
+    def __init__(self, position, size, text, unpressed_image_name=UNPRESSED_BUTTON_IMAGE , pressed_image_name=PRESSED_BUTTON_IMAGE):
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
         self.font = pygame.font.SysFont("arial", min(30, self.rect.height - 5))
         self.text = text
