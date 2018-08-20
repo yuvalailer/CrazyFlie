@@ -47,7 +47,8 @@ class CrazyGame:
         time.sleep(0.5)
         self.set_control_board()
         self.set_drone_controller()
-        self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller.get_world_size())
+        self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller.get_world_size(),
+                                                          self.drone_controller)
         self.orch.add_drones(self.drone_controller.get_objects())  # TODO -> support other object than drone
         self.drawer.set_board(self.orch)
         self.run_starting_animation()
