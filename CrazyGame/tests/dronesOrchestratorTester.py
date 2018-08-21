@@ -1,14 +1,8 @@
-import dronesOrchestrator
 import logger
-<<<<<<< HEAD
-from Peripherals import dronesControllerSimulator
-=======
 import time
-import functools
 from shapely.geometry import Point
-from CrazyGame import dronesControllerSimulator
-from CrazyGame.Games import dronesOrchestrator
->>>>>>> 70c3f13889612d33876b53f262da8df79a48703e
+from Peripherals import dronesControllerSimulator
+from CrazyGame import dronesOrchestrator
 
 cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start drones Orchestrator tester ####")

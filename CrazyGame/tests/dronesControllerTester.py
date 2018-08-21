@@ -1,20 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-<<<<<<< HEAD
 import time
 
 ## input:
 #     - drone name: crazieflie5
 #     - path to route.txt file:
 
-=======
->>>>>>> master
 from fixSysPath import test_sys_path
 
 test_sys_path()
 from CrazyGame import logger
-<<<<<<< HEAD
-from CrazyGame.dronesController import DronesController
+from Peripherals.dronesController import DronesController
 import sys
 import math
 
@@ -22,9 +18,6 @@ cf_logger = logger.get_logger(__name__)  # debug(), info(), warning(), error(), 
 
 EPSILON = 0.01
 SLEEP_TIME = 0.5
-=======
-from Peripherals.dronesController import DronesController
->>>>>>> master
 
 
 def main():

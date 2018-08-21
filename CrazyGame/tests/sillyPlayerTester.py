@@ -7,7 +7,7 @@ cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start silly player tester ####")
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
-from SillyGame import sillyPlayer
+from Games import pathFinder
 from datetime import datetime
 
 def plot_player(ax, p, r, c):
