@@ -44,7 +44,7 @@ class DronesOrchestrator:
 
     def set_velocity(self, velocity):
         self._drone_velocity = velocity
-        self.drones_controller.set_speed(DRONE_VELOCITY)
+        self.drones_controller.set_speed(velocity)
 
     @property
     def drone_step_size(self):
@@ -52,6 +52,7 @@ class DronesOrchestrator:
 
     def set_drone_step_size(self, drone_move_time_out):
         self._drone_step_size = drone_move_time_out
+        self.drones_controller.set_step_size(drone_move_time_out)
 
     def get_drone_pos(self, drone):
         return self.drones_controller.get_object_position(drone.name)
