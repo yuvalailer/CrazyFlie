@@ -7,7 +7,6 @@ LOG_FILE = "{}/crazy_game.log".format(LOG_FOLDER)
 
 DEFAULT_LOGGING_LEVEL = logging.INFO
 
-
 def get_console_handler():
     console_handler = logging.StreamHandler(sys.stdout)
     console_handler.setFormatter(FORMATTER)
