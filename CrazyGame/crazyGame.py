@@ -85,14 +85,14 @@ class CrazyGame:
             if event.type == pygame.QUIT:
                 self.tear_down()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == MOUSE_LEFT_BUTTON:
-                self.drawer.check_buttons_mouse_event(event.type)
+                self.drawer.check_mouse_event(event.type)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == MOUSE_LEFT_BUTTON:
-                button = self.drawer.check_buttons_mouse_event(event.type)
-                if button:
-                    cf_logger.debug('button %s clicked' % button.text)
-                    if button.text == 'exit':
+                event = self.drawer.check_mouse_event(event.type)
+                if event[0] == 'button':
+                    cf_logger.debug('button %s clicked' % event[1].text)
+                    if event[1].text == 'exit':
                         self.tear_down()
-                    return button.text
+                    return event[1].text
 
     def set_drone_controller(self):
         self.drone_controller = None
@@ -143,14 +143,14 @@ class CrazyGame:
             if event.type == pygame.QUIT:
                 self.tear_down()
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == MOUSE_LEFT_BUTTON:
-                self.drawer.check_buttons_mouse_event(event.type)
+                self.drawer.check_mouse_event(event.type)
             elif event.type == pygame.MOUSEBUTTONUP and event.button == MOUSE_LEFT_BUTTON:
-                button = self.drawer.check_buttons_mouse_event(event.type)
-                if button:
-                    cf_logger.debug('button %s clicked' % button.text)
-                    if button.text == 'exit':
+                event = self.drawer.check_mouse_event(event.type)
+                if event[0] == 'button':
+                    cf_logger.debug('button %s clicked' % event[1].text)
+                    if event[1].text == 'exit':
                         self.tear_down()
-                    return button.text
+                    return event[1].text
 
     def tear_down(self):
         if self.control_board:

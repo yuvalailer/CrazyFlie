@@ -40,9 +40,6 @@ class DronesController:
     def get_world_size(self):
         return self._world_size
 
-    def set_speed(self, speed):
-        pass #TODO -> update
-
     def get_objects(self):
         return list(self._objects.keys())
 
@@ -88,9 +85,18 @@ class DronesController:
 
     def land(self, drone_name):
         drone = self._objects[drone_name]
-        drone.pos = (drone.pos[0],
-                     drone.pos[1],
-                     0)
+        if not drone.on_the_go:
+            drone.pos = (drone.pos[0],
+                         drone.pos[1],
+                         0)
+        else:
+            diff = time.time() - drone.start_time
+            if diff >= 1:
+                drone.on_the_go = False
+
+            drone.pos = ( drone.start_pos[0] + (drone.pos[0] - drone.start_pos[0]) * diff + self.add_noise("posnoise"),
+                          drone.start_pos[1] + (drone.pos[1] - drone.start_pos[1]) * diff + self.add_noise("posnoise"),
+                          drone.pos[2])
 
     def battery_status(self, drone_name):
         return 0
