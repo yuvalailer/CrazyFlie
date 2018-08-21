@@ -28,6 +28,7 @@ class DronesController:
         self._world_size = [WORLD_X, WORLD_Y]
         self._objects = {}
         self.velocity = VELOCITY
+        self.step = 0.1
         for i in range(1, DRONES_NUM+1):
             player = (i-1)//2
             drone = (i-1)%2
@@ -48,6 +49,9 @@ class DronesController:
 
     def set_speed(self, speed):
         self.velocity = speed
+
+    def set_step_size(self, step):
+        self.step = step
 
     def get_object_position(self, object_name):
         object = self._objects[object_name]
