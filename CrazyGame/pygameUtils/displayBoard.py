@@ -14,13 +14,13 @@ class DisplayBoard:
     def __init__(self, display_surf, orchestrator):
         self.display_surf = display_surf
         self._orch = orchestrator
-        self.rect = self.get_display_board_rect()
-        self.radius = self.get_relative_radius()
         self.inner_rect = self.get_inner_rect()
         self.display = False
         self.convert_ratio = self.inner_rect.width/self._orch.width
+        self.radius = self.get_relative_radius()
+        self.rect = self.get_display_board_rect()
 
-    def get_display_board_rect(self):
+    def get_inner_rect(self):
         ratio = self._orch.width/self._orch.height
         if ratio >= 1:
             width = BOARD_BOUND_RECT.width
@@ -34,13 +34,13 @@ class DisplayBoard:
         rect.center = BOARD_BOUND_RECT.center
         return rect
 
-    def get_inner_rect(self):
-        rect = pygame.Rect(0, 0, self.rect.width - 2*self.radius, self.rect.height - 2*self.radius)
-        rect.center = self.rect.center
+    def get_display_board_rect(self):
+        rect = pygame.Rect(0, 0, self.inner_rect.width + 2*self.radius, self.inner_rect.height + 2*self.radius)
+        rect.center = self.inner_rect.center
         return rect
 
     def get_relative_radius(self):
-        ratio = self.rect.width/self._orch.width
+        ratio = self.inner_rect.width/self._orch.width
         return round(ratio * self._orch.drone_radius)
 
     def render(self):
@@ -56,6 +56,14 @@ class DisplayBoard:
         new_y = real_world_position.y * self.convert_ratio
         return round(self.inner_rect.left + new_x), round(self.inner_rect.top + new_y)
 
+    def translate_xy_board2real(self, board_position):
+        ratio = self._orch.width/self.inner_rect.width
+        inner_board_x = board_position[0] - self.inner_rect.left
+        inner_board_y = board_position[1] - self.inner_rect.top
+        new_x = self._orch.width - (inner_board_x * ratio)
+        new_y = inner_board_y * ratio
+        return round(new_x), round(new_y)
+
     def _render_drone(self, drone):
         drone.display_position = self._convert_world_to_display_xy(drone.position)
         width = 1 if drone.grounded else 0
@@ -68,7 +76,7 @@ class DisplayBoard:
             for drone in self._orch.drones:
                 if self.pos_in_drone(pos, drone):
                     return 'drone', drone
-            return 'point', Point(pos[0], pos[1])
+            return 'point', Point(self.translate_xy_board2real(pos))
         return None
 
     def pos_in_drone(self, pos, drone):

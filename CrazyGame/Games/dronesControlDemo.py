@@ -55,6 +55,8 @@ class DronesControlDemo:
                         self.manage_button_click(mouse_event_obj[1])
                     elif mouse_event_obj[0] == 'drone':
                         self.next_drone(mouse_event_obj[1])
+                    elif mouse_event_obj[0] == 'point':
+                        self.orch.try_goto(self.current_drone, mouse_event_obj[1])
             elif event.type == pygame.KEYUP:
                 self.manage_keyboard_event(event.key)
 
