@@ -9,7 +9,7 @@ WORLD_X = 2.68
 WORLD_Y = 1.92
 
 TAKEOFF_HEIGHT = 0.5
-VELOCITY = 0.1
+VELOCITY = 0.0001
 
 DRONES_NUM = 4
 
@@ -66,24 +66,25 @@ class DronesController:
                      object.pos[2])
 
         if object.on_the_go:
-            x = object.pos[0] - object.start_pos[0]
-            y = object.pos[1] - object.start_pos[1]
-            c = (x**2+y**2)**0.5
-            x_dir = x/c
-            y_dir = y/c
-            object.tmp = ( object.tmp[0] + x_dir * self.velocity + self.add_noise("posnoise"),
-                           object.tmp[1] + y_dir * self.velocity + self.add_noise("posnoise"),
-                           object.tmp[2])
-            if object.pos[0]-self.velocity <= object.tmp[0] <= object.pos[0]+self.velocity and \
-                   object.pos[1]-self.velocity <= object.tmp[1] <= object.pos[1]+self.velocity :
-                cf_logger.info("reached destination")
-                object.on_the_go = False
+            if time.time()-object.interval > 0.3:
+                x = object.pos[0] - object.start_pos[0]
+                y = object.pos[1] - object.start_pos[1]
+                c = (x**2+y**2)**0.5
+                x_dir = x/c
+                y_dir = y/c
+                object.tmp = ( object.tmp[0] + x_dir * self.velocity + self.add_noise("posnoise"),
+                               object.tmp[1] + y_dir * self.velocity + self.add_noise("posnoise"),
+                               object.tmp[2])
+                if object.pos[0]-self.velocity <= object.tmp[0] <= object.pos[0]+self.velocity and \
+                       object.pos[1]-self.velocity <= object.tmp[1] <= object.pos[1]+self.velocity:
+                    cf_logger.info("reached destination")
+                    object.on_the_go = False
+                object.interval = time.time()
             return object.tmp
 
         for el in object.pos:
             el += self.add_noise("posnoise")
         return object.pos
-
 
     def move_drone(self, drone_name, direction_vector):  # direction_vector = [x, y]
         drone = self._objects[drone_name]
@@ -104,9 +105,10 @@ class DronesController:
         drone.on_the_move = False
         drone.on_the_go = True
         drone.start_time = time.time()
+        drone.interval = drone.start_time
         drone.pos = (pos[0],
-                      pos[1],
-                      drone.pos[2])
+                     pos[1],
+                     drone.pos[2])
 
     def take_off(self, drone_name):
         drone = self._objects[drone_name]
