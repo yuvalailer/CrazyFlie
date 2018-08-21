@@ -2,6 +2,7 @@ import pygame
 from CrazyGame.pygameUtils import drawer
 from CrazyGame.pygameUtils import displaysConsts
 from CrazyGame import logger
+from shapely.geometry import Point
 
 
 cf_logger = logger.get_logger(__name__)
@@ -53,7 +54,25 @@ class DisplayBoard:
         return round(self.inner_rect.left + new_x), round(self.inner_rect.top + new_y)
 
     def _render_drone(self, drone):
-        x, y = self.translate_xy(drone.position)
+        drone.display_position = self.translate_xy(drone.position)
         width = 1 if drone.grounded else 0
-        cf_logger.debug("drawing {} at ({}, {})".format(drone.name, x, y))
-        pygame.draw.circle(self.display_surf, drone.color, (x, y), self.radius, width)
+        cf_logger.debug("drawing {} at ({})".format(drone.name, drone.display_position))
+        if self.inside_bounds(drone.display_position):
+            pygame.draw.circle(self.display_surf, drone.color, drone.display_position, self.radius, width)
+
+    def handle_mouse_event(self, pos):
+        if self.inside_bounds(pos):
+            for drone in self._orch.drones:
+                in_x = drone.display_position[0]-self.radius <= pos[0] <= drone.display_position[0]+self.radius
+                in_y = drone.display_position[1]-self.radius <= pos[1] <= drone.display_position[1]+self.radius
+                if in_x and in_y:
+                    return 'drone', drone
+            return 'point', Point(pos[0], pos[1])
+        return None
+
+    def inside_bounds(self, pos):
+        bounds_x = self.inner_rect.left <= pos[0] <= self.inner_rect.right
+        bounds_y = self.inner_rect.top <= pos[1] <= self.inner_rect.bottom
+        if bounds_x and bounds_y:
+            return True
+        return False

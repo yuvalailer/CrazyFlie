@@ -80,7 +80,7 @@ class DronesOrchestrator:
         drone.grounded = False
 
     def land(self, drone, blocking=False):
-        if not drone.up:
+        if drone.grounded:
             cf_logger.warning('try to land a grounded drone %s' % drone.name)
             return
         self.drones_controller.land(drone.name)

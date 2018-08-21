@@ -56,13 +56,13 @@ class Drawer:
         if update_display:
             pygame.display.update()
 
-    def check_buttons_mouse_event(self, event_type):
+    def check_mouse_event(self, event_type):
         pos = pygame.mouse.get_pos()
         for button in self.buttons:
             if button.handle_mouse_event(event_type, pos):
-                return button
+                return 'button', button
 
-        return None
+        return self.board.handle_mouse_event(pos)
 
     def set_board(self, orch):
         self.board = displayBoard.DisplayBoard(self.display_surf, orch)
