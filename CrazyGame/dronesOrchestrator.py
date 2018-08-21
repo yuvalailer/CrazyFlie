@@ -69,7 +69,7 @@ class DronesOrchestrator:
             self.update_drone_xy_pos(drone)
 
     def try_move_drone(self, drone, direction):
-        if sum(direction) == 0:
+        if direction[0] == 0 and direction[1] == 0: # TODO fix
             if drone.on_move:
                 cf_logger.info('stop drone %s' % drone.name)
                 self.drones_controller.move_drone(drone.name, direction)
