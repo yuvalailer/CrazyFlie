@@ -27,7 +27,7 @@ class DronesControlDemo:
         self.drawer.render()
         current_time = time.time()
         while True:
-            if time.time() - current_time > 0.1:
+            if time.time() - current_time > 0.2:
                 self.orch.update_drones_positions()
                 self.drawer.render()
                 joystick_dir = self.joystick.get_normalize_direction()
@@ -53,9 +53,9 @@ class DronesControlDemo:
                     self.next_drone()
 
                 elif event.key == pygame.K_u:
-                    self.orch.try_take_off(self.current_drone)
+                    self.orch.try_take_off(self.current_drone, blocking=True)
                 elif event.key == pygame.K_l:
-                    self.orch.land(self.current_drone)
+                    self.orch.land(self.current_drone, blocking=True)
         return 'continue'
 
     def next_drone(self):

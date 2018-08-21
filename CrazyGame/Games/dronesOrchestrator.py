@@ -7,9 +7,9 @@ from munch import Munch
 
 cf_logger = logger.get_logger(__name__)
 
-DRONE_VELOCITY = 0.1
-DRONE_MOVE_TIME_OUT = 1
-DRONE_DISTANCE_IN_TIME_OUT = DRONE_VELOCITY * DRONE_MOVE_TIME_OUT
+DRONE_VELOCITY = 0.01
+DRONE_STEP_SIZE = 0.01
+DRONE_DISTANCE_IN_TIME_OUT = DRONE_STEP_SIZE
 
 
 class DronesOrchestrator:
@@ -17,13 +17,14 @@ class DronesOrchestrator:
         self.drones_controller = drones_controller
         self.size = self.drones_controller.get_world_size()
         cf_logger.info('world size is %s'%self.size)
-        self.drone_radius = 0.1 # TODO temp value
+        self.drone_radius = 0.1  # TODO temp value
+        self.step_size = DRONE_STEP_SIZE
         self.drones_controller.set_speed(DRONE_VELOCITY)
+        self.drones_controller.set_step_size(self.step_size)
 
         self.drones = []
         for drone in self.drones_controller.get_objects():
-            self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK))
-            self.try_take_off(self.drones[-1])
+            self.drones.append(Munch(name=drone, grounded=True, color=displaysConsts.BLACK, on_move=False))
 
         self.update_drones_positions()
     @property
@@ -39,7 +40,6 @@ class DronesOrchestrator:
 
     def update_drone_xy_pos(self, drone):
         pos = self.drones_controller.get_object_position(drone.name)
-        cf_logger.info('current pos is %s'%pos)
         drone.position = Point(pos[:2])
         return drone.position
 
@@ -48,6 +48,11 @@ class DronesOrchestrator:
             self.update_drone_xy_pos(drone)
 
     def try_move_drone(self, drone, direction):  # TODO -> consider board limits
+        if direction == [0, 0]:
+            if drone.on_move:
+                self.drones_controller.move_drone(drone.name, direction)
+                drone.on_move = False
+            return True
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
@@ -63,7 +68,9 @@ class DronesOrchestrator:
                     return False
         if not self.check_if_leaving_bounds(target, drone):
             return False
+        cf_logger.debug('drone %s move in dir %s' % (drone.name, direction))
         self.drones_controller.move_drone(drone.name, direction)
+        drone.on_move = True
         return True
 
     def try_take_off(self, drone, blocking=False):
@@ -76,10 +83,12 @@ class DronesOrchestrator:
                     cf_logger.warning('unable to take off %s because of %s' % (drone.name, temp_drone.name))
                     return False
 
+        cf_logger.info('take off drone %s', drone.name)
         self.drones_controller.take_off(drone.name)
 
-        if blocking:
-            while self.get_drone_pos(drone)[2] < 0.3:
+        if blocking:  #add timeout
+            cf_logger.info('waiting to drone %s to take off', drone.name)
+            while self.get_drone_pos(drone)[2] < 0.1:
                 time.sleep(0.2)
 
         drone.grounded = False
@@ -88,9 +97,11 @@ class DronesOrchestrator:
         if drone.grounded:
             cf_logger.warning('try to land a grounded drone %s' % drone.name)
             return
+        cf_logger.info('landing drone %s' % drone.name)
         self.drones_controller.land(drone.name)
         if blocking:
-            while self.get_drone_pos(drone)[2] > 0.2:
+            cf_logger.info('wait to drone %s to land' % drone.name)
+            while self.get_drone_pos(drone)[2] > 0.1:
                 time.sleep(0.2)
 
         drone.grounded = True

@@ -2,9 +2,9 @@ import pygame
 from CrazyGame.pygameUtils import drawer
 from CrazyGame.pygameUtils import displaysConsts
 from CrazyGame import logger
+import logging
 
-
-cf_logger = logger.get_logger(__name__)
+cf_logger = logger.get_logger(__name__, logging.WARNING)
 
 BOARD_BOUND_RECT = pygame.Rect(300, 50, drawer.MAIN_RECT.width-350, drawer.MAIN_RECT.height-100)
 
