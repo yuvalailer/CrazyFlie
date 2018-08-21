@@ -69,13 +69,16 @@ class CaptureTheFlag:
             cf_logger.info('run %s turn' % self.current_player.name)
             self.current_player.drone.color = displaysConsts.GREEN
             self.run_turn()
-            self.current_player.drone.color = displaysConsts.BLACK
+            if self.current_player.name == 'computer':
+                self.current_player.drone.color = displaysConsts.BLACK
+            else:
+                self.current_player.drone.color = displaysConsts.RED
             self.orch.stop(self.current_player.drone)
             if self.player_reach_goal():
                 cf_logger.info('%s turn arrive to goal' % self.current_player.name)
                 break
-            self.current_player = self.current_player.next_player
             self.displayManager.text_line.set_text('%s turn ended' % self.current_player.name)
+            self.current_player = self.current_player.next_player
             self.interactive_sleep(2)
 
         if not self.running:
