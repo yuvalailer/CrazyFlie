@@ -41,6 +41,9 @@ class DronesController:
         cf_logger.info("Demo drone controller connected")
         return True
 
+    def connect(self):
+        return True
+
     def get_world_size(self):
         return self._world_size
 

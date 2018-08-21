@@ -9,6 +9,7 @@ cf_logger = logger.get_logger(__name__)
 
 DRONE_VELOCITY = 0.1
 DRONE_STEP_SIZE = 0.1
+TARGET_RADIUS = 0.1
 
 
 class DronesOrchestrator:
@@ -70,8 +71,10 @@ class DronesOrchestrator:
             self.update_drone_xy_pos(drone)
 
     def stop(self, drone):
-        cf_logger.warning('stopping drone %s' % drone.name)
-        self.try_move_drone(drone, [0, 0])
+        if drone.might_on_move:
+            cf_logger.warning('stopping drone %s' % drone.name)
+            self.try_move_drone(drone, [0, 0])
+            drone.might_on_move = False
 
     def try_move_drone(self, drone, direction):
         if drone.grounded:
@@ -91,6 +94,7 @@ class DronesOrchestrator:
             return False
         cf_logger.debug('drone %s move in dir %s' % (drone.name, direction))
         self.drones_controller.move_drone(drone.name, direction)
+        drone.might_on_move = True
         return True
 
     def try_take_off(self, drone, blocking=False):
@@ -108,10 +112,16 @@ class DronesOrchestrator:
 
         if blocking:  #add timeout
             cf_logger.info('waiting to drone %s to take off', drone.name)
-            while self.get_drone_pos(drone)[2] < 0.1:
+            while not self.drone_is_up(drone):
                 time.sleep(0.2)
 
         drone.grounded = False
+
+    def drone_is_up(self, drone):
+        return self.get_drone_pos(drone)[2] > 0.1
+
+    def drone_reach_position(self, drone, target):
+        return self.update_drone_xy_pos(drone).distance(target) < TARGET_RADIUS
 
     def land(self, drone):
         if drone.grounded:
@@ -138,7 +148,7 @@ class DronesOrchestrator:
 
         cf_logger.warning('drone %s go to %s' % (drone.name, target))
         self.drones_controller.goto(drone.name, (target.x,target.y))
-
+        drone.might_on_move = True
         return True
 
     def _get_drone_proximity_position(self, drone, direction):

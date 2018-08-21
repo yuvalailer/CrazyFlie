@@ -17,7 +17,6 @@ MATH_OPT_BUTTON_SIZE = (80, 80)
 UPDATE_BUTTON_SIZE = (200, 80)
 
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
-BUTTONS_POS = [(10, 50), (10, 160), (10, 270), (10, 390), (100, 390)]
 
 
 class DronesControlDemo:

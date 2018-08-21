@@ -5,12 +5,12 @@ import pygame
 
 from CrazyGame import dronesOrchestrator, joystick, logger
 from pygameUtils import button, displayManager
-from Games import sillyGame, joystickDemo, dronesControlDemo
+from Games import captureTheFlag, joystickDemo, dronesControlDemo
 from Peripherals import controlBoard, dronesController, dronesControllerSimulator
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
-GAMES = {'silly game': sillyGame.SillyGame,
+GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
          'joystick demo': joystickDemo.JoystickDemo,
          'drones control demo': dronesControlDemo.DronesControlDemo}
 
