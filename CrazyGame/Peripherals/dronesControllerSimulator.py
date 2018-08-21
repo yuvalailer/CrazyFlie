@@ -37,11 +37,8 @@ class DronesController:
                                                                  start_pos=(0, 0, 0),
                                                                  start_time=0.0)
 
-    def connect(self):
+    def connect(self, number_of_trials=5, time_between_trails=3):
         cf_logger.info("Demo drone controller connected")
-        return True
-
-    def connect(self):
         return True
 
     def get_world_size(self):

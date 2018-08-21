@@ -9,7 +9,8 @@ cf_logger = logger.get_logger(__name__)
 
 DRONE_VELOCITY = 0.1
 DRONE_STEP_SIZE = 0.1
-TARGET_RADIUS = 0.1
+DRONE_RADIUS = 0.1
+TARGET_RADIUS = 0.05
 
 
 class DronesOrchestrator:
@@ -17,7 +18,7 @@ class DronesOrchestrator:
         self.drones_controller = drones_controller
         self.size = self.drones_controller.get_world_size()
         cf_logger.info('world size is %s'%self.size)
-        self.drone_radius = 0.1  # TODO temp value
+        self.drone_radius = DRONE_RADIUS
         self.set_velocity(DRONE_VELOCITY)
         self.set_drone_step_size(DRONE_STEP_SIZE)
 
