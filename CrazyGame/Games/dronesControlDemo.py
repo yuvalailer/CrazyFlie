@@ -47,7 +47,7 @@ class DronesControlDemo:
     def game_loop(self):
         current_time = time.time()
         while self.running:
-            if time.time() - current_time > 0.1:
+            if time.time() - current_time > 0.05:
                 self.orch.update_drones_positions()
                 self.displayManager.render()
                 joystick_dir = self.joystick.get_normalize_direction()
@@ -71,7 +71,7 @@ class DronesControlDemo:
                     elif mouse_event_obj[0] == 'drone':
                         self.next_drone(mouse_event_obj[1])
                     elif mouse_event_obj[0] == 'point':
-                        self.orch.try_goto(self.current_drone, mouse_event_obj[1])
+                        self.orch.try_goto(self.current_drone, mouse_event_obj[1], blocking=True)
             elif event.type == pygame.KEYUP:
                 self.manage_keyboard_event(event.key)
 

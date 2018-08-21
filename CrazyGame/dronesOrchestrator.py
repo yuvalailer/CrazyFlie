@@ -8,7 +8,7 @@ from munch import Munch
 cf_logger = logger.get_logger(__name__)
 
 DRONE_VELOCITY = 0.1
-DRONE_STEP_SIZE = 1
+DRONE_STEP_SIZE = 0.1
 DRONE_DISTANCE_IN_TIME_OUT = DRONE_STEP_SIZE
 
 
@@ -125,7 +125,7 @@ class DronesOrchestrator:
 
     def try_goto(self, drone, target, blocking=False):
         if drone.grounded:
-            cf_logger.warning('try to move grounded drone %s' % drone.name)
+            cf_logger.warning('goto failed - try to move grounded drone %s' % drone.name)
             return False
         line = LineString([drone.position, (target.x, target.y)])
         for temp_drone in self.drones:
@@ -133,15 +133,17 @@ class DronesOrchestrator:
                 temp_circle = temp_drone.position.buffer(self.drone_radius * 2)
                 inter = temp_circle.intersection(line)
                 if inter.type == 'LineString':
-                    cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
+                    cf_logger.warning('goto failed - drone %s try to enter %s drone' % (drone.name, temp_drone.name))
                     return False
         if not self.check_point_in_bounds(target, drone):
             return False
 
+        cf_logger.warning('drone %s go to %s' % (drone.name, target))
         self.drones_controller.goto(drone.name, (target.x,target.y))
 
         if blocking:
-            while self.update_drone_xy_pos(drone).distance(target) > 10:
+            cf_logger.info('wait for %s to get the %s', drone.name, target)
+            while self.update_drone_xy_pos(drone).distance(target) > 0.1:
                 time.sleep(0.2)
         return True
 
