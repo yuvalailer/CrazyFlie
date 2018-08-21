@@ -8,7 +8,8 @@ from pygameUtils import displayManager
 from pygameUtils import button
 from pygameUtils import displaysConsts
 from CrazyGame import logger
-from CrazyGame import dronesOrchestrator
+from Games import pathFinder
+from Games import followPath
 
 cf_logger = logger.get_logger(__name__)
 
@@ -53,14 +54,14 @@ class CaptureTheFlag:
                                     start_position=Point(2.43, 0.96),
                                     target=Point(0.25, 0.96),
                                     last_updated=0,
-                                    prepare_to_turn=self.human_player_prepare_to_turn,
-                                    manage_turn=self.human_player_manage_turn,
+                                    prepare_to_turn=self.computer_player_prepare_to_turn,
+                                    manage_turn=self.computer_player_manage_turn,
                                     winner_message='YOU LOSE, NOT TOO BAD')
                                     ]
 
         self.players[0].next_player = self.players[1]
         self.players[1].next_player = self.players[0]
-        self.current_player = self.players[0]
+        self.current_player = self.players[1]
 
     def game_loop(self):
         self.move_drones_to_start_position()
@@ -98,6 +99,7 @@ class CaptureTheFlag:
                 break
             if current_time - last_render_time > RENDER_RATE:
                 text = '%s - turn ends in %2f second' % (self.current_player.name, turn_left_time)
+                self.orch.update_drones_positions()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
                 last_render_time = time.time()
@@ -146,13 +148,23 @@ class CaptureTheFlag:
     def player_reach_goal(self):
         return self.orch.drone_reach_position(self.current_player.drone, self.current_player.target)
 
+    def computer_player_prepare_to_turn(self):
+        friend_drones = [self.orch.update_drone_xy_pos(self.current_player.drone)]
+        opponent_drones = [self.orch.update_drone_xy_pos(self.current_player.next_player.drone)]
+        target = self.current_player.target
+        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 100)
+        self.current_player.follower = followPath.Follower(path, self.current_player.drone, self.orch)
+
+    def computer_player_manage_turn(self):
+        if time.time() - self.current_player.last_updated > 0.1:
+            self.current_player.follower.follow_path()
+            self.current_player.last_updated = time.time()
+
     def human_player_prepare_to_turn(self):
         pass
 
     def human_player_manage_turn(self):
         if time.time() - self.current_player.last_updated > 0.05:
-            self.orch.update_drones_positions()
-            self.displayManager.render()
             joystick_dir = self.joystick.get_normalize_direction()
             self.orch.try_move_drone(self.current_player.drone, joystick_dir)
             self.current_player.last_updated = time.time()
@@ -173,8 +185,6 @@ class CaptureTheFlag:
                         self.manage_button_click(mouse_event_obj[1])
                     elif mouse_event_obj[0] == 'drone':
                         self.next_drone(mouse_event_obj[1])
-                    elif mouse_event_obj[0] == 'point':
-                        self.orch.try_goto(self.current_drone, mouse_event_obj[1], blocking=True)
             elif event.type == pygame.KEYUP:
                 self.manage_keyboard_event(event.key)
 

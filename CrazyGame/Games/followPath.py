@@ -1,4 +1,4 @@
-from crazyGame import logger
+from CrazyGame import logger
 cf_logger = logger.get_logger(__name__)
 
 
@@ -11,10 +11,14 @@ class Follower:
         self._completed = False
         self._generator = self._targets_generator()
         self._target = next(self._generator)
+
         assert not drone.grounded, 'try to move grounded drone'
         current_pos = self._orchestrator.update_drone_xy_pos(self._drone)
+        cf_logger.info('path is: [%s]' % (" ".join([str(point) for point in path])))
         cf_logger.info('pos %s - target %s' %  (current_pos, path[0]))
         assert self._orchestrator.drone_reach_position(self._drone, path[0]), 'drone too far from initial position'
+
+        self._orchestrator.try_goto(self._drone, self._target)
 
     def follow_path(self):
         if self._completed:
