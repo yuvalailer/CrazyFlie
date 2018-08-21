@@ -29,10 +29,9 @@ class DronesController:
         self._objects = {}
         self.velocity = VELOCITY
         self.step = 0.1
-        for i in range(1, DRONES_NUM+1):
-            player = (i-1)//2
-            drone = (i-1)%2
-            self._objects["crazyflie{}".format(i)] = munch.Munch(pos=(0 + WORLD_X*player, WORLD_Y/2 + drone*0.4, 0),
+        step = WORLD_Y/(DRONES_NUM+1)
+        for i in range(0, DRONES_NUM):
+            self._objects["crazyflie{}".format(i+1)] = munch.Munch(pos=(WORLD_X/2, step + i*step, 0),
                                                                  on_the_go=False,
                                                                  on_the_move=False,
                                                                  start_pos=(0, 0, 0),
