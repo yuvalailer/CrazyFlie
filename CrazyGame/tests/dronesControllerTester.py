@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import time
 from fixSysPath import test_sys_path
 test_sys_path()
 from CrazyGame import logger
-from CrazyGame.dronesController import DronesController
+from Peripherals.dronesController import DronesController
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 

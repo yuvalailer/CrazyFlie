@@ -1,6 +1,6 @@
+import dronesOrchestrator
 import logger
-from CrazyGame import dronesControllerSimulator
-from CrazyGame.Games import dronesOrchestrator
+from Peripherals import dronesControllerSimulator
 
 cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start drones Orchestrator tester ####")

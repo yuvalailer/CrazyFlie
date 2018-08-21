@@ -3,7 +3,7 @@ cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start silly player tester ####")
 from fixSysPath import test_sys_path
 test_sys_path()
-import controlBoard
+from Peripherals import controlBoard
 import joystick
 import matplotlib.pyplot as plt
 

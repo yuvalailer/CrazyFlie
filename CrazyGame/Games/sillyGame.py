@@ -1,6 +1,6 @@
 import pygame
+
 from CrazyGame import logger
-from CrazyGame.Games import dronesOrchestrator
 
 cf_logger = logger.get_logger(__name__)
 

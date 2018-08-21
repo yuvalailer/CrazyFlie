@@ -4,7 +4,6 @@ from pygameUtils import displaysConsts
 from CrazyGame import logger
 cf_logger = logger.get_logger(__name__)
 
-
 UNPRESSED_BUTTON_IMAGE = 'button_unpressed.png'
 PRESSED_BUTTON_IMAGE = 'button_pressed.png'
 
