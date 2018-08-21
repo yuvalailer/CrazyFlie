@@ -57,7 +57,7 @@ class DronesController:
         object = self._objects[object_name]
         diff = time.time() - object.start_time
         if object.on_the_move:
-            if diff >= 1:
+            if diff >= object.end_time:
                 object.on_the_move = False
                 return object.pos
 
@@ -95,6 +95,7 @@ class DronesController:
         drone.pos = (drone.start_pos[0] + direction_vector[0] * self.velocity + self.add_noise("movetonoise"),
                      drone.start_pos[1] + direction_vector[1] * self.velocity + self.add_noise("movetonoise"),
                      drone.start_pos[2])
+        drone.end_time = ((direction_vector[0] * self.velocity)**2 + (direction_vector[1] * self.velocity)**2)**0.5 /self.velocity
 
     def goto(self, drone_name, pos):  # pos = [x, y]
         drone = self._objects[drone_name]
