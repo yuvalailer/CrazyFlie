@@ -4,7 +4,14 @@ import time
 from fixSysPath import test_sys_path
 test_sys_path()
 from CrazyGame import logger
-from CrazyGame.dronesController import DronesController
+from Peripherals.dronesController import DronesController
+import sys
+import math
+
+cf_logger = logger.get_logger(__name__)  # debug(), info(), warning(), error(), exception(), critical()
+
+EPSILON = 0.01
+SLEEP_TIME = 0.5
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 
@@ -19,7 +26,7 @@ def main():
 	cf_logger.info("battery_status: {}".format(drones_controller.battery_status("crazyflie2")))
 	drones_controller.take_off("crazyflie2")
 	cf_logger.debug("get_object_position: {}".format(drones_controller.get_object_position("crazyflie2")))
-	drones_controller.goto("crazyflie2", [1,1])
+	drones_controller.goto("crazyflie2", [1,1])  # TODO -> goto without sleep?!
 	cf_logger.debug("get_object_position: {}".format(drones_controller.get_object_position("crazyflie2")))
 	drones_controller.land("crazyflie2")
 	drones_controller.disconnect()

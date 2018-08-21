@@ -1,11 +1,13 @@
+import functools
+import math
+from queue import PriorityQueue
+
+import numpy as np
 from shapely.geometry import LineString
 from shapely.geometry import Point
-from queue import PriorityQueue
-import functools
-import numpy as np
-import math
+
+import dronesOrchestrator
 from CrazyGame import logger
-from CrazyGame.Games import dronesOrchestrator
 
 cf_logger = logger.get_logger(__name__)
 

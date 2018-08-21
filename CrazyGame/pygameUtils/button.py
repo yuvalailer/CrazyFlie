@@ -2,8 +2,8 @@ import pygame
 import os
 from pygameUtils import displaysConsts
 from CrazyGame import logger
-cf_logger = logger.get_logger(__name__)
-
+import logging
+cf_logger = logger.get_logger(__name__, logging.INFO)
 
 UNPRESSED_BUTTON_IMAGE = 'button_unpressed.png'
 PRESSED_BUTTON_IMAGE = 'button_pressed.png'
@@ -17,6 +17,8 @@ class Button:
         self.font = pygame.font.SysFont("arial", min(30, self.rect.height - 5))
         self.text = text
         self.size = size
+        self.current_image = ''
+        self.pressed = False
         self.text_surface = self.font.render(self.text, False, Button.BUTTON_TEXT_COLOR)
         self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
                               self.rect.centery - self.text_surface.get_height() / 2)
@@ -26,7 +28,13 @@ class Button:
         self.pressed_image_name = pressed_image_name
         self._set_images()
         self.set_pressed(False)
+        self.current_color = (0, 0, 0)
 
+    def set_text(self, text):
+        self.text_surface = self.font.render(text, False, Button.BUTTON_TEXT_COLOR)
+        self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
+                              self.rect.centery - self.text_surface.get_height() / 2)
+        self.render()
 
     def render(self):
         if self.has_image:
@@ -47,10 +55,9 @@ class Button:
             if self.has_image:
                 self.current_image = self.not_pressed_image
 
-    def handle_mouse_event(self, event_type, mouse_location): #add or not  * before mouse
-
+    def handle_mouse_event(self, event_type, mouse_location):
         if self.rect.collidepoint(*mouse_location):
-            cf_logger.info('mouse event %s occurred on button %s'%(event_type, self.text))
+            cf_logger.debug('mouse event %s occurred on button %s'%(event_type, self.text))
             if event_type == pygame.MOUSEBUTTONDOWN:
                 self.set_pressed(True)
             elif event_type == pygame.MOUSEBUTTONUP:
@@ -74,3 +81,9 @@ class Button:
             self.not_pressed_image = pygame.transform.scale(button_unpressed_image, self.size)
             button_pressed_image = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, self.pressed_image_name))
             self.pressed_image = pygame.transform.scale(button_pressed_image, self.size)
+
+    def is_pressed(self):
+        return self.pressed
+
+    def change_state(self):
+        self.pressed = not self.pressed

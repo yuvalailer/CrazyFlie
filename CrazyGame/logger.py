@@ -5,8 +5,7 @@ FORMATTER = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(messag
 LOG_FOLDER = "log"
 LOG_FILE = "{}/crazy_game.log".format(LOG_FOLDER)
 
-DEFAULT_LOGGING_LEVEL = logging.DEBUG
-
+DEFAULT_LOGGING_LEVEL = logging.INFO
 
 def get_console_handler():
     console_handler = logging.StreamHandler(sys.stdout)
