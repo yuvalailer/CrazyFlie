@@ -21,7 +21,7 @@ BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
 
 class DronesControlDemo:
     def __init__(self):
-        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, 'back')
+        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
         self.velocity_button = button.Button((10, 50), VARIABLE_BUTTON_SIZE, 'velocity')
         self.step_size_button = button.Button((10, 160), VARIABLE_BUTTON_SIZE, 'step size')
         self.plus_button = button.Button((50, 270), MATH_OPT_BUTTON_SIZE, '+')
