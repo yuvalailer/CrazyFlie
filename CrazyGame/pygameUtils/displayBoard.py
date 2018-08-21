@@ -51,21 +51,20 @@ class DisplayBoard:
         for drone in self._orch.drones:
             self._render_drone(drone)
 
-    def _convert_world_to_display_xy(self, real_world_position):
+    def translate_xy_real2world(self, real_world_position):
         new_x = self.inner_rect.width - (real_world_position.x * self.convert_ratio)
         new_y = real_world_position.y * self.convert_ratio
         return round(self.inner_rect.left + new_x), round(self.inner_rect.top + new_y)
 
     def translate_xy_board2real(self, board_position):
-        ratio = self._orch.width/self.inner_rect.width
         inner_board_x = board_position[0] - self.inner_rect.left
         inner_board_y = board_position[1] - self.inner_rect.top
-        new_x = self._orch.width - (inner_board_x * ratio)
-        new_y = inner_board_y * ratio
-        return round(new_x), round(new_y)
+        new_x = self._orch.width - (inner_board_x / self.convert_ratio)
+        new_y = inner_board_y / self.convert_ratio
+        return new_x, new_y
 
     def _render_drone(self, drone):
-        drone.display_position = self._convert_world_to_display_xy(drone.position)
+        drone.display_position = self.translate_xy_real2world(drone.position)
         width = 1 if drone.grounded else 0
         cf_logger.debug("drawing {} at ({})".format(drone.name, drone.display_position))
         if self.inside_bounds(drone.display_position):
@@ -76,6 +75,7 @@ class DisplayBoard:
             for drone in self._orch.drones:
                 if self.pos_in_drone(pos, drone):
                     return 'drone', drone
+            cf_logger.debug("clicked on {}".format(pos))
             return 'point', Point(self.translate_xy_board2real(pos))
         return None
 
