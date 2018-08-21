@@ -22,7 +22,9 @@ class CrazyGame:
         self.initialization_process()
 
         while True:
+            self.displayManager.reset_main_rect()
             game_name = self.choose_game()
+            self.displayManager.reset_main_rect()
             self.displayManager.text_line.set_text(game_name)
             game = GAMES[game_name]()
             game.joystick = self.joystick
@@ -131,7 +133,7 @@ class CrazyGame:
         self.displayManager.render()
 
     def choose_game(self):
-        self.displayManager.text_line.set_text('choose your game', update_display=False)
+        self.displayManager.text_line.set_text('choose your game')
         self.displayManager.board.display = False
         self.set_games_buttons()
         while True:

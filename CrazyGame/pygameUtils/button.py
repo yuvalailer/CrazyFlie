@@ -29,6 +29,11 @@ class Button:
         self.set_pressed(False)
         self.current_color = (0, 0, 0)
 
+    def set_text(self, text):
+        self.text_surface = self.font.render(text, False, Button.BUTTON_TEXT_COLOR)
+        self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
+                              self.rect.centery - self.text_surface.get_height() / 2)
+        self.render()
 
     def render(self):
         if self.has_image:

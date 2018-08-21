@@ -15,7 +15,6 @@ class JoystickDemo:
         self.circle_position = (int(displayManager.MAIN_RECT.width / 2), int(displayManager.MAIN_RECT.height / 2))
 
     def run(self):
-        self.displayManager.reset_main_rect(update_display=False)
         self.displayManager.add_button(self.back_button)
         self.quit = False
         self.running = True

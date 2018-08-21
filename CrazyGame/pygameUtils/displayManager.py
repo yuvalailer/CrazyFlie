@@ -27,6 +27,7 @@ class DisplayManager:
         background_image = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, 'main_crazyflie.png'))
         self.display_surf.blit(background_image, (0, 0))
         self.buttons = []
+        self.multiButtons = []
         if update_display:
             pygame.display.update()
 
@@ -95,7 +96,7 @@ class TextLine:
     def __init__(self, display_surf, text=None):
         self.height = displaysConsts.TEXT_LINE_HEIGHT
         self.rect = pygame.Rect(0, WINDOW_RECT[1] - self.height, WINDOW_RECT[0], self.height)
-        self.text = text
+        self._text = text
         self.display_surf = display_surf
         self.display = True
         self.font = pygame.font.SysFont("arial", 30)
@@ -104,12 +105,12 @@ class TextLine:
         if self.display:
             pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
 
-            textsurface = self.font.render(self.text, False, displaysConsts.BLACK)
+            textsurface = self.font.render(self._text, False, displaysConsts.BLACK)
             text_pos = (self.rect.centerx - textsurface.get_width() / 2, self.rect.y + 10)
             self.display_surf.blit(textsurface, text_pos)
 
     def set_text(self, text, update_display=True):
-        self.text = text
+        self._text = text
         self.display = True
         if update_display:
             self.render()
