@@ -29,10 +29,9 @@ class DronesController:
         self._objects = {}
         self.velocity = VELOCITY
         self.step = 0.1
-        for i in range(1, DRONES_NUM+1):
-            player = (i-1)//2
-            drone = (i-1)%2
-            self._objects["crazyflie{}".format(i)] = munch.Munch(pos=(0 + WORLD_X*player, WORLD_Y/2 + drone*0.4, 0),
+        step = WORLD_Y/(DRONES_NUM+1)
+        for i in range(0, DRONES_NUM):
+            self._objects["crazyflie{}".format(i+1)] = munch.Munch(pos=(WORLD_X/2, step + i*step, 0),
                                                                  on_the_go=False,
                                                                  on_the_move=False,
                                                                  start_pos=(0, 0, 0),
@@ -60,7 +59,7 @@ class DronesController:
         object = self._objects[object_name]
         diff = time.time() - object.start_time
         if object.on_the_move:
-            if diff >= 1:
+            if diff >= object.end_time:
                 object.on_the_move = False
                 return object.pos
 
@@ -98,6 +97,7 @@ class DronesController:
         drone.pos = (drone.start_pos[0] + direction_vector[0] * self.velocity + self.add_noise("movetonoise"),
                      drone.start_pos[1] + direction_vector[1] * self.velocity + self.add_noise("movetonoise"),
                      drone.start_pos[2])
+        drone.end_time = ((direction_vector[0] * self.velocity)**2 + (direction_vector[1] * self.velocity)**2)**0.5 /self.velocity
 
     def goto(self, drone_name, pos):  # pos = [x, y]
         drone = self._objects[drone_name]
