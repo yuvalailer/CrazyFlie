@@ -66,7 +66,7 @@ class DisplayManager:
     def _check_board_mouse_event(self, pos, event_type):
         if not self.board or not self.board.display:
             return None
-        return self.board.handle_mouse_event(pos, event_type)
+        return self.board.handle_mouse_event(pos)
 
     def handle_mouse_event(self, event_type):
         handle_mouse_event_functions = [self._check_buttons_mouse_event,

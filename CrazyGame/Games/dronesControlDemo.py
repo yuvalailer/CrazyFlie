@@ -75,7 +75,7 @@ class DronesControlDemo:
         if drone:
             self.current_drone = drone
         else:
-            next_drone_index = self.current_drone.index + 1 % len(self.orch.drones)
+            next_drone_index = (self.current_drone.index + 1) % len(self.orch.drones)
             self.current_drone = self.orch.drones[next_drone_index]
         cf_logger.info('change to drone %s' % self.current_drone.name)
         self.current_drone.color = displaysConsts.GREEN
