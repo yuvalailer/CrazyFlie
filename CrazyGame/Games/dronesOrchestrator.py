@@ -78,7 +78,7 @@ class DronesOrchestrator:
         self.drones_controller.take_off(drone.name)
 
         if blocking:
-            while self.get_drone_pos(drone)[2] < 0.3:
+            while self.get_drone_altitude(drone) < 0.3:
                 time.sleep(0.2)
 
         drone.grounded = False
@@ -89,7 +89,7 @@ class DronesOrchestrator:
             return
         self.drones_controller.land(drone.name)
         if blocking:
-            while self.get_drone_pos(drone)[2] > 0.2:
+            while self.get_drone_altitude(drone) > 0.2:
                 time.sleep(0.2)
 
         drone.grounded = True

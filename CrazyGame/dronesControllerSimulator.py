@@ -40,9 +40,6 @@ class DronesController:
     def get_world_size(self):
         return self._world_size
 
-    def set_speed(self, speed):
-        pass #TODO -> update
-
     def get_objects(self):
         return list(self._objects.keys())
 

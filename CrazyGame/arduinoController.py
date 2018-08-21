@@ -30,7 +30,7 @@ def _get_port():
         return '/dev/ttyUSB0'
 
 
-class ControlBoard:
+class ArduinoController:
     def __init__(self):
         self._serial_port = _get_port()
         cf_logger.info('serial port name is %s' % self._serial_port)

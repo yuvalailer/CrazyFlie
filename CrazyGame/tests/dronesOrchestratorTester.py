@@ -1,6 +1,5 @@
 import logger
 import time
-import functools
 from shapely.geometry import Point
 from CrazyGame import dronesControllerSimulator
 from CrazyGame.Games import dronesOrchestrator

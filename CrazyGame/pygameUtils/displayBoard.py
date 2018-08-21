@@ -1,6 +1,7 @@
 import pygame
 from CrazyGame.pygameUtils import drawer
 from CrazyGame.pygameUtils import displaysConsts
+from CrazyGame import landmarkManager
 from CrazyGame import logger
 
 
@@ -10,9 +11,10 @@ BOARD_BOUND_RECT = pygame.Rect(300, 50, drawer.MAIN_RECT.width-350, drawer.MAIN_
 
 
 class DisplayBoard:
-    def __init__(self, display_surf, orchestrator):
+    def __init__(self, display_surf, orchestrator, landmark_manager):
         self.display_surf = display_surf
         self._orch = orchestrator
+        self._landmark_manager = landmark_manager
         self.rect = self.get_display_board_rect()
         self.radius = self.get_relative_radius()
         self.inner_rect = self.get_inner_rect()
@@ -45,6 +47,10 @@ class DisplayBoard:
         pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
         for drone in self._orch.drones:
             self._render_drone(drone)
+        for led in self._landmark_manager.leds:
+            self._render_led(led)
+        for obstacle in self._landmark_manager.obstacles:
+            self._render_obstacle(obstacle)
 
     def translate_xy(self, real_world_position):
         ratio = self.inner_rect.width/self._orch.width
@@ -57,3 +63,11 @@ class DisplayBoard:
         width = 1 if drone.grounded else 0
         cf_logger.debug("drawing {} at ({}, {})".format(drone.name, x, y))
         pygame.draw.circle(self.display_surf, drone.color, (x, y), self.radius, width)
+
+    def _render_led(self, led):
+        x, y = self.translate_xy(led.position)
+        # todo finish rendering
+
+    def _render_obstacle(self, obstacle):
+        x, y = self.translate_xy(obstacle.position)
+        # todo finish rendering

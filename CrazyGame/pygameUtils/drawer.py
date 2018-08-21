@@ -77,8 +77,8 @@ class Drawer:
 
         return None
 
-    def set_board(self, orch):
-        self.board = displayBoard.DisplayBoard(self.display_surf, orch)
+    def set_board(self, orch, landmarkManager):
+        self.board = displayBoard.DisplayBoard(self.display_surf, orch, landmarkManager)
 
     def render_board(self, update_display=False):
         if self.board:

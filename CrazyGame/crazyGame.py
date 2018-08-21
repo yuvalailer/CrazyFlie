@@ -4,11 +4,12 @@ import time
 
 import pygame
 
-from CrazyGame import controlBoard
+from CrazyGame import arduinoController
 from CrazyGame import dronesController
 from CrazyGame import dronesControllerSimulator
 from CrazyGame import joystick
 from CrazyGame import logger
+from CrazyGame import landmarkManager
 from CrazyGame.Games import dronesOrchestrator
 from CrazyGame.Games.JoystickDemo import joystickDemo
 from CrazyGame.Games.SillyGame import sillyGame
@@ -37,6 +38,7 @@ class CrazyGame:
             game.droneController = self.drone_controller
             game.drawer = self.drawer
             game.orch = self.orch
+            game.landmarkManager = self.landmarkManager
             game_result = game.run()
             if game_result == 'exit':
                 break
@@ -46,23 +48,25 @@ class CrazyGame:
         cf_logger.info('start initialization process')
         self.drawer = drawer.Drawer()
         time.sleep(0.5)
-        self.set_control_board()
+        self.set_arduino_control()
         self.set_drone_controller()
         self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller)
-        self.drawer.set_board(self.orch)
+        self.landmarkManager = landmarkManager.LandmarkManager(self.arduino_controller,
+                                                               self.drone_controller)
+        self.drawer.set_board(self.orch, self.landmarkManager)
         self.run_starting_animation()
 
-    def set_control_board(self):
+    def set_arduino_control(self):
         cf_logger.info('connecting to control board')
         self.drawer.set_text_line('connecting to control board')
         try:
-            self.control_board = controlBoard.ControlBoard()
+            self.arduino_controller = arduinoController.ArduinoController()
         except:
             cf_logger.info('fail to connect control board')
             self.drawer.set_text_line('connecting to control board')
-            self.control_board = None
+            self.arduino_controller = None
 
-        self.joystick = joystick.Joystick(self.control_board)
+        self.joystick = joystick.Joystick(self.arduino_controller)
 
     def set_drone_controller_buttons(self):
         BUTTON_SIZE = (200, 100)
@@ -153,8 +157,8 @@ class CrazyGame:
                     return button.text
 
     def tear_down(self):
-        if self.control_board:
-            self.control_board.disconnect()
+        if self.arduino_controller:
+            self.arduino_controller.disconnect()
         if self.drone_controller:
             self.drone_controller.disconnect()
         pygame.quit()
