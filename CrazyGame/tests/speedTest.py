@@ -10,7 +10,7 @@ from fixSysPath import test_sys_path
 
 test_sys_path()
 from CrazyGame import logger
-from CrazyGame.dronesController import DronesController
+from CrazyGame.Peripherals import dronesController
 import sys
 import math
 

@@ -10,8 +10,8 @@ class Follower:
         self._completed = False
         self._generator = self._targets_generator()
         self._target = next(self._generator)
-        assert not drone.grounded, 'try to move grounded drone'
-        assert self._is_drone_at_position(path[0]), 'drone too far from initial position'
+        # assert not drone.grounded, 'try to move grounded drone'
+        #assert self._is_drone_at_position(path[0]), 'drone too far from initial position'
 
     def follow_path(self):
         if self._completed:
@@ -23,7 +23,7 @@ class Follower:
         return self._orchestrator.try_goto(self._drone, self._target)
 
     def _is_drone_at_position(self, target):
-        return np.linalg.norm(self._orchestrator.get_drone_pos(self._drone) - target) < DESTINATION_RADIUS
+        return np.linalg.norm(self._orchestrator.update_drone_xy_pos(self._drone) - target) < DESTINATION_RADIUS
 
     def _set_new_path(self, new_path):
         self._path = new_path
