@@ -18,7 +18,7 @@ class Joystick:
     def get_normalize_direction(self):
         ax, ay = self._non_normalize_function()
         if ax == 0 and ay == 0:
-            return [0, 0]
+            return None
         vector = np.array([ax, ay])
         normalized_vector = vector / np.linalg.norm(vector)
         return normalized_vector.tolist()
@@ -29,7 +29,7 @@ class Joystick:
 
 def _get_keyboard_click():
     keys = pygame.key.get_pressed()
-    return keys[pygame.K_KP_ENTER]
+    return keys[pygame.K_c]
 
 
 def _get_keyboard_direction():

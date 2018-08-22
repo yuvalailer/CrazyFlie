@@ -26,6 +26,8 @@ class JoystickDemo:
             self.manage_events()
 
     def manage_events(self):
+        if self.joystick.get_click():
+            self.running = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -41,7 +43,7 @@ class JoystickDemo:
 
     def draw_joystick_circle(self, joystick_dir):
         pygame.draw.circle(self.displayManager.display_surf, displaysConsts.BLUE, self.circle_position, CIRCLE_RADIUS)
-        if joystick_dir != [0, 0]:
+        if joystick_dir:
             line_end_position = (self.circle_position[0] + 0.9*joystick_dir[0]*CIRCLE_RADIUS,
                                  self.circle_position[1] + 0.9*joystick_dir[1] * CIRCLE_RADIUS)
             pygame.draw.line(self.displayManager.display_surf, displaysConsts.GREEN, self.circle_position, line_end_position)

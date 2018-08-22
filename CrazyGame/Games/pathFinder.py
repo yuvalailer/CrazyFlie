@@ -12,7 +12,7 @@ from CrazyGame import logger
 cf_logger = logger.get_logger(__name__)
 
 MARGIN = 0.1
-DRONE_RADIUS = dronesOrchestrator.DRONE_RADIUS * 0.95
+DRONE_RADIUS = dronesOrchestrator.DRONE_RADIUS * 1
 HEXAGON_RADIUS = (DRONE_RADIUS * 2 + MARGIN) / np.cos(np.pi/8)
 PSIS = [np.pi*psi/4 for psi in range(8)]
 HEXAGON_POINTS_VECTORS = [Point(HEXAGON_RADIUS*np.sin(psi), HEXAGON_RADIUS*np.cos(psi)) for psi in PSIS]

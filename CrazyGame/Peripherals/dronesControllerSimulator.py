@@ -10,8 +10,8 @@ WORLD_X = 2.68
 WORLD_Y = 1.92
 
 TAKEOFF_HEIGHT = 0.5
-VELOCITY = 0.0001
-
+DEFAULT_VELOCITY = 0.1
+DEFAULT_STEP_SIZE = 0.1
 DRONES_NUM = 4
 
 NOISE_EXPECTATION_POS = 0
@@ -28,8 +28,8 @@ class DronesController:
     def __init__(self):
         self._world_size = [WORLD_X, WORLD_Y]
         self._objects = {}
-        self.velocity = VELOCITY
-        self.step = 0.1
+        self.velocity = DEFAULT_VELOCITY
+        self.step_size = DEFAULT_STEP_SIZE
         step = WORLD_Y/(DRONES_NUM+1)
         for i in range(0, DRONES_NUM):
             self._objects["crazyflie{}".format(i+1)] = munch.Munch(pos=[WORLD_X/2, step + i*step],
@@ -50,7 +50,7 @@ class DronesController:
         self.velocity = speed
 
     def set_step_size(self, step):
-        self.step = step
+        self.step_size = step
 
     def get_object_position(self, object_name):
         obj = self._objects[object_name]
@@ -72,8 +72,8 @@ class DronesController:
             drone.move = MoveManager(start_pos, target_pos, self.velocity)
 
     def end_move_position(self, start, direction):
-        pos_x = start[0] + direction[0] * self.velocity + self.add_noise("movetonoise")
-        pos_y = start[1] + direction[1] * self.velocity + self.add_noise("movetonoise")
+        pos_x = start[0] + direction[0] * self.step_size + self.add_noise("movetonoise")
+        pos_y = start[1] + direction[1] * self.step_size + self.add_noise("movetonoise")
         return [pos_x, pos_y]
 
     def goto(self, drone_name, pos):

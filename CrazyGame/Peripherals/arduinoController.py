@@ -45,6 +45,7 @@ class ArduinoController:
         self._thread.start()
         self.reset_leds()
         self._set_defaults()
+        cf_logger.info('arduino board connected')
 
     def disconnect(self):
         cf_logger.info('disconnection')
@@ -76,7 +77,7 @@ class ArduinoController:
         if abs(ax - self._default_x) < 20 and abs(ay - self._default_y) < 20:
             return [0, 0]
 
-        ax = ax - self._default_x
+        ax = -(ax - self._default_x)
         ay = -(ay - self._default_y)
 
         return [ax, ay]

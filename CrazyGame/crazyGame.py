@@ -32,7 +32,7 @@ class CrazyGame:
             game.droneController = self.drone_controller
             game.displayManager = self.displayManager
             game.orch = self.orch
-            game.landmark = self.landmarkManager
+            game.landmarks = self.landmarkManager
             game.run()
             if game.quit:
                 break
@@ -51,14 +51,15 @@ class CrazyGame:
         self.run_starting_animation()
 
     def set_arduino_control(self):
-        cf_logger.info('connecting to control board')
-        self.displayManager.text_line.set_text('connecting to control board')
+        cf_logger.info('connecting to arduino board')
+        self.displayManager.text_line.set_text('connecting to arduino board')
         try:
             self.arduino_controller = arduinoController.ArduinoController()
         except:
-            cf_logger.info('fail to connect control board')
-            self.displayManager.text_line.set_text('connecting to control board')
+            cf_logger.info('fail to connect arduino board')
+            self.displayManager.text_line.set_text('fail to connect to arduino board')
             self.arduino_controller = None
+            time.sleep(1)
 
         self.joystick = joystick.Joystick(self.arduino_controller)
 
@@ -102,18 +103,18 @@ class CrazyGame:
             drone_controller_type = self.get_drone_controller_type()
             if drone_controller_type == 'vm':
                 self.drone_controller = dronesController.DronesController()
-                cf_logger.info('Connect to drone vm controller...')
-                self.displayManager.text_line.set_text('Connect to drone vm controller...')
-                try:
-                    self.drone_controller.connect()
-                except ConnectionError:
-                    cf_logger.info('Fail to connect drone vm controller')
-                    self.displayManager.text_line.set_text('Failed')
-                    time.sleep(1)
-                    self.drone_controller = None
-            elif drone_controller_type == 'demo':
-                cf_logger.info('Connect to demo drone controller...')
+            else:
                 self.drone_controller = dronesControllerSimulator.DronesController()
+                cf_logger.info('Connect to drone vm controller...')
+            self.displayManager.text_line.set_text('Connect to drone vm controller...')
+            try:
+                self.drone_controller.connect()
+            except ConnectionError:
+                fail_text = 'Fail to connect drone %s controller' % drone_controller_type
+                cf_logger.info(fail_text)
+                self.displayManager.text_line.set_text(fail_text)
+                time.sleep(1)
+                self.drone_controller = None
 
     def run_starting_animation(self):
         if not self.drone_controller:

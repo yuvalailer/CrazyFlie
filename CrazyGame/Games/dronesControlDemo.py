@@ -51,13 +51,15 @@ class DronesControlDemo:
                 self.orch.update_drones_positions()
                 self.displayManager.render()
                 joystick_dir = self.joystick.get_normalize_direction()
-                if joystick_dir != [0, 0]:
+                if joystick_dir:
                     self.orch.try_move_drone(self.current_drone, joystick_dir)
                 current_time = time.time()
 
             self.manage_events()
 
     def manage_events(self):
+        if self.joystick.get_click():
+            self.orch.stop_drone(self.current_drone)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.quit = True
@@ -91,17 +93,17 @@ class DronesControlDemo:
             if self.led:
                 r, g, b = self.led.color
                 new_r = 0 if r>0 else 255
-                self.landmark.set_led(self.led, (new_r, g, b))
+                self.landmarks.set_led(self.led, (new_r, g, b))
         elif key == pygame.K_g:
             if self.led:
                 r, g, b = self.led.color
                 new_g = 0 if g > 0 else 255
-                self.landmark.set_led(self.led, (r, new_g, b))
+                self.landmarks.set_led(self.led, (r, new_g, b))
         elif key == pygame.K_b:
             if self.led:
                 r, g, b = self.led.color
                 new_b = 0 if b > 0 else 255
-                self.landmark.set_led(self.led, (r, g, new_b))
+                self.landmarks.set_led(self.led, (r, g, new_b))
 
     def manage_button_click(self, button):
         if button == self.back_button:

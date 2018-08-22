@@ -16,16 +16,17 @@ class LandmarkManager:
 
     def _parse_leds(self, landmarks):
         leds = []
-        for obj in landmarks:
+        for inx, obj in enumerate(landmarks):
             if obj.startswith('led'):
                 leds.append(Munch(name=obj,
+                                  number=inx,
                                   color=displaysConsts.BLACK,
                                   position=self.update_landmark_xy_position(obj)))
 
 
         if len(leds) == 0:
-            leds = [Munch(name='led1', color=displaysConsts.GREEN, position=Point(2.53, 0.96)),
-                    Munch(name='led2', color=displaysConsts.BLUE, position=Point(0.15, 0.96))]
+            leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.53, 0.96)),
+                    Munch(name='led2', number=1,color=displaysConsts.BLUE, position=Point(0.15, 0.96))]
         return leds
 
     def _parse_obstacles(self, landmarks):
@@ -57,4 +58,4 @@ class LandmarkManager:
     def set_led(self, led, color):
         led.color = color
         if self.arduino_cont:
-            self.arduino_cont.set_led(led, *color)
+            self.arduino_cont.set_led(led.number, *color)

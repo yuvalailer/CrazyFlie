@@ -7,8 +7,8 @@ from munch import Munch
 
 cf_logger = logger.get_logger(__name__)
 
-DRONE_VELOCITY = 0.1
-DRONE_STEP_SIZE = 0.1
+#DRONE_VELOCITY = 0.1
+#DRONE_STEP_SIZE = 0.1
 DRONE_RADIUS = 0.1
 TARGET_RADIUS = 0.05
 
@@ -19,8 +19,8 @@ class DronesOrchestrator:
         self.size = self.drones_controller.get_world_size()
         cf_logger.info('world size is %s'%self.size)
         self.drone_radius = DRONE_RADIUS
-        self.set_velocity(DRONE_VELOCITY)
-        self.set_drone_step_size(DRONE_STEP_SIZE)
+        self.set_velocity(0.1)
+        self.set_drone_step_size(0.1)
 
         self.drones = []
         for i, drone in enumerate(self.drones_controller.get_objects()):
@@ -52,9 +52,9 @@ class DronesOrchestrator:
     def drone_step_size(self):
         return self._drone_step_size
 
-    def set_drone_step_size(self, drone_move_time_out):
-        self._drone_step_size = drone_move_time_out
-        self.drones_controller.set_step_size(drone_move_time_out)
+    def set_drone_step_size(self, step_size):
+        self._drone_step_size = step_size
+        self.drones_controller.set_step_size(self._drone_step_size)
 
     def get_drone_pos(self, drone):
         return self.drones_controller.get_object_position(drone.name)

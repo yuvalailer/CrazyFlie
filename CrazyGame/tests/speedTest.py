@@ -25,7 +25,7 @@ def main():
     drone_name = sys.argv[1]
     if len(sys.argv) > 2:
         route_file = open(sys.argv[2], "r")
-    drones_controller = DronesController()  # Optional variables: "ip", "port" and "buffer_size"
+    drones_controller = dronesController.DronesController()  # Optional variables: "ip", "port" and "buffer_size"
     if not drones_controller.connect(number_of_trials=5, time_between_trails=3):
         cf_logger.critical("Communication error")
         return

@@ -44,23 +44,31 @@ class CaptureTheFlag:
         self.players = [munch.Munch(name='your',
                                     drone=self.orch.drones[0],
                                     start_position=Point(0.25, 0.96),
-                                    target=Point(2.43, 0.96),
+                                    led=self.landmarks.leds[0],
+                                    target=self.landmarks.leds[0].position,
                                     last_updated=0,
                                     prepare_to_turn=self.human_player_prepare_to_turn,
                                     manage_turn=self.human_player_manage_turn,
-                                    winner_message='YOU ARE THE WINNER'),
+                                    winner_message='YOU ARE THE WINNER',
+                                    color=displaysConsts.BLUE),
                         munch.Munch(name='computer',
                                     drone=self.orch.drones[1],
                                     start_position=Point(2.43, 0.96),
-                                    target=Point(0.25, 0.96),
+                                    led=self.landmarks.leds[1],
+                                    target=self.landmarks.leds[1].position,
                                     last_updated=0,
                                     prepare_to_turn=self.computer_player_prepare_to_turn,
                                     manage_turn=self.computer_player_manage_turn,
-                                    winner_message='YOU LOSE, NOT TOO BAD')
+                                    winner_message='YOU LOSE, NOT TOO BAD',
+                                    color=displaysConsts.GREEN)
                                     ]
 
         self.players[0].next_player = self.players[1]
         self.players[1].next_player = self.players[0]
+        self.players[0].drone.color = displaysConsts.BLACK
+        self.players[1].drone.color = displaysConsts.BLACK
+        self.landmarks.set_led(self.players[0].led, self.players[0].color)
+        self.landmarks.set_led(self.players[1].led, self.players[1].color)
         self.current_player = self.players[1]
 
     def game_loop(self):
@@ -68,16 +76,13 @@ class CaptureTheFlag:
         cf_logger.info('start game')
         while self.running:
             cf_logger.info('run %s turn' % self.current_player.name)
-            self.current_player.drone.color = displaysConsts.GREEN
+            self.current_player.drone.color = self.current_player.color
             self.run_turn()
-            if self.current_player.name == 'computer':
-                self.current_player.drone.color = displaysConsts.BLACK
-            else:
-                self.current_player.drone.color = displaysConsts.RED
             self.orch.stop_drone(self.current_player.drone)
             if self.player_reach_goal():
                 cf_logger.info('%s turn arrive to goal' % self.current_player.name)
                 break
+            self.current_player.drone.color = displaysConsts.BLACK
             self.displayManager.text_line.set_text('%s turn ended' % self.current_player.name)
             self.current_player = self.current_player.next_player
             self.interactive_sleep(2)
@@ -168,10 +173,11 @@ class CaptureTheFlag:
     def human_player_manage_turn(self):
         if time.time() - self.current_player.last_updated > 0.05:
             joystick_dir = self.joystick.get_normalize_direction()
-            self.orch.try_move_drone(self.current_player.drone, joystick_dir)
+            if joystick_dir:
+                self.orch.try_move_drone(self.current_player.drone, joystick_dir)
+            else:
+                self.orch.stop_drone(self.current_player.drone)
             self.current_player.last_updated = time.time()
-
-
 
     def manage_events(self):
         for event in pygame.event.get():

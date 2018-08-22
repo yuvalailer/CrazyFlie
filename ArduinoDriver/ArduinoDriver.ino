@@ -34,7 +34,7 @@ void loop() {
 
 void updateJoystick(){
   unsigned long now = millis();
-  if(now - last_message_send < 20)
+  if(now - last_message_send < 100)
     return;
   
   int Ax = analogRead(AxPin);
