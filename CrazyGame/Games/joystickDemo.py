@@ -6,12 +6,12 @@ from pygameUtils import displaysConsts
 
 CIRCLE_RADIUS = 150
 BACK_BUTTON_SIZE = (100, 50)
-BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height / 2 - BACK_BUTTON_SIZE[1] / 2)
+BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
 
 
 class JoystickDemo:
     def __init__(self):
-        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, 'back')
+        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
         self.circle_position = (int(displayManager.MAIN_RECT.width / 2), int(displayManager.MAIN_RECT.height / 2))
 
     def run(self):

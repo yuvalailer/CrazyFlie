@@ -21,7 +21,7 @@ RENDER_RATE = 1/15
 
 class CaptureTheFlag:
     def __init__(self):
-        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, 'back')
+        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
 
     def run(self):
         self.velocity = self.orch.drone_velocity
