@@ -2,6 +2,8 @@ from munch import Munch
 from CrazyGame.pygameUtils import displaysConsts
 from shapely.geometry import Point
 
+LED_RADIUS = 0.05
+
 
 class LandmarkManager:
     def __init__(self, arduino_controller, drones_controller):
@@ -10,14 +12,20 @@ class LandmarkManager:
         self.leds = self._parse_leds(rigid_bodies)
         self.obstacles = self._parse_obstacles(rigid_bodies)
         self.arduino_cont = arduino_controller
-        # todo handle the case of no landmarks in motive
-        self.update_led_positions()
-        self.update_obstacle_positions()
         self.reset_leds()
 
     def _parse_leds(self, landmarks):
-        leds = [Munch(name=obj, color=displaysConsts.BLACK) for
-                obj in landmarks if obj.startswith()]
+        leds = []
+        for obj in landmarks:
+            if obj.startswith('led'):
+                leds.append(Munch(name=obj,
+                                  color=displaysConsts.BLACK,
+                                  position=self.update_landmark_xy_position(obj)))
+
+
+        if len(leds) == 0:
+            leds = [Munch(name='led1', color=displaysConsts.GREEN, position=Point(2.53, 0.96)),
+                    Munch(name='led2', color=displaysConsts.BLUE, position=Point(0.15, 0.96))]
         return leds
 
     def _parse_obstacles(self, landmarks):
@@ -29,7 +37,6 @@ class LandmarkManager:
 
     def update_landmark_xy_position(self, landmark):
         pos = self.drones_controller.get_object_position(landmark.name)
-        # todo update if can't find in the motive( if get_object_position doesn't find the name)
         landmark.position = Point(pos[:2])
         return landmark.position
 
@@ -42,7 +49,12 @@ class LandmarkManager:
             self.update_landmark_xy_position(obstacle)
 
     def reset_leds(self):
-        self.arduino_cont.reset_leds()  # todo handle the case of no arduino controller
+        for led in self.leds:
+            self.set_led(led, displaysConsts.BLACK)
+        if self.arduino_cont:
+            self.arduino_cont.reset_leds()
 
-    def set_led(self, led, r, g, b):
-        self.arduino_cont.set_led(led, r, g, b) # todo handle the case of no arduino controller
+    def set_led(self, led, color):
+        led.color = color
+        if self.arduino_cont:
+            self.arduino_cont.set_led(led, *color)

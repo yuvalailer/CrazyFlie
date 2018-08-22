@@ -38,6 +38,9 @@ class DronesController:
 
     def set_speed(self, speed):
         self._send("SetSpeed${}".format(speed))
+    
+    def set_step_size(self, step_size):
+        self._send("SetStepSize${}".format(step_size))
 
     def get_world_size(self):
         res = self._send("WorldSize")
@@ -55,6 +58,9 @@ class DronesController:
         else:
             cf_logger.error("Failed to get list of objects")
             return False
+
+    def take_your_place(self, drone_name, pos): # pos = [x, y]
+        self._send("TakeYourPlace${}${}${}".format(drone_name, pos[0], pos[1]))
 
     def get_object_position(self, object_name):
         res = self._send("GetPos${}".format(object_name))

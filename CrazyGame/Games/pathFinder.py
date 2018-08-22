@@ -1,24 +1,26 @@
+import functools
+import math
+from queue import PriorityQueue
+
+import numpy as np
 from shapely.geometry import LineString
 from shapely.geometry import Point
-from queue import PriorityQueue
-import functools
-import numpy as np
-import math
+
+import dronesOrchestrator
 from CrazyGame import logger
-from CrazyGame.Games import dronesOrchestrator
 
 cf_logger = logger.get_logger(__name__)
 
-MARGIN = 1
-DRONE_RADIUS = dronesOrchestrator.DRONE_RADIUS
-HEXAGON_RADIUS = (DRONE_RADIUS*2 + MARGIN) / np.cos(np.pi/8)
+MARGIN = 0.1
+DRONE_RADIUS = dronesOrchestrator.DRONE_RADIUS * 0.95
+HEXAGON_RADIUS = (DRONE_RADIUS * 2 + MARGIN) / np.cos(np.pi/8)
 PSIS = [np.pi*psi/4 for psi in range(8)]
 HEXAGON_POINTS_VECTORS = [Point(HEXAGON_RADIUS*np.sin(psi), HEXAGON_RADIUS*np.cos(psi)) for psi in PSIS]
 
-MIN_X = 2
-MIN_Y = 2
-MAX_X = 48
-MAX_Y = 48
+MIN_X = 0
+MIN_Y = 0
+MAX_X = 2
+MAX_Y = 2
 
 
 def _path_distance(path):
@@ -158,7 +160,7 @@ def _find_path(start, target, obstacles):
         points.extend(list(filter(point_query, _get_points_around_obstacle(obstacle))))
 
     if not point_query(target):
-        cf_logger.info('target not reacable!')
+        cf_logger.info('target not reachable!')
         new_target = sorted(points, key=lambda k: target.distance(k))[0]
         target_moved_distance, target = target.distance(new_target), new_target
     else:
@@ -171,7 +173,7 @@ def _find_path(start, target, obstacles):
     return path, target_moved_distance
 
 
-def silly_player_move(friend_drones, opponent_drones, target, allowed_distance=20):
+def find_best_path(friend_drones, opponent_drones, target, allowed_distance=20):
     @functools.total_ordering
     class Path:
         def __init__(self, path, target_moved_distance):

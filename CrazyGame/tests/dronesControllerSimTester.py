@@ -1,8 +1,11 @@
-import logger
 import time
+
 from fixSysPath import test_sys_path
+
+import logger
+
 test_sys_path()
-from CrazyGame import dronesControllerSimulator
+from Peripherals import dronesControllerSimulator
 
 cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start controller sim tester ####")

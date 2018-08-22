@@ -2,8 +2,8 @@ import pygame
 import os
 from pygameUtils import displaysConsts
 from CrazyGame import logger
-cf_logger = logger.get_logger(__name__)
-
+import logging
+cf_logger = logger.get_logger(__name__, logging.INFO)
 
 UNPRESSED_BUTTON_IMAGE = 'button_unpressed.png'
 PRESSED_BUTTON_IMAGE = 'button_pressed.png'
@@ -30,6 +30,11 @@ class Button:
         self.set_pressed(False)
         self.current_color = (0, 0, 0)
 
+    def set_text(self, text):
+        self.text_surface = self.font.render(text, False, Button.BUTTON_TEXT_COLOR)
+        self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
+                              self.rect.centery - self.text_surface.get_height() / 2)
+        self.render()
 
     def render(self):
         if self.has_image:
@@ -52,7 +57,7 @@ class Button:
 
     def handle_mouse_event(self, event_type, mouse_location):
         if self.rect.collidepoint(*mouse_location):
-            cf_logger.info('mouse event %s occurred on button %s'%(event_type, self.text))
+            cf_logger.debug('mouse event %s occurred on button %s'%(event_type, self.text))
             if event_type == pygame.MOUSEBUTTONDOWN:
                 self.set_pressed(True)
             elif event_type == pygame.MOUSEBUTTONUP:

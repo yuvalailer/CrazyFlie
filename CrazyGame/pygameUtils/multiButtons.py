@@ -4,7 +4,7 @@ from CrazyGame import logger
 cf_logger = logger.get_logger(__name__)
 
 
-class MultiButton:
+class MultiButtons:
     def __init__(self, buttons, name):
         cf_logger.info('create multi button {}'.format(name))
         self.buttons = buttons
