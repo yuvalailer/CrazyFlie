@@ -27,7 +27,7 @@ class DronesOrchestrator:
             self.drones.append(Munch(name=drone,
                                      index=i,
                                      grounded=True,
-                                     on_move=False,
+                                     might_on_move=False,
                                      color=displaysConsts.BLACK))
 
         self.update_drones_positions()
@@ -71,10 +71,10 @@ class DronesOrchestrator:
         for drone in self.drones:
             self.update_drone_xy_pos(drone)
 
-    def stop(self, drone):
+    def stop_drone(self, drone):
         if drone.might_on_move:
             cf_logger.warning('stopping drone %s' % drone.name)
-            self.try_move_drone(drone, [0, 0])
+            self.drones_controller.move_drone(drone.name, [0, 0])
             drone.might_on_move = False
 
     def try_move_drone(self, drone, direction):

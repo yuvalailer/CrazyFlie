@@ -83,7 +83,7 @@ class DronesControlDemo:
         elif key == pygame.K_l:
             self.orch.land(self.current_drone)
         elif key == pygame.K_s:
-            self.orch.stop(self.current_drone)
+            self.orch.stop_drone(self.current_drone)
 
     def manage_button_click(self, button):
         if button == self.back_button:
@@ -129,6 +129,3 @@ class DronesControlDemo:
     def set_buttons_text(self):
         self.velocity_button.set_text("velocity=%.2f" % self.velocity)
         self.step_size_button.set_text("step Size=%.2f" % self.step_size)
-
-
-

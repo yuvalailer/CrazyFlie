@@ -74,7 +74,7 @@ class CaptureTheFlag:
                 self.current_player.drone.color = displaysConsts.BLACK
             else:
                 self.current_player.drone.color = displaysConsts.RED
-            self.orch.stop(self.current_player.drone)
+            self.orch.stop_drone(self.current_player.drone)
             if self.player_reach_goal():
                 cf_logger.info('%s turn arrive to goal' % self.current_player.name)
                 break
