@@ -25,8 +25,8 @@ class LandmarkManager:
 
 
         if len(leds) == 0:
-            leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.53, 0.96)),
-                    Munch(name='led2', number=1,color=displaysConsts.BLUE, position=Point(0.15, 0.96))]
+            leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.30, 0.96)),
+                    Munch(name='led2', number=1,color=displaysConsts.BLUE, position=Point(0.20, 0.96))]
         return leds
 
     def _parse_obstacles(self, landmarks):

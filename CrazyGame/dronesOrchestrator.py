@@ -12,8 +12,6 @@ DRONE_STEP_SIZE = 0.1
 DRONE_RADIUS = 0.1
 TARGET_RADIUS = 0.05
 
-
-
 class DronesOrchestrator:
     def __init__(self, drones_controller):
         self.drones_controller = drones_controller
@@ -124,7 +122,7 @@ class DronesOrchestrator:
         drone.grounded = False
 
     def drone_is_up(self, drone):
-        return self.get_drone_pos(drone)[2] > 0.1
+        return self.get_drone_pos(drone)[2] > 0.45
 
     def drone_reach_position(self, drone, target):
         return self.update_drone_xy_pos(drone).distance(target) < TARGET_RADIUS

@@ -21,7 +21,7 @@ CHOOSE_BUTTON_SIZE = (200, 130)
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
 COM_COM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
 COM_PLAYER_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - CHOOSE_BUTTON_SIZE[0], Y_POS)
-TURN_TIME = 10
+TURN_TIME = 4
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
 
@@ -34,7 +34,7 @@ class CaptureTheFlag:
         self.getting = True
         self.quit = False
         self.running = True
-        self.players = [munch.Munch(last_updated=0)] * 2
+        self.players = [munch.Munch(last_updated=0), munch.Munch(last_updated=0)]
         self.current_player = None
 
 
@@ -61,8 +61,8 @@ class CaptureTheFlag:
         self.game_loop()
 
     def allocate_players(self):
-        drone1position = Point(0.25, 0.96)
-        drone2position = Point(2.43, 0.96)
+        drone1position = Point(0.3, 0.96)
+        drone2position = Point(2.2, 0.96)
         if drone1position.distance(self.landmarks.leds[0].position) < drone2position.distance(self.landmarks.leds[0].position):
             drone1 = self.orch.drones[0]
             drone2 = self.orch.drones[1]
@@ -74,9 +74,11 @@ class CaptureTheFlag:
         self.players[0].start_position = drone1position
         self.players[1].drone = drone2
         self.players[1].start_position = drone2position
+        self.players[0].color = displaysConsts.BLUE
+        self.players[1].color = displaysConsts.GREEN
 
     def initialize_players(self):
-        cf_logger.info('create players')
+        cf_logger.info('create players - {}'.format(len(self.players)))
         self.allocate_players()
         for i in range(2):
             self.players[i].led = self.landmarks.leds[i]
@@ -84,9 +86,6 @@ class CaptureTheFlag:
             self.players[i].next_player = self.players[1-i]
             self.players[i].drone.color = displaysConsts.BLACK
             self.landmarks.set_led(self.players[i].led, self.players[i].color)
-
-        self.players[0].color = displaysConsts.BLUE
-        self.players[1].color = displaysConsts.GREEN
 
         self.current_player = self.players[1]
 
@@ -131,6 +130,9 @@ class CaptureTheFlag:
                 last_render_time = time.time()
             self.current_player.manage_turn()
             self.manage_events()
+        cf_logger.debug('player %s finished his movement at position: %s' % (self.current_player.name,
+                                                                             self.orch.get_drone_pos(
+                                                                                 self.current_player.drone)))
 
     def land_drones(self):
         for player in self.players:
@@ -138,6 +140,7 @@ class CaptureTheFlag:
 
     def move_drones_to_start_positions(self):
         for player in self.players:
+            cf_logger.info("players - %d" % len(self.players))
             cf_logger.info("move %s to start position" % player.name)
             self.orch.try_take_off(player.drone)
             wait_func = functools.partial(self.orch.drone_is_up, player.drone)
@@ -180,7 +183,10 @@ class CaptureTheFlag:
         friend_drones = [self.orch.update_drone_xy_pos(self.current_player.drone)]
         opponent_drones = [self.orch.update_drone_xy_pos(self.current_player.next_player.drone)]
         target = self.current_player.target
-        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 100)
+        cf_logger.critical('player %s current target is %s ' %(self.current_player.name, target))
+        cf_logger.critical('player %s current position is: %s' %(self.current_player.name,
+                                                                 self.orch.get_drone_pos(self.current_player.drone)))
+        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, self.orch.size)
         if not path:
             cf_logger.info('no path found')
             path = [self.orch.update_drone_xy_pos(self.current_player.drone)]*2
@@ -228,7 +234,6 @@ class CaptureTheFlag:
             self.getting = False
             self.running = False
         if button == self.com_com_button:
-
             self.com_com_update()
             self.getting = False
         if button == self.com_player_button:
@@ -237,10 +242,10 @@ class CaptureTheFlag:
 
     def com_com_update(self):
         for i in range(2):
-            self.players[i].name = 'computer {}'.format(i)
+            self.players[i].name = 'computer {}'.format(i+1)
             self.players[i].prepare_to_turn = self.computer_player_prepare_to_turn
             self.players[i].manage_turn = self.computer_player_manage_turn
-            self.players[i].winner_message = 'computer {} wins'.format(i)
+            self.players[i].winner_message = 'computer {} wins'.format(i+1)
 
     def com_player_update(self):
         self.players[0].name = 'computer'

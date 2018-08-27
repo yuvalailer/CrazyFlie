@@ -6,8 +6,8 @@ import math
 
 cf_logger = logger.get_logger(__name__)
 
-WORLD_X = 2.68
-WORLD_Y = 1.92
+WORLD_X = 2.46
+WORLD_Y = 1.72
 
 TAKEOFF_HEIGHT = 0.5
 DEFAULT_VELOCITY = 0.1
