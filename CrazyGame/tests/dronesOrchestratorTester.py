@@ -35,7 +35,7 @@ def print_drone_positions(orch):
     cf_logger.info("*** DRONES POSITIONS ***")
     cf_logger.info("**********************")
     for drone in orch.drones:
-        drone_alt = orch.get_drone_altitude(drone)
+        drone_alt = orch.get_drone_alt(drone)
         d = drone.name
         p = orch.update_drone_xy_pos(drone)
         k = drone_alt
