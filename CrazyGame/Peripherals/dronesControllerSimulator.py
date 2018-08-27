@@ -128,7 +128,11 @@ class MoveManager():
             self._move_end = True
             return list(self._target)
 
-        move_complieted_ratio = (current_time - self._start_time) / self._total_time
+        time_numerator = current_time - self._start_time
+        if time_numerator >= self._total_time:
+            move_complieted_ratio = 0
+        else:
+            move_complieted_ratio = time_numerator / self._total_time
 
         pos_x = self._start[0] + self._move_vector[0] * move_complieted_ratio
         pos_y = self._start[1] + self._move_vector[1] * move_complieted_ratio
