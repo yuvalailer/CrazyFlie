@@ -106,7 +106,7 @@ class DronesController:
         return np.random.normal(exp, var, 1)
 
 
-class MoveManager():
+class MoveManager:
     def __init__(self, start, target, velocity):
         self._start = start
         self._target = target

@@ -6,6 +6,7 @@ from shapely.geometry import Point
 
 from pygameUtils import displayManager
 from pygameUtils import button
+from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
 from CrazyGame import logger
 from Games import pathFinder
@@ -13,45 +14,60 @@ from Games import followPath
 
 cf_logger = logger.get_logger(__name__)
 
+DIS_FROM_EDGE = 200
+Y_POS = 300
 BACK_BUTTON_SIZE = (100, 50)
+CHOOSE_BUTTON_SIZE = (200, 130)
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
+COM_COM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
+COM_PLAYER_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - CHOOSE_BUTTON_SIZE[0], Y_POS)
 TURN_TIME = 10
 RENDER_RATE = 1/15
+MOUSE_LEFT_BUTTON = 1
 
 
 class CaptureTheFlag:
     def __init__(self):
         self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
+        self.com_com_button = multiLinesButton.MultiLinesButton(COM_COM_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['computer','vs','computer'])
+        self.com_player_button = multiLinesButton.MultiLinesButton(COM_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','computer'])
+        self.getting = True
+        self.quit = False
+        self.running = True
 
     def run(self):
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
 
+        assert len(self.orch.drones) > 1, 'need at least two drones'
+
+        self.choose_mode()
+        if not self.running:
+            return
+
         self.displayManager.reset_main_rect(update_display=False)
+        self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.add_buttons()
         self.displayManager.render()
-
-        assert len(self.orch.drones) > 1, 'need at least two drones'
-        self.set_players()
 
         self.quit = False
         self.running = True
         self.game_loop()
 
-    def set_players(self):
+    def set_players(self, player1_name, player2_name, player2_prep, player2_manage, player2_msg, player1_msg):
         cf_logger.info('create players')
-        self.players = [munch.Munch(name='your',
+        self.players = [munch.Munch(name=player2_name,
                                     drone=self.orch.drones[0],
                                     start_position=Point(0.25, 0.96),
                                     led=self.landmarks.leds[0],
                                     target=self.landmarks.leds[0].position,
                                     last_updated=0,
-                                    prepare_to_turn=self.human_player_prepare_to_turn,
-                                    manage_turn=self.human_player_manage_turn,
-                                    winner_message='YOU ARE THE WINNER',
+                                    prepare_to_turn=player2_prep,
+                                    manage_turn=player2_manage,
+                                    winner_message=player2_msg,
                                     color=displaysConsts.BLUE),
-                        munch.Munch(name='computer',
+                        munch.Munch(name=player1_name,
                                     drone=self.orch.drones[1],
                                     start_position=Point(2.43, 0.96),
                                     led=self.landmarks.leds[1],
@@ -59,7 +75,7 @@ class CaptureTheFlag:
                                     last_updated=0,
                                     prepare_to_turn=self.computer_player_prepare_to_turn,
                                     manage_turn=self.computer_player_manage_turn,
-                                    winner_message='YOU LOSE, NOT TOO BAD',
+                                    winner_message=player1_msg,
                                     color=displaysConsts.GREEN)
                                     ]
 
@@ -184,9 +200,10 @@ class CaptureTheFlag:
             if event.type == pygame.QUIT:
                 self.quit = True
                 self.running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.getting = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == MOUSE_LEFT_BUTTON:
                 self.displayManager.handle_mouse_event(event.type)
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == MOUSE_LEFT_BUTTON:
                 mouse_event_obj = self.displayManager.handle_mouse_event(event.type)
                 if mouse_event_obj:
                     if mouse_event_obj[0] == 'button':
@@ -200,7 +217,27 @@ class CaptureTheFlag:
 
     def manage_button_click(self, button):
         if button == self.back_button:
+            self.getting = False
             self.running = False
+        if button == self.com_com_button:
+            self.set_players('computer 1', 'computer 2', self.computer_player_prepare_to_turn,
+                             self.computer_player_manage_turn, 'computer 2 wins', 'computer 1 wins')
+            self.getting = False
+        if button == self.com_player_button:
+            self.set_players('computer', 'your', self.human_player_prepare_to_turn,
+                             self.human_player_manage_turn, 'YOU ARE THE WINNER', 'YOU LOSE, NOT TOO BAD')
+            self.getting = False
 
-    def add_buttons(self):
+    def add_buttons(self, choose=False):
         self.displayManager.add_button(self.back_button)
+        if choose:
+            self.displayManager.add_button(self.com_com_button)
+            self.displayManager.add_button(self.com_player_button)
+
+    def choose_mode(self):
+        self.displayManager.text_line.set_text('Choose game mode')
+        self.add_buttons(choose=True)
+        self.displayManager.render()
+        self.getting = True
+        while self.getting:
+            self.manage_events()
