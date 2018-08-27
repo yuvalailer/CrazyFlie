@@ -4,7 +4,7 @@ import logging
 from CrazyGame import logger
 logger.set_default_logging_level(logging.INFO)
 cf_logger = logger.get_logger(__name__)
-cf_logger.info("#### start silly player tester ####")
+cf_logger.info("#### start path finder tester ####")
 from shapely.geometry import Point
 import matplotlib.pyplot as plt
 from Games import pathFinder
@@ -40,8 +40,8 @@ for drone in opponent_drones:
 
 cf_logger.info("path:")
 for p,q in zip(path[:-1], path[1:]):
-    cf_logger.info('%d %d -> %d %d' % (p.x, p.y, q.x, q.y))
-    plt.plot([p.x, q.x], [p.y, q.y], color='yellow')
+    cf_logger.info('%f %f -> %f %f' % (p.x, p.y, q.x, q.y))
+    plt.plot([p.x, q.x], [p.y, q.y], color='green')
 
 plt.xlim(0, 2)
 plt.ylim(0, 2)

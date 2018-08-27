@@ -22,6 +22,7 @@ RENDER_RATE = 1/15
 class CaptureTheFlag:
     def __init__(self):
         self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
+        self.players = [munch.Munch(last_updated=0)] * 2
 
     def run(self):
         self.velocity = self.orch.drone_velocity
@@ -33,35 +34,36 @@ class CaptureTheFlag:
         self.displayManager.render()
 
         assert len(self.orch.drones) > 1, 'need at least two drones'
-        self.set_players()
+        self.initialize_players()
 
         self.quit = False
         self.running = True
         self.game_loop()
 
-    def set_players(self):
+    def allocate_players(self):
+        drone1position = Point(0.25, 0.96)
+        drone2position = Point(2.43, 0.96)
+        if drone1position.distance(self.landmarks.leds[0].position) < drone2position.distance(self.landmarks.leds[0].position):
+            drone1 = self.orch.drones[0]
+            drone2 = self.orch.drones[1]
+        else:
+            drone1 = self.orch.drones[1]
+            drone2 = self.orch.drones[0]
+
+        self.players[0].drone = drone1
+        self.players[0].start_position = drone1position
+        self.players[1].drone = drone2
+        self.players[1].start_position = drone2position
+
+    def initialize_players(self):
         cf_logger.info('create players')
-        self.players = [munch.Munch(name='your',
-                                    drone=self.orch.drones[0],
-                                    start_position=Point(0.25, 0.96),
-                                    led=self.landmarks.leds[0],
-                                    target=self.landmarks.leds[0].position,
-                                    last_updated=0,
-                                    prepare_to_turn=self.human_player_prepare_to_turn,
-                                    manage_turn=self.human_player_manage_turn,
-                                    winner_message='YOU ARE THE WINNER',
-                                    color=displaysConsts.BLUE),
-                        munch.Munch(name='computer',
-                                    drone=self.orch.drones[1],
-                                    start_position=Point(2.43, 0.96),
-                                    led=self.landmarks.leds[1],
-                                    target=self.landmarks.leds[1].position,
-                                    last_updated=0,
-                                    prepare_to_turn=self.computer_player_prepare_to_turn,
-                                    manage_turn=self.computer_player_manage_turn,
-                                    winner_message='YOU LOSE, NOT TOO BAD',
-                                    color=displaysConsts.GREEN)
-                                    ]
+        self.allocate_players()
+        self.players[0].led = self.landmarks.leds[0]
+        self.players[0].target = self.landmarks.leds[0].position
+        self.players[0].color = displaysConsts.BLUE
+        self.players[1].led = self.landmarks.leds[1]
+        self.players[1].target = self.landmarks.leds[1].position
+        self.players[1].color = displaysConsts.GREEN
 
         self.players[0].next_player = self.players[1]
         self.players[1].next_player = self.players[0]
@@ -72,7 +74,9 @@ class CaptureTheFlag:
         self.current_player = self.players[1]
 
     def game_loop(self):
-        self.move_drones_to_start_position()
+        for drone in self.orch.drones:
+            self.orch.land(drone)
+        self.move_drones_to_start_positions()
         cf_logger.info('start game')
         while self.running:
             cf_logger.info('run %s turn' % self.current_player.name)
@@ -115,7 +119,7 @@ class CaptureTheFlag:
         for player in self.players:
             self.orch.land(player.drone)
 
-    def move_drones_to_start_position(self):
+    def move_drones_to_start_positions(self):
         for player in self.players:
             cf_logger.info("move %s to start position" % player.name)
             self.orch.try_take_off(player.drone)
@@ -124,7 +128,7 @@ class CaptureTheFlag:
 
             self.orch.try_goto(player.drone, player.start_position)
             wait_func = functools.partial(self.orch.drone_reach_position, player.drone, player.start_position)
-            self.wait_to(wait_func, timeout=10)
+            self.wait_to(wait_func, timeout=30)
 
             self.orch.land(player.drone)
 
