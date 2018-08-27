@@ -10,7 +10,7 @@ cf_logger = logger.get_logger(__name__)
 WINDOW_RECT = (1000, 800)
 
 TEXT_LINE_HEIGHT = 50
-TEXT_LINE_RECT = pygame.Rect(0, WINDOW_RECT[1]-TEXT_LINE_HEIGHT,WINDOW_RECT[0],TEXT_LINE_HEIGHT)
+TEXT_LINE_RECT = pygame.Rect(0, WINDOW_RECT[1]-TEXT_LINE_HEIGHT, WINDOW_RECT[0], TEXT_LINE_HEIGHT)
 
 MAIN_RECT = pygame.Rect(0, 0, WINDOW_RECT[0], WINDOW_RECT[1] - TEXT_LINE_HEIGHT)
 
@@ -24,14 +24,14 @@ class Drawer:
         self.multiButtons = []
         self.board = None
         pygame.display.set_caption('Crazy Game')
-        self.reset_main_rect(update_display=False)
+        self.reset_main_rect(update_display=True)
         self.set_text_line('Welcome To Crazy Game', update_display=False)
         self.image_name = ''
         pygame.display.update()
 
     def reset_main_rect(self, update_display=True):
         backgroundimage = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, 'main_crazyflie.png'))
-        self.display_surf.blit(backgroundimage, (0,0))
+        self.display_surf.blit(backgroundimage, (0, 0))
         self.buttons = []
         if update_display:
             pygame.display.update()

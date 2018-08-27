@@ -24,13 +24,13 @@ COM_PLAYER_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - CHOOSE
 TURN_TIME = 10
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
-
+CTF_IMAGE = 'capture_the_flag.png'
 
 class CaptureTheFlag:
     def __init__(self):
         self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
-        self.com_com_button = multiLinesButton.MultiLinesButton(COM_COM_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['computer','vs','computer'])
-        self.com_player_button = multiLinesButton.MultiLinesButton(COM_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','computer'])
+        self.com_com_button = multiLinesButton.MultiLinesButton(COM_COM_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['computer', 'vs', 'computer'])
+        self.com_player_button = multiLinesButton.MultiLinesButton(COM_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player', 'vs', 'computer'])
         self.getting = True
         self.quit = False
         self.running = True
@@ -45,7 +45,7 @@ class CaptureTheFlag:
         if not self.running:
             return
 
-        self.displayManager.reset_main_rect(update_display=False)
+        #self.displayManager.reset_main_rect(True, CTF_IMAGE)
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.add_buttons()
@@ -238,6 +238,7 @@ class CaptureTheFlag:
             self.displayManager.add_button(self.com_player_button)
 
     def choose_mode(self):
+        self.displayManager.reset_main_rect(True, CTF_IMAGE)
         self.displayManager.text_line.set_text('Choose game mode')
         self.add_buttons(choose=True)
         self.displayManager.render()
