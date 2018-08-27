@@ -183,7 +183,7 @@ class CaptureTheFlag:
         path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 100)
         if not path:
             cf_logger.info('no path found')
-            path = [self.orch.update_drone_xy_pos(self.current_player.drone)]
+            path = [self.orch.update_drone_xy_pos(self.current_player.drone)]*2
         self.current_player.follower = followPath.Follower(path, self.current_player.drone, self.orch)
 
     def computer_player_manage_turn(self):
@@ -228,13 +228,40 @@ class CaptureTheFlag:
             self.getting = False
             self.running = False
         if button == self.com_com_button:
-            self.initialize_players('computer 1', 'computer 2', self.computer_player_prepare_to_turn,
-                             self.computer_player_manage_turn, 'computer 2 wins', 'computer 1 wins')
+
+            self.com_com_update()
             self.getting = False
         if button == self.com_player_button:
-            self.initialize_players('computer', 'your', self.human_player_prepare_to_turn,
-                             self.human_player_manage_turn, 'YOU ARE THE WINNER', 'YOU LOSE, NOT TOO BAD')
+            self.com_player_update()
             self.getting = False
+
+    def com_com_update(self):
+        for i in range(2):
+            self.players[i].name = 'computer {}'.format(i)
+            self.players[i].prepare_to_turn = self.computer_player_prepare_to_turn
+            self.players[i].manage_turn = self.computer_player_manage_turn
+            self.players[i].winner_message = 'computer {} wins'.format(i)
+
+    def com_player_update(self):
+        self.players[0].name = 'computer'
+        self.players[1].name = 'your'
+
+        self.players[0].prepare_to_turn = self.computer_player_prepare_to_turn
+        self.players[1].prepare_to_turn = self.human_player_prepare_to_turn
+
+        self.players[0].manage_turn = self.computer_player_manage_turn
+        self.players[1].manage_turn = self.human_player_manage_turn
+
+        self.players[0].winner_message = 'YOU LOSE, TOO BAD, LOSER!!!'
+        self.players[1].winner_message = 'YOU ARE THE WINNER'
+
+    def player_player_update(self):
+        for i in range(2):
+            self.players[i].name = 'player {}'.format(i)
+            self.players[i].prepare_to_turn = self.human_player_prepare_to_turn
+            self.players[i].manage_turn = self.human_player_manage_turn
+            self.players[i].winner_message = 'player {} wins'.format(i)
+
 
     def add_buttons(self, choose=False):
         self.displayManager.add_button(self.back_button)
@@ -249,3 +276,4 @@ class CaptureTheFlag:
         self.getting = True
         while self.getting:
             self.manage_events()
+            time.sleep(0.1)

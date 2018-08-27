@@ -21,8 +21,8 @@ class DronesOrchestrator:
 
         cf_logger.info('world size is %s' % self.size)
         self.drone_radius = DRONE_RADIUS
-        self.set_velocity(DRONE_VELOCITY)
-        self.set_drone_step_size(DRONE_STEP_SIZE)
+        self._drone_velocity = DRONE_VELOCITY
+        self._drone_step_size = DRONE_STEP_SIZE
 
         self.drones = []
         for i, drone in enumerate(self.drones_controller.get_objects()):
