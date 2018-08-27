@@ -14,13 +14,14 @@ from Games import followPath
 
 cf_logger = logger.get_logger(__name__)
 
-DIS_FROM_EDGE = 200
+DIS_FROM_EDGE = 150
 Y_POS = 300
 BACK_BUTTON_SIZE = (100, 50)
 CHOOSE_BUTTON_SIZE = (200, 130)
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
 COM_COM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
 COM_PLAYER_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - CHOOSE_BUTTON_SIZE[0], Y_POS)
+PLAYER_PLAYER_BUTTON_POS = ((displayManager.MAIN_RECT.width-CHOOSE_BUTTON_SIZE[0])/2, Y_POS)
 TURN_TIME = 4
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
@@ -31,6 +32,7 @@ class CaptureTheFlag:
         self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
         self.com_com_button = multiLinesButton.MultiLinesButton(COM_COM_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['computer','vs','computer'])
         self.com_player_button = multiLinesButton.MultiLinesButton(COM_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','computer'])
+        self.player_player_button = multiLinesButton.MultiLinesButton(PLAYER_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','player'])
         self.getting = True
         self.quit = False
         self.running = True
@@ -239,6 +241,9 @@ class CaptureTheFlag:
         if button == self.com_player_button:
             self.com_player_update()
             self.getting = False
+        if button == self.player_player_button:
+            self.player_player_update()
+            self.getting = False
 
     def com_com_update(self):
         for i in range(2):
@@ -262,10 +267,10 @@ class CaptureTheFlag:
 
     def player_player_update(self):
         for i in range(2):
-            self.players[i].name = 'player {}'.format(i)
+            self.players[i].name = 'player {}'.format(i+1)
             self.players[i].prepare_to_turn = self.human_player_prepare_to_turn
             self.players[i].manage_turn = self.human_player_manage_turn
-            self.players[i].winner_message = 'player {} wins'.format(i)
+            self.players[i].winner_message = 'player {} wins'.format(i+1)
 
 
     def add_buttons(self, choose=False):
@@ -273,6 +278,7 @@ class CaptureTheFlag:
         if choose:
             self.displayManager.add_button(self.com_com_button)
             self.displayManager.add_button(self.com_player_button)
+            self.displayManager.add_button(self.player_player_button)
 
     def choose_mode(self):
         self.displayManager.text_line.set_text('Choose game mode')
