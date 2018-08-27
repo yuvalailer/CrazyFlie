@@ -25,7 +25,7 @@ PLAYER_PLAYER_BUTTON_POS = ((displayManager.MAIN_RECT.width-CHOOSE_BUTTON_SIZE[0
 TURN_TIME = 4
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
-
+CTF_IMAGE = 'capture_the_flag.png'
 
 class CaptureTheFlag:
     def __init__(self):
@@ -43,7 +43,6 @@ class CaptureTheFlag:
     def run(self):
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
-
         assert len(self.orch.drones) > 1, 'need at least two drones'
 
         self.initialize_players()
@@ -52,7 +51,7 @@ class CaptureTheFlag:
         if not self.running:
             return
 
-        self.displayManager.reset_main_rect(update_display=False)
+        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.add_buttons()
@@ -272,7 +271,6 @@ class CaptureTheFlag:
             self.players[i].manage_turn = self.human_player_manage_turn
             self.players[i].winner_message = 'player {} wins'.format(i+1)
 
-
     def add_buttons(self, choose=False):
         self.displayManager.add_button(self.back_button)
         if choose:
@@ -281,6 +279,7 @@ class CaptureTheFlag:
             self.displayManager.add_button(self.player_player_button)
 
     def choose_mode(self):
+        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
         self.displayManager.text_line.set_text('Choose game mode')
         self.add_buttons(choose=True)
         self.displayManager.render()

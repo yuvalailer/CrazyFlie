@@ -6,7 +6,7 @@ from CrazyGame.pygameUtils import displayBoard
 
 cf_logger = logger.get_logger(__name__)
 
-WINDOW_RECT = (1000, 800)
+WINDOW_RECT = (1280, 720)
 MAIN_RECT = pygame.Rect(0, 0, WINDOW_RECT[0], WINDOW_RECT[1] - displaysConsts.TEXT_LINE_HEIGHT)
 
 
@@ -21,10 +21,11 @@ class DisplayManager:
         pygame.display.set_caption('Crazy Game')
         self.reset_main_rect(update_display=False)
         self.text_line = TextLine(self.display_surf, 'Welcome To Crazy Game')
+        self.default_picture = 'main_720p.png'
         pygame.display.update()
 
-    def reset_main_rect(self, update_display=True):
-        background_image = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, 'main_crazyflie.png'))
+    def reset_main_rect(self, update_display=True, picture_name='main_720p.png'):
+        background_image = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, picture_name))
         self.display_surf.blit(background_image, (0, 0))
         self.buttons = []
         self.multiButtons = []

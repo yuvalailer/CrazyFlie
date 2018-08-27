@@ -15,6 +15,14 @@ GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
          'joystick demo': joystickDemo.JoystickDemo,
          'drones control demo': dronesControlDemo.DronesControlDemo}
 
+games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
+                         'joystick demo': ['joystick_unpressed.png', 'joystick_pressed.png'],
+                         'drones control demo': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png']}
+
+games_images = {'capture the flag': 'capture_the_flag.png',
+                 'joystick demo': 'capture_the_flag.png',
+                 'drones control demo': 'capture_the_flag.png'}
+
 MOUSE_LEFT_BUTTON = 1
 
 
@@ -23,9 +31,7 @@ class CrazyGame:
         self.initialization_process()
 
         while True:
-            self.displayManager.reset_main_rect()
             game_name = self.choose_game()
-            self.displayManager.reset_main_rect()
             self.displayManager.text_line.set_text(game_name)
             game = GAMES[game_name]()
             game.joystick = self.joystick
@@ -121,19 +127,20 @@ class CrazyGame:
             return
 
     def set_games_buttons(self):
-        BUTTON_SIZE = (400, 100)
-        BUTTON_X_POS = self.displayManager.display_surf.get_width() / 2 - BUTTON_SIZE[0] / 2
-        BUTTON_Y_START_POS = 100
-        BUTTONS_Y_DISTANCES = 150
+        BUTTON_SIZE = (320, 120)
+        BUTTON_X_POS = 150
+        BUTTON_Y_POS = 400
+        BUTTONS_X_DISTANCES = 350
 
-        self.displayManager.reset_main_rect()
+        self.displayManager.reset_main_rect(True, 'game_menu.png')
         for i, key in enumerate(GAMES):
-            pos = (BUTTON_X_POS, BUTTON_Y_START_POS + i * BUTTONS_Y_DISTANCES)
-            temp_button = button.Button(pos, BUTTON_SIZE, key)
+            pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES*i, BUTTON_Y_POS)
+            images = games_buttons_images.get(key)
+            temp_button = button.Button(pos, BUTTON_SIZE, key, images[0], images[1], False)
             self.displayManager.add_button(temp_button)
 
-        pos = (BUTTON_X_POS, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 50)
-        temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'button_unpressed_exit.png', 'button_pressed_exit.png')
+        pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES*1, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
+        temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'exit_unpressed.png', 'exit_pressed.png', False)
         self.displayManager.add_button(temp_button)
         self.displayManager.render()
 

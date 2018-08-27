@@ -8,7 +8,7 @@ from shapely.geometry import Point
 
 cf_logger = logger.get_logger(__name__, logging.INFO)
 
-BOARD_BOUND_RECT = pygame.Rect(300, 50, displayManager.MAIN_RECT.width-350, displayManager.MAIN_RECT.height-100)
+BOARD_BOUND_RECT = pygame.Rect(400, 50, displayManager.MAIN_RECT.width-450, displayManager.MAIN_RECT.height-100)
 
 
 class DisplayBoard:
@@ -50,7 +50,7 @@ class DisplayBoard:
         if not self.display:
             return
         cf_logger.debug("rendering board...")
-        pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
+        pygame.draw.rect(self.display_surf, displaysConsts.DARK_ORANGE, self.rect)
         for drone in self._orch.drones:
             self._render_drone(drone)
         for led in self._landmark_manager.leds:

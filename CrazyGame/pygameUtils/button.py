@@ -12,12 +12,13 @@ PRESSED_BUTTON_IMAGE = 'button_pressed.png'
 class Button:
     BUTTON_TEXT_COLOR = displaysConsts.WHITE
 
-    def __init__(self, position, size, text, unpressed_image_name=UNPRESSED_BUTTON_IMAGE, pressed_image_name=PRESSED_BUTTON_IMAGE):
+    def __init__(self, position, size, text, unpressed_image_name=UNPRESSED_BUTTON_IMAGE, pressed_image_name=PRESSED_BUTTON_IMAGE, show_text=True):
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
         self.font = pygame.font.SysFont("arial", min(30, self.rect.height - 5))
         self.text = text
         self.size = size
         self.current_image = ''
+        self.show_text = show_text
         self.pressed = False
         self.text_surface = self.font.render(self.text, False, Button.BUTTON_TEXT_COLOR)
         self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
@@ -42,7 +43,8 @@ class Button:
         else:
             pygame.draw.rect(self.display_surf, self.current_color, self.rect)
 
-        self.display_surf.blit(self.text_surface, self.text_position)
+        if self.show_text:
+            self.display_surf.blit(self.text_surface, self.text_position)
 
     def set_pressed(self, state):
         self.pressed = state
