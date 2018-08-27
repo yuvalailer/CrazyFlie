@@ -202,9 +202,11 @@ def find_best_path(friend_drones, opponent_drones, target, allowed_distance=20):
     if len(paths) == 0:
         cf_logger.info('failed to find a path! print board for debugging')
         cf_logger.info('friend_drones:')
-        cf_logger.info(friend_drones)
+        for drone in friend_drones:
+            cf_logger.info('\t%s' % drone)
         cf_logger.info('opponent_drones:')
-        cf_logger.info(opponent_drones)
+        for drone in opponent_drones:
+            cf_logger.info('\t%s' % drone)
         cf_logger.info('target:')
         cf_logger.info(target)
         cf_logger.info('DRONE_RADIUS - %f' % DRONE_RADIUS)
