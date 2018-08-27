@@ -71,7 +71,7 @@ class CrazyGame:
         DEMO_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
 
         vm_button = button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm')
-        demo_button = button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'demo')
+        demo_button = button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'simulator')
         self.displayManager.add_button(vm_button)
         self.displayManager.add_button(demo_button)
         self.displayManager.render()

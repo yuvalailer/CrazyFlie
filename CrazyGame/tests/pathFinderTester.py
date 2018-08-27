@@ -14,12 +14,12 @@ def plot_player(ax, p, r, c):
     circle =  plt.Circle((p.x, p.y), r, color=c, fill=False)
     ax.add_artist(circle)
 
-friend_drones = [Point(3,4), Point(50,4), Point(50,50)]
-opponent_drones = [Point(25,35), Point(22,20), Point(12,20)]
-target = Point(25,27)
+friend_drones = [Point(0.5, 0.5)]
+opponent_drones = [Point(1,1), Point(1,0.4)]
+target = Point(1.4,1.4)
 
 start_time = datetime.now()
-path = sillyPlayer.silly_player_move(friend_drones, opponent_drones, target, 32)
+path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 32)
 end_time = datetime.now()
 
 elapsed_time = end_time - start_time
@@ -32,17 +32,17 @@ ax = plt.gca()
 plt.plot(target.x, target.y, color='black', marker='o')
 for drone in friend_drones:
     plt.plot(drone.x, drone.y, color='blue', marker='o')
-    plot_player(ax, drone, sillyPlayer.DRONE_RADIUS, 'b')
+    plot_player(ax, drone, pathFinder.DRONE_RADIUS, 'b')
 
 for drone in opponent_drones:
     plt.plot(drone.x, drone.y, color='red', marker='o')
-    plot_player(ax, drone, sillyPlayer.DRONE_RADIUS, 'red')
+    plot_player(ax, drone, pathFinder.DRONE_RADIUS, 'red')
 
 cf_logger.info("path:")
 for p,q in zip(path[:-1], path[1:]):
     cf_logger.info('%d %d -> %d %d' % (p.x, p.y, q.x, q.y))
     plt.plot([p.x, q.x], [p.y, q.y], color='yellow')
 
-plt.xlim(-10, 60)
-plt.ylim(-10, 60)
+plt.xlim(0, 2)
+plt.ylim(0, 2)
 plt.show()
