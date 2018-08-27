@@ -162,10 +162,10 @@ class DronesOrchestrator:
                      drone.position.y + direction[1] * self.drone_step_size)
 
     def check_point_in_bounds(self, target, drone):
-        if not (0 <= target.x + self.drone_radius <= self.width):
+        if not (DRONE_RADIUS <= target.x + self.drone_radius <= self.width):
             cf_logger.warning('drone %s is trying to move out of x bounds' % drone.name)
             return False
-        if not 0 <= target.y + self.drone_radius <= self.height:
+        if not (DRONE_RADIUS <= target.y + self.drone_radius <= self.height):
             cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
             return False
         return True
