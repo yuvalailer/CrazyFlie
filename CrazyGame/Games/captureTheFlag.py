@@ -160,6 +160,9 @@ class CaptureTheFlag:
         opponent_drones = [self.orch.update_drone_xy_pos(self.current_player.next_player.drone)]
         target = self.current_player.target
         path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 100)
+        if not path:
+            cf_logger.info('no path found')
+            path = [self.orch.update_drone_xy_pos(self.current_player.drone)]
         self.current_player.follower = followPath.Follower(path, self.current_player.drone, self.orch)
 
     def computer_player_manage_turn(self):
