@@ -1,7 +1,7 @@
+
 # CrazyFlie
-  ________            ______                          ______                   
- /_  __/ /_  ___     / ____/________ _____  __  __   / ____/___ _____ ___  ___ 
-  / / / __ \/ _ \   / /   / ___/ __ `/_  / / / / /  / / __/ __ `/ __ `__ \/ _ \
- / / / / / /  __/  / /___/ /  / /_/ / / /_/ /_/ /  / /_/ / /_/ / / / / / /  __/
-/_/ /_/ /_/\___/   \____/_/   \__,_/ /___/\__, /   \____/\__,_/_/ /_/ /_/\___/ 
-                                         /____/                              
+
+[CrazyFlie for Windows PC - GUI](https://github.com/xqgex/CrazyFlie)  
+[CrazyFlie VM code - Communication with the drones](https://github.com/xqgex/CrazyFlie_ros)  
+[CrazyFlie Arduino code - For joystick and led strips](https://github.com/xqgex/CrazyFlie_Arduino)  
+[CrazyFlie Automatic player](https://github.com/xqgex/CrazyFlie_Autoplayer)  

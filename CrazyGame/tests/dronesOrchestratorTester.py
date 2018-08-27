@@ -35,7 +35,7 @@ def print_drone_positions(orch):
     cf_logger.info("*** DRONES POSITIONS ***")
     cf_logger.info("**********************")
     for drone in orch.drones:
-        drone_alt = orch.get_drone_altitude(drone)
+        drone_alt = orch.get_drone_alt(drone)
         d = drone.name
         p = orch.update_drone_xy_pos(drone)
         k = drone_alt
@@ -60,8 +60,8 @@ def go_to_out_of_bounds_tests(orch, drone):
 
 def move_out_of_bounds_tests(orch, drone):
     cf_logger.info("*** MOVE OUT OF BOUNDS TEST***")
-    orch.try_move_drone(drone, (-1, 0))
-    time.sleep(1)
+    while orch.try_move_drone(drone, (1, 0)):
+        time.sleep(1)
 
 
 def takeoff_land_tests(orch, droneA, droneB):

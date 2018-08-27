@@ -47,7 +47,7 @@ class DronesControlDemo:
     def game_loop(self):
         current_time = time.time()
         while self.running:
-            if time.time() - current_time > 0.05:
+            if time.time() - current_time > 0.07:
                 self.orch.update_drones_positions()
                 self.displayManager.render()
                 joystick_dir = self.joystick.get_normalize_direction()

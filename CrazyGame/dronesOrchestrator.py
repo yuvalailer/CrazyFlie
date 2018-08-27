@@ -4,23 +4,25 @@ from CrazyGame.pygameUtils import displaysConsts
 from shapely.geometry import Point
 from shapely.geometry import LineString
 from munch import Munch
-
+import math
 cf_logger = logger.get_logger(__name__)
 
-#DRONE_VELOCITY = 0.1
-#DRONE_STEP_SIZE = 0.1
+DRONE_VELOCITY = 0.1
+DRONE_STEP_SIZE = 0.1
 DRONE_RADIUS = 0.1
 TARGET_RADIUS = 0.05
+
 
 
 class DronesOrchestrator:
     def __init__(self, drones_controller):
         self.drones_controller = drones_controller
         self.size = self.drones_controller.get_world_size()
-        cf_logger.info('world size is %s'%self.size)
+
+        cf_logger.info('world size is %s' % self.size)
         self.drone_radius = DRONE_RADIUS
-        self.set_velocity(0.1)
-        self.set_drone_step_size(0.1)
+        self.set_velocity(DRONE_VELOCITY)
+        self.set_drone_step_size(DRONE_STEP_SIZE)
 
         self.drones = []
         for i, drone in enumerate(self.drones_controller.get_objects()):
@@ -82,18 +84,21 @@ class DronesOrchestrator:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
             return False
         target = self._get_drone_proximity_position(drone, direction)
+        cf_logger.info('prox position is {} current position is {}'.format(target, drone.position))
         line = LineString([drone.position, target])
 
         for temp_drone in self.drones:
             if temp_drone != drone and not temp_drone.grounded:
-                temp_circle = temp_drone.position.buffer(self.drone_radius*2)
+                temp_circle = temp_drone.position.buffer(self.drone_radius + DRONE_STEP_SIZE)
                 inter = temp_circle.intersection(line)
                 if inter.type == 'LineString':
                     cf_logger.warning('drone %s try to enter %s drone' % (drone.name, temp_drone.name))
+                    cf_logger.info('other drone position {} radius {}'.format(temp_drone.position, math.sqrt(temp_circle.area/3.14)))
+                    cf_logger.info('distance curr drone from other drone {}'.format(drone.position.distance(temp_drone.position)))
                     return False
         if not self.check_point_in_bounds(target, drone):
             return False
-        cf_logger.debug('drone %s move in dir %s' % (drone.name, direction))
+        cf_logger.debug('drone %s move in direction %s' % (drone.name, direction))
         self.drones_controller.move_drone(drone.name, direction)
         drone.might_on_move = True
         return True
@@ -157,10 +162,10 @@ class DronesOrchestrator:
                      drone.position.y + direction[1] * self.drone_step_size)
 
     def check_point_in_bounds(self, target, drone):
-        if not 0 <= target.x <= self.width:
+        if not (DRONE_RADIUS <= target.x + self.drone_radius <= self.width):
             cf_logger.warning('drone %s is trying to move out of x bounds' % drone.name)
             return False
-        if not 0 <= target.y <= self.height:
+        if not (DRONE_RADIUS <= target.y + self.drone_radius <= self.height):
             cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
             return False
         return True
