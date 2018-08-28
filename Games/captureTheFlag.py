@@ -43,6 +43,7 @@ class CaptureTheFlag:
         self.current_player = None
 
 
+
     def run(self):
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
@@ -56,7 +57,13 @@ class CaptureTheFlag:
         if not self.running:
             return
 
-        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
+        if self.current_mode == 'computerVsPlayer':
+            self.displayManager.reset_main_rect(picture_name='computerVsPlayer.png')
+        if self.current_mode == 'computerVsComputer':
+            self.displayManager.reset_main_rect(picture_name='computerVsComputer.png')
+        if self.current_mode == 'playerVsPlayer':
+            self.displayManager.reset_main_rect(picture_name='playerVsPlayer.png')
+
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
@@ -258,6 +265,7 @@ class CaptureTheFlag:
             self.getting = False
 
     def com_com_update(self):
+        self.current_mode = 'computerVsComputer'
         for i in range(2):
             self.players[i].name = 'computer {}'.format(i+1)
             self.players[i].prepare_to_turn = self.computer_player_prepare_to_turn
@@ -265,6 +273,7 @@ class CaptureTheFlag:
             self.players[i].winner_message = 'computer {} wins'.format(i+1)
 
     def com_player_update(self):
+        self.current_mode = 'computerVsPlayer'
         self.players[0].name = 'computer'
         self.players[1].name = 'your'
 
@@ -278,6 +287,7 @@ class CaptureTheFlag:
         self.players[1].winner_message = 'YOU ARE THE WINNER'
 
     def player_player_update(self):
+        self.current_mode = 'playerVsPlayer'
         for i in range(2):
             self.players[i].name = 'player {}'.format(i+1)
             self.players[i].prepare_to_turn = self.human_player_prepare_to_turn
