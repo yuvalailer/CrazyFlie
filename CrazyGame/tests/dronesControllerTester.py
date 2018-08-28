@@ -20,7 +20,7 @@ def main():
 	if not drones_controller.connect(number_of_trials=5, time_between_trails=3):
 		cf_logger.critical("Communication error")
 		return
-	drones_list = drones_controller.get_objects()
+	drones_list = drones_controller.get_drones()
 	cf_logger.info("drones_list: {}".format(drones_list))
 	cf_logger.info("get_world_size: {}".format(drones_controller.get_world_size()))
 	cf_logger.info("battery_status: {}".format(drones_controller.battery_status("crazyflie2")))

@@ -50,13 +50,22 @@ class DronesController:
             cf_logger.error("Failed to get world size")
             return False
 
-    def get_objects(self):
-        res = self._send("GetObjects")
-        cf_logger.debug("GetObjects got{}".format(res))
+    def get_drones(self):
+        res = self._send("GetDrones")
+        cf_logger.debug("GetDrones got{}".format(res))
         if res and (res != "FATAL"):
             return res.split("$")
         else:
-            cf_logger.error("Failed to get list of objects")
+            cf_logger.error("Failed to get list of drones")
+            return False
+
+    def get_leds(self):
+        res = self._send("GetLeds")
+        cf_logger.debug("GetLeds got{}".format(res))
+        if res and (res != "FATAL"):
+            return res.split("$")
+        else:
+            cf_logger.error("Failed to get list of leds")
             return False
 
     def take_your_place(self, drone_name, pos): # pos = [x, y]

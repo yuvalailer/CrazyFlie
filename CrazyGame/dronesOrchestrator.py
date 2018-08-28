@@ -25,7 +25,7 @@ class DronesOrchestrator:
         self.set_drone_step_size(DRONE_STEP_SIZE)
 
         self.drones = []
-        for i, drone in enumerate(self.drones_controller.get_objects()):
+        for i, drone in enumerate(self.drones_controller.get_drones()):
             self.drones.append(Munch(name=drone,
                                      index=i,
                                      grounded=True,
