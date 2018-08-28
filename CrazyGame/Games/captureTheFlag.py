@@ -43,7 +43,6 @@ class CaptureTheFlag:
     def run(self):
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
-
         assert len(self.orch.drones) > 1, 'need at least two drones'
 
         self.initialize_players()
@@ -53,6 +52,7 @@ class CaptureTheFlag:
         if not self.running:
             return
 
+        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.add_buttons()
@@ -280,7 +280,7 @@ class CaptureTheFlag:
             self.displayManager.add_button(self.player_player_button)
 
     def choose_mode(self):
-        self.displayManager.reset_main_rect(True, CTF_IMAGE)
+        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
         self.displayManager.text_line.set_text('Choose game mode')
         self.add_buttons(choose=True)
         self.displayManager.render()

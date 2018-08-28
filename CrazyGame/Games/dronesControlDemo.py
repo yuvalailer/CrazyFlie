@@ -32,7 +32,7 @@ class DronesControlDemo:
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
 
-        self.displayManager.reset_main_rect(update_display=False)
+        self.displayManager.reset_main_rect(True, 'droneControllerDemo_main.png')
         self.displayManager.board.display = True
         self.add_buttons()
         self.displayManager.render()
