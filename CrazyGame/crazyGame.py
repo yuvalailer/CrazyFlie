@@ -38,7 +38,6 @@ class CrazyGame:
             self.displayManager.text_line.set_text(game_name)
             game = GAMES[game_name]()
             game.joystick = self.joystick
-            game.droneController = self.drone_controller
             game.displayManager = self.displayManager
             game.orch = self.orch
             game.landmarks = self.landmarkManager
