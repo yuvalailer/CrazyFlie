@@ -2,13 +2,14 @@ import pygame
 import os
 import logger
 from pygameUtils import displaysConsts
+
+WINDOW_RECT = (1280, 720)
+MAIN_RECT = pygame.Rect(0, 0, WINDOW_RECT[0], WINDOW_RECT[1] - displaysConsts.TEXT_LINE_HEIGHT)
+
 from pygameUtils import displayBoard
 from pygameUtils import batteriesDisplay
 
 cf_logger = logger.get_logger(__name__)
-
-WINDOW_RECT = (1280, 720)
-MAIN_RECT = pygame.Rect(0, 0, WINDOW_RECT[0], WINDOW_RECT[1] - displaysConsts.TEXT_LINE_HEIGHT)
 
 
 class DisplayManager:

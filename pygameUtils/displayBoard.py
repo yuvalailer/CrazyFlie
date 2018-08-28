@@ -1,7 +1,6 @@
 import pygame
 from pygameUtils import displayManager
 from pygameUtils import displaysConsts
-import landmarkManager
 import logger
 import logging
 from shapely.geometry import Point
