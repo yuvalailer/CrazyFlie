@@ -167,3 +167,8 @@ class DronesOrchestrator:
             cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
             return False
         return True
+
+    def update_drones_battery(self):
+        for drone in self.drones:
+            drone.battery_level = self.drones_controller.battery_status(drone)
+

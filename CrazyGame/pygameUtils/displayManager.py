@@ -3,6 +3,7 @@ import os
 from CrazyGame import logger
 from CrazyGame.pygameUtils import displaysConsts
 from CrazyGame.pygameUtils import displayBoard
+from CrazyGame.pygameUtils import batteriesDisplay
 
 cf_logger = logger.get_logger(__name__)
 
@@ -17,6 +18,7 @@ class DisplayManager:
         self.display_surf = pygame.display.set_mode(WINDOW_RECT, pygame.HWSURFACE)
         self.buttons = []
         self.multiButtons = []
+        self.batteriesDisplay = None
         self.board = None
         pygame.display.set_caption('Crazy Game')
         self.reset_main_rect(update_display=False)
@@ -45,6 +47,9 @@ class DisplayManager:
 
     def set_board(self, orch, landmark):
         self.board = displayBoard.DisplayBoard(self.display_surf, orch, landmark)
+
+    def set_batteries_display(self, orch):
+        self.batteriesDisplay = batteriesDisplay.BatteriesDisplay(self.display_surf, orch)
 
     def _render_buttons(self):
         for button in self.buttons:
@@ -86,10 +91,16 @@ class DisplayManager:
         if self.board:
             self.board.render()
 
+    def _render_batteries_display(self):
+        if self.batteriesDisplay:
+            self.batteriesDisplay.render()
+
     def render(self):
         self._render_buttons()
         self.text_line.render()
         self._render_board()
+        self._render_batteries_display()
+
         pygame.display.update()
 
 
