@@ -6,18 +6,16 @@ import pygame
 
 from CrazyGame import dronesOrchestrator, logger, landmarkManager, joystick
 from pygameUtils import button, displayManager
-from Games import captureTheFlag, joystickDemo, dronesControlDemo, grabAllFlags
+from Games import captureTheFlag, sandbox, grabAllFlags
 from Peripherals import dronesController, dronesControllerSimulator, arduinoController
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
 GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
-         'joystick demo': joystickDemo.JoystickDemo,
-         'drones control demo': dronesControlDemo.DronesControlDemo,
+         'sandbox': sandbox.DronesControlDemo,
          'grab all flags': grabAllFlags.GrabAllFlags}
 
 games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
-                         'joystick demo': ['joystick_unpressed.png', 'joystick_pressed.png'],
                          'drones control demo': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png'],
                          'grab all flags': ['button_unpressed_ctf.png', 'button_pressed_ctf.png']}
 
