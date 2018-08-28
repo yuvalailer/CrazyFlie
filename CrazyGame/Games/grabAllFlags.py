@@ -1,4 +1,5 @@
 import munch
+from munch import Munch
 import pygame
 import time
 import functools
@@ -37,7 +38,10 @@ class GrabAllFlags:
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
 
-        self.landmarks.initialize_leds('grab')
+
+        if not self.landmarks.real_leds:
+            self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.RED, position=Point(1.30, 0.96)),
+                            Munch(name='led2', number=1,color=displaysConsts.RED, position=Point(0.90, 0.96))]
         self.initialize()
 
         self.displayManager.reset_main_rect(update_display=False)

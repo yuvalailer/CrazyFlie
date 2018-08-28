@@ -1,5 +1,7 @@
 import pygame
 import time
+from munch import Munch
+from shapely.geometry import Point
 
 from pygameUtils import displayManager
 from pygameUtils import button
@@ -32,7 +34,9 @@ class DronesControlDemo:
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
 
-        self.landmarks.initialize_leds('demo')
+        if not self.landmarks.real_leds:
+            self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.30, 0.96)),
+                         Munch(name='led2', number=1, color=displaysConsts.BLUE, position=Point(0.20, 0.96))]
 
         self.displayManager.reset_main_rect(True, 'droneControllerDemo_main.png')
         self.displayManager.board.display = True

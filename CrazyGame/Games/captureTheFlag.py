@@ -1,4 +1,5 @@
 import munch
+from munch import Munch
 import pygame
 import time
 import functools
@@ -45,7 +46,9 @@ class CaptureTheFlag:
         self.step_size = self.orch.drone_step_size
         assert len(self.orch.drones) > 1, 'need at least two drones'
 
-        self.landmarks.initialize_leds('capture')
+        if not self.landmarks.real_leds:
+            self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.30, 0.96)),
+                         Munch(name='led2', number=1, color=displaysConsts.BLUE, position=Point(0.20, 0.96))]
         self.initialize_players()
 
         self.choose_mode()

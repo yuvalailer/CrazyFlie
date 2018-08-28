@@ -165,7 +165,7 @@ class DronesOrchestrator:
         if not (2*DRONE_RADIUS + MARGIN_X <= target.x + self.drone_radius <= self.width - MARGIN_X):
             cf_logger.warning('drone %s is trying to move out of x bounds' % drone.name)
             return False
-        if not (2*DRONE_RADIUS +MARGIN_Y <= target.y + self.drone_radius <= self.height - MARGIN_Y):
+        if not (2*DRONE_RADIUS + MARGIN_Y <= target.y + self.drone_radius <= self.height - MARGIN_Y):
             cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
             return False
         return True
