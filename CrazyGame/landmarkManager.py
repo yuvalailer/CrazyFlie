@@ -8,7 +8,7 @@ LED_RADIUS = 0.05
 class LandmarkManager:
     def __init__(self, arduino_controller, drones_controller):
         self.drones_controller = drones_controller
-        rigid_bodies = self.drones_controller.get_objects()
+        rigid_bodies = self.drones_controller.get_leds()
         self.real_leds = False
         self.leds = self._parse_leds(rigid_bodies)
         self.obstacles = self._parse_obstacles(rigid_bodies)
@@ -34,17 +34,16 @@ class LandmarkManager:
         return obstacles
 
     def update_landmark_xy_position(self, landmark):
-        pos = self.drones_controller.get_object_position(landmark.name)
-        landmark.position = Point(pos[:2])
-        return landmark.position
+        position = Point(self.drones_controller.get_object_position(landmark)[:2])
+        return position
 
     def update_led_positions(self):
         for led in self.leds:
-            self.update_landmark_xy_position(led)
+            self.update_landmark_xy_position(led.name)
 
     def update_obstacle_positions(self):
         for obstacle in self.obstacles:
-            self.update_landmark_xy_position(obstacle)
+            self.update_landmark_xy_position(obstacle.name)
 
     def reset_leds(self):
         for led in self.leds:

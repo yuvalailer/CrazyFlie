@@ -18,7 +18,7 @@ def main():
 	if not drones_cont.connect(number_of_trials=5, time_between_trails=3):
 		cf_logger.critical("Communication error")
 		return
-	for drone_name in drones_cont.get_objects():
+	for drone_name in drones_cont.get_drones():
 		DRONES.append(drone_name)
 		drones_cont.take_off(drone_name)
 	current = 0 # the drone that's controlled now

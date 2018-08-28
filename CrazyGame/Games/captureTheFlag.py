@@ -66,6 +66,7 @@ class CaptureTheFlag:
         self.quit = False
         self.running = True
         self.game_loop()
+        self.displayManager.batteriesDisplay.display = False
 
     def set_virtual_leds(self):
         self.landmarks.leds = [Munch(name='led1', number=0,
@@ -136,6 +137,7 @@ class CaptureTheFlag:
             if current_time - last_render_time > RENDER_RATE:
                 text = '%s - turn ends in %2f second' % (self.current_player.name, turn_left_time)
                 self.orch.update_drones_positions()
+                self.orch.update_drones_battery()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
                 last_render_time = time.time()

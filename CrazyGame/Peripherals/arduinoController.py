@@ -19,7 +19,7 @@ arduino_message_regex = re.compile(arduino_message_format)
 
 def _get_port():
     if os.name == 'nt':  # if run on windows
-        ports = list(serial.tools.list_ports.comports())
+        ports = [str(port) for port in serial.tools.list_ports.comports()]
 
         cf_logger.debug("serial ports found:")
         cf_logger.debug(ports)
@@ -36,6 +36,7 @@ class ArduinoController:
         cf_logger.info('serial port name is %s' % self._serial_port)
 
         self.ser = serial.Serial(self._serial_port, 9600)
+        cf_logger.info('connected')
         self._data = None
         self._run_thread = True
 
@@ -45,7 +46,7 @@ class ArduinoController:
         self._thread.start()
         self.reset_leds()
         self._set_defaults()
-        cf_logger.info('arduino board connected')
+        cf_logger.info('Arduino board ready to use')
 
     def disconnect(self):
         cf_logger.info('disconnection')

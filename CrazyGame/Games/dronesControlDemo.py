@@ -39,6 +39,7 @@ class DronesControlDemo:
 
         self.displayManager.reset_main_rect(True, 'droneControllerDemo_main.png')
         self.displayManager.board.display = True
+        self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
         self.displayManager.render()
 
@@ -48,12 +49,14 @@ class DronesControlDemo:
         self.quit = False
         self.running = True
         self.game_loop()
-
+        self.displayManager.batteriesDisplay.display = False
+        
     def game_loop(self):
         current_time = time.time()
         while self.running:
             if time.time() - current_time > 0.07:
                 self.orch.update_drones_positions()
+                self.orch.update_drones_battery()
                 self.displayManager.render()
                 joystick_dir = self.joystick.get_normalize_direction()
                 if joystick_dir:

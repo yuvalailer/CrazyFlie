@@ -10,7 +10,7 @@ cf_logger.info("#### start drones Orchestrator tester ####")
 
 def initialize(controller):
     cf_logger.info("*** world size is - " + str(controller.get_world_size()))
-    objects = controller.get_objects()
+    objects = controller.get_drones()
     cf_logger.info("**********************")
     cf_logger.info("*** The objects in the world are: {}".format(' '.join(objects)))
     cf_logger.info("**********************")
