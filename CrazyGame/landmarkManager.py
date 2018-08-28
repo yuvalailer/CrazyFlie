@@ -19,12 +19,11 @@ class LandmarkManager:
         leds = []
         for inx, obj in enumerate(landmarks):
             if obj.startswith('led'):
-                self.real_leds = True
                 leds.append(Munch(name=obj,
                                   number=inx,
                                   color=displaysConsts.BLACK,
                                   position=self.update_landmark_xy_position(obj)))
-
+        self.real_leds = len(leds) > 0
         return leds
 
     def _parse_obstacles(self, landmarks):

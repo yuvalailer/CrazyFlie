@@ -35,8 +35,12 @@ class DronesControlDemo:
         self.step_size = self.orch.drone_step_size
 
         if not self.landmarks.real_leds:
-            self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.30, 0.96)),
-                         Munch(name='led2', number=1, color=displaysConsts.BLUE, position=Point(0.20, 0.96))]
+            self.landmarks.leds = [Munch(name='led1', number=0,
+                                         position=Point(self.orch.max_x, (self.orch.max_y + self.orch.min_y) / 2)),
+                                   Munch(name='led2', number=1,
+                                         position=Point(self.orch.min_x, (self.orch.max_y + self.orch.min_y) / 2))]
+            self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.GREEN)
+            self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.BLUE)
 
         self.displayManager.reset_main_rect(True, 'droneControllerDemo_main.png')
         self.displayManager.board.display = True

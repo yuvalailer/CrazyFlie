@@ -22,9 +22,9 @@ def _path_distance(path):
     return sum(p.distance(q) for p, q in zip(path[:-1], path[1:]))
 
 
-def _in_minkowski_board(p, world_size):
-    return DRONE_RADIUS < p.x < world_size[0]-DRONE_RADIUS and \
-            DRONE_RADIUS < p.y < world_size[1]-DRONE_RADIUS
+def _in_minkowski_board(p, min_x, max_x, min_y, max_y):
+    return min_x< p.x < max_x and \
+            min_y < p.y < max_y
 
 
 def _cut_path(path, allowed_distance):
@@ -127,8 +127,8 @@ def _points_to_circle_obstacles(points, radius=DRONE_RADIUS*2):
     return [p.buffer(radius) for p in points]
 
 
-def _is_point_legal(circle_obstacles, world_size, p):
-    if not _in_minkowski_board(p, world_size):
+def _is_point_legal(circle_obstacles, min_x, max_x, min_y, max_y, p):
+    if not _in_minkowski_board(p, min_x, max_x, min_y, max_y):
         return False
 
     for obs in circle_obstacles:
@@ -147,10 +147,10 @@ def _segment_intersection_query(circle_obstacles, line):  # assumes line points 
     return True
 
 
-def _find_path(start, target, obstacles, world_size):
+def _find_path(start, target, obstacles, min_x, max_x, min_y, max_y):
     cf_logger.info('find path from %s to %s'%(start, target))
     circle_obstacles = _points_to_circle_obstacles(obstacles)
-    point_query = functools.partial(_is_point_legal, circle_obstacles, world_size)
+    point_query = functools.partial(_is_point_legal, circle_obstacles, min_x, max_x, min_y, max_y)
     points = []
     for obstacle in obstacles:
         points.extend(list(filter(point_query, _get_points_around_obstacle(obstacle))))
@@ -169,7 +169,7 @@ def _find_path(start, target, obstacles, world_size):
     return path, target_moved_distance
 
 
-def find_best_path(friend_drones, opponent_drones, target, world_size):
+def find_best_path(friend_drones, opponent_drones, target, min_x, max_x, min_y, max_y):
     @functools.total_ordering
     class Path:
         def __init__(self, path, target_moved_distance):
@@ -188,7 +188,7 @@ def find_best_path(friend_drones, opponent_drones, target, world_size):
     for drone in friend_drones:
         temp_drones = list(drones)
         temp_drones.remove(drone)
-        path, target_moved_distance = _find_path(drone, target, temp_drones, world_size)
+        path, target_moved_distance = _find_path(drone, target, temp_drones, min_x, max_x, min_y, max_y)
         if path:
             paths.append(Path(path, target_moved_distance))
             cf_logger.debug('found path from %s. path distance - %d. target_moved - %d'%

@@ -39,8 +39,14 @@ class GrabAllFlags:
 
 
         if not self.landmarks.real_leds:
-            self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.RED, position=Point(1.30, 0.96)),
-                            Munch(name='led2', number=1,color=displaysConsts.RED, position=Point(0.90, 0.96))]
+            self.landmarks.leds = [Munch(name='led1', number=0,
+                   position=Point(((self.orch.max_x + self.orch.min_x) / 2) + 2*self.orch.drone_radius,
+                                  ((self.orch.max_y + self.orch.min_y) / 2))),
+             Munch(name='led2', number=1,
+                   position=Point(((self.orch.max_x + self.orch.min_x) / 2) - 2*self.orch.drone_radius,
+                                  ((self.orch.max_y + self.orch.min_y) / 2)))]
+            self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.RED)
+            self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.RED)
         self.initialize()
 
         self.displayManager.reset_main_rect(update_display=False)

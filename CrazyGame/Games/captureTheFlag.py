@@ -47,8 +47,12 @@ class CaptureTheFlag:
         assert len(self.orch.drones) > 1, 'need at least two drones'
 
         if not self.landmarks.real_leds:
-            self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.30, 0.96)),
-                         Munch(name='led2', number=1, color=displaysConsts.BLUE, position=Point(0.20, 0.96))]
+            self.landmarks.leds = [Munch(name='led1', number=0,
+                                         position=Point(self.orch.max_x, (self.orch.max_y + self.orch.min_y)/2)),
+                         Munch(name='led2', number=1,
+                               position=Point(self.orch.min_x, (self.orch.max_y + self.orch.min_y)/2))]
+            self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.GREEN)
+            self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.BLUE)
         self.initialize_players()
 
         self.choose_mode()
@@ -191,7 +195,8 @@ class CaptureTheFlag:
         cf_logger.critical('player %s current target is %s ' %(self.current_player.name, target))
         cf_logger.critical('player %s current position is: %s' %(self.current_player.name,
                                                                  self.orch.get_drone_pos(self.current_player.drone)))
-        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, self.orch.size)
+        path = pathFinder.find_best_path(friend_drones, opponent_drones, target,
+                                         self.orch.min_x, self.orch.max_x, self.orch.min_y, self.orch.max_y)
         if not path:
             cf_logger.info('no path found')
             path = [self.orch.update_drone_xy_pos(self.current_player.drone)]*2
