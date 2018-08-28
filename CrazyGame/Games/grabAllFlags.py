@@ -125,6 +125,15 @@ class GrabAllFlags:
 
         self.orch.try_take_off(self.drone)
         cf_logger.info('run %s turn' % self.current_player.name)
+        self.displayManager.text_line.set_text('get ready for your turn!')
+        self.interactive_sleep(2)
+        running = True
+        start_time = time.time()
+        while running:
+            current_time = time.time() - start_time
+            self.displayManager.text_line.set_text('in {0:d}'.format(3-int(current_time)))
+            if current_time >= 3:
+                running = False
         for i in range(2):
             self.reset_leds()
             self.drone.color = self.current_player.color
@@ -146,7 +155,7 @@ class GrabAllFlags:
         self.interactive_sleep(4)
         self.displayManager.text_line.set_text(winner.winner_message)
         self.orch.land(self.drone)
-        self.interactive_sleep(4)
+        self.interactive_sleep(3)
 
     def calculate_winner(self):
         text = "computer's time - {0:.2f}    |    your time - {1:.2f}".format(self.players[0].time, self.players[1].time)
