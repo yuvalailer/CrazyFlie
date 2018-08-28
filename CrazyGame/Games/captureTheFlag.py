@@ -5,7 +5,7 @@ import time
 import functools
 from shapely.geometry import Point
 
-from pygameUtils import displayManager
+from pygameUtils import displayManager, batteriesDisplay
 from pygameUtils import button
 from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
@@ -57,6 +57,7 @@ class CaptureTheFlag:
         self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
+        self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
         self.displayManager.render()
 
