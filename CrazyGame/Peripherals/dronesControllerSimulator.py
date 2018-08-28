@@ -27,12 +27,12 @@ NOISE_DIR = {'posnoise': (NOISE_EXPECTATION_POS, NOISE_VAR_POS, NOISE_POS),
 class DronesController:
     def __init__(self):
         self._world_size = [WORLD_X, WORLD_Y]
-        self._objects = {}
+        self._drones = {}
         self.velocity = DEFAULT_VELOCITY
         self.step_size = DEFAULT_STEP_SIZE
         step = WORLD_Y/(DRONES_NUM+1)
         for i in range(0, DRONES_NUM):
-            self._objects["crazyflie{}".format(i+1)] = munch.Munch(pos=[WORLD_X/2, step + i*step],
+            self._drones["crazyflie{}".format(i+1)] = munch.Munch(pos=[WORLD_X/2, step + i*step],
                                                                    move=None,
                                                                    altitude=0)
 
@@ -43,8 +43,11 @@ class DronesController:
     def get_world_size(self):
         return self._world_size
 
-    def get_objects(self):
-        return list(self._objects.keys())
+    def get_drones(self):
+        return list(self._drones.keys())
+
+    def get_leds(self):
+       return []
 
     def set_speed(self, speed):
         self.velocity = speed
@@ -53,7 +56,7 @@ class DronesController:
         self.step_size = step
 
     def get_object_position(self, object_name):
-        obj = self._objects[object_name]
+        obj = self._drones[object_name]
         if obj.move:
             obj.pos = obj.move.get_position()
             if obj.move.move_end:
@@ -63,7 +66,7 @@ class DronesController:
     def move_drone(self, drone_name, direction_vector):
         cf_logger.debug("drone %s start new move" % drone_name)
         start_pos = self.get_object_position(drone_name)[:2]
-        drone = self._objects[drone_name]
+        drone = self._drones[drone_name]
         if direction_vector == [0, 0]:
             drone.move = None
             drone.pos = start_pos
@@ -78,17 +81,17 @@ class DronesController:
 
     def goto(self, drone_name, pos):
         cf_logger.debug("drone %s start new goto" % drone_name)
-        drone = self._objects[drone_name]
+        drone = self._drones[drone_name]
         start_pos = self.get_object_position(drone_name)[:2]
         target_pos = pos
         drone.move = MoveManager(start_pos, target_pos, self.velocity)
 
     def take_off(self, drone_name):
-        drone = self._objects[drone_name]
+        drone = self._drones[drone_name]
         drone.altitude = 0.5
 
     def land(self, drone_name):
-        drone = self._objects[drone_name]
+        drone = self._drones[drone_name]
         drone.pos = self.get_object_position(drone_name)[:2]
         drone.move = None
         drone.altitude = 0

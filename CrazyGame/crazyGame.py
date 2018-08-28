@@ -16,12 +16,11 @@ GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
          'grab all flags': grabAllFlags.GrabAllFlags}
 
 games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
-                         'drones control demo': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png'],
+                         'sandbox': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png'],
                          'grab all flags': ['button_unpressed_ctf.png', 'button_pressed_ctf.png']}
 
 games_images = {'capture the flag': 'capture_the_flag.png',
-                'joystick demo': 'capture_the_flag.png',
-                'drones control demo': 'capture_the_flag.png',
+                'sandbox': 'capture_the_flag.png',
                 'grab all flags': 'capture_the_flag.png'}
 
 MOUSE_LEFT_BUTTON = 1
