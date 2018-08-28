@@ -6,22 +6,25 @@ import pygame
 
 from CrazyGame import dronesOrchestrator, logger, landmarkManager, joystick
 from pygameUtils import button, displayManager
-from Games import captureTheFlag, joystickDemo, dronesControlDemo
+from Games import captureTheFlag, joystickDemo, dronesControlDemo, grabAllFlags
 from Peripherals import dronesController, dronesControllerSimulator, arduinoController
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
 GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
          'joystick demo': joystickDemo.JoystickDemo,
-         'drones control demo': dronesControlDemo.DronesControlDemo}
+         'drones control demo': dronesControlDemo.DronesControlDemo,
+         'grab all flags': grabAllFlags.GrabAllFlags}
 
 games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
                          'joystick demo': ['joystick_unpressed.png', 'joystick_pressed.png'],
-                         'drones control demo': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png']}
+                         'drones control demo': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png'],
+                         'grab all flags': ['button_unpressed_ctf.png', 'button_pressed_ctf.png']}
 
 games_images = {'capture the flag': 'capture_the_flag.png',
-                 'joystick demo': 'capture_the_flag.png',
-                 'drones control demo': 'capture_the_flag.png'}
+                'joystick demo': 'capture_the_flag.png',
+                'drones control demo': 'capture_the_flag.png',
+                'grab all flags': 'capture_the_flag.png'}
 
 MOUSE_LEFT_BUTTON = 1
 
@@ -35,7 +38,6 @@ class CrazyGame:
             self.displayManager.text_line.set_text(game_name)
             game = GAMES[game_name]()
             game.joystick = self.joystick
-            game.droneController = self.drone_controller
             game.displayManager = self.displayManager
             game.orch = self.orch
             game.landmarks = self.landmarkManager
@@ -129,9 +131,9 @@ class CrazyGame:
 
     def set_games_buttons(self):
         BUTTON_SIZE = (320, 120)
-        BUTTON_X_POS = 150
+        BUTTON_X_POS = 30
         BUTTON_Y_POS = 400
-        BUTTONS_X_DISTANCES = 350
+        BUTTONS_X_DISTANCES = BUTTON_SIZE[0] + 30
 
         self.displayManager.reset_main_rect(True, 'game_menu.png')
         for i, key in enumerate(GAMES):
@@ -140,7 +142,7 @@ class CrazyGame:
             temp_button = button.Button(pos, BUTTON_SIZE, key, images[0], images[1], False)
             self.displayManager.add_button(temp_button)
 
-        pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES*1, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
+        pos = ((displayManager.MAIN_RECT.width - BUTTONS_X_DISTANCES)//2, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
         temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'exit_unpressed.png', 'exit_pressed.png', False)
         self.displayManager.add_button(temp_button)
         self.displayManager.render()

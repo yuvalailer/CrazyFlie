@@ -16,14 +16,12 @@ class DisplayBoard:
         self.display_surf = display_surf
         self._orch = orchestrator
         self._landmark_manager = landmark_manager
-        self.inner_rect = self.get_inner_rect()
+        self.set_inner_rect()
         self.display = False
-        self.convert_ratio = self.inner_rect.width/self._orch.width
-        self.drone_radius = self.get_relative_drone_radius()
         self.led_radius = 8
         self.rect = self.get_display_board_rect()
 
-    def get_inner_rect(self):
+    def set_inner_rect(self):
         ratio = self._orch.width/self._orch.height
         if ratio >= 1:
             width = BOARD_BOUND_RECT.width
@@ -33,9 +31,16 @@ class DisplayBoard:
             height = BOARD_BOUND_RECT.height
             width = height * ratio
 
-        rect = pygame.Rect(0, 0, width, height)
-        rect.center = BOARD_BOUND_RECT.center
-        return rect
+        self.inner_rect = pygame.Rect(0, 0, width, height)
+        self.inner_rect.center = BOARD_BOUND_RECT.center
+        self.convert_ratio = self.inner_rect.width / self._orch.width
+        self.drone_radius = self.get_relative_drone_radius()
+
+        min_x, min_y = self.translate_xy_real2board(Point(self._orch.min_x - self._orch.drone_radius,
+                                                          self._orch.min_y - self._orch.drone_radius))
+        max_x, max_y = self.translate_xy_real2board(Point(self._orch.max_x + self._orch.drone_radius,
+                                                          self._orch.max_y + self._orch.drone_radius))
+        self.working_rect = pygame.Rect(min_x, min_y, (max_x - min_x), (max_y - min_y))
 
     def get_display_board_rect(self):
         rect = pygame.Rect(0, 0, self.inner_rect.width + 2 * self.drone_radius, self.inner_rect.height + 2 * self.drone_radius)
@@ -50,7 +55,7 @@ class DisplayBoard:
         if not self.display:
             return
         cf_logger.debug("rendering board...")
-        pygame.draw.rect(self.display_surf, displaysConsts.DARK_ORANGE, self.rect)
+        self._render_board()
         for drone in self._orch.drones:
             self._render_drone(drone)
         for led in self._landmark_manager.leds:
@@ -69,6 +74,10 @@ class DisplayBoard:
         new_x = self._orch.width - (inner_board_x / self.convert_ratio)
         new_y = inner_board_y / self.convert_ratio
         return new_x, new_y
+
+    def _render_board(self):
+        pygame.draw.rect(self.display_surf, displaysConsts.DARK_ORANGE, self.inner_rect)
+        pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.working_rect)
 
     def _render_drone(self, drone):
         drone.display_position = self.translate_xy_real2board(drone.position)
@@ -107,7 +116,6 @@ class DisplayBoard:
         in_x = pos1[0] - radius <= pos2[0] <= pos1[0] + radius
         in_y = pos1[1] - radius <= pos2[1] <= pos1[1] + radius
         return  in_x and in_y
-
 
     def inside_bounds(self, pos):
         bounds_x = self.inner_rect.left <= pos[0] <= self.inner_rect.right

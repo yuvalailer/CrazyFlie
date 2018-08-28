@@ -4,7 +4,7 @@ import time
 import threading
 import re
 import os
-import logger
+from CrazyGame import logger
 cf_logger = logger.get_logger(__name__)
 
 
