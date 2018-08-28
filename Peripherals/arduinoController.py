@@ -84,10 +84,14 @@ class ArduinoController:
         return [ax, ay]
 
     def _set_defaults(self):
+        start = time.time()
         while True:
             if self._data:
                 break
+            if time.time() - start > 5:
+                raise Exception('time out waiting for arduino data')
             time.sleep(0.1)
+
         time.sleep(0.1)
         axs = []
         ays = []
@@ -111,6 +115,10 @@ class ArduinoController:
     def _read_joystick(self):
         while self._run_thread:
             self._serMutex.acquire()
+            if self.ser.inWaiting() == 0:
+                self._serMutex.release()
+                time.sleep(TIME_BETWEEN_MESSAGES / 2)
+                continue
             line = self.ser.readline()
             self._serMutex.release()
             try:
