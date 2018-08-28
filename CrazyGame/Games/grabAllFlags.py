@@ -2,6 +2,7 @@ import munch
 from munch import Munch
 import pygame
 import time
+import random
 import functools
 from shapely.geometry import Point
 
@@ -22,6 +23,8 @@ BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
 TURN_TIME = 10
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
+
+LED_NUM = 4
 
 
 class GrabAllFlags:
@@ -76,16 +79,24 @@ class GrabAllFlags:
         self.players[1].winner_message = 'YOU ARE THE WINNER'
 
     def set_virtual_leds(self):
-        self.landmarks.leds = [Munch(name='led1', number=0,
-                                     position=Point(
-                                         ((self.orch.max_x + self.orch.min_x) / 2) + 2 * self.orch.drone_radius,
-                                         ((self.orch.max_y + self.orch.min_y) / 2))),
-                               Munch(name='led2', number=1,
-                                     position=Point(
-                                         ((self.orch.max_x + self.orch.min_x) / 2) - 2 * self.orch.drone_radius,
-                                         ((self.orch.max_y + self.orch.min_y) / 2)))]
-        self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.RED)
-        self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.RED)
+        self.landmarks.leds = self.generate_leds(LED_NUM)
+        for led in self.landmarks.leds:
+            self.landmarks.set_led(led, displaysConsts.RED)
+
+    def generate_leds(self, led_num):
+        RATIO = 10000
+        leds = []
+        x_start = self.orch.min_x * RATIO
+        x_end = self.orch.max_x * RATIO
+        y_start = self.orch.min_y * RATIO
+        y_end = self.orch.max_y * RATIO
+        for i in range(led_num):
+            x = random.randint(x_start, x_end)/RATIO
+            y = random.randint(y_start, y_end)/RATIO
+            leds.append(Munch(name='led{}'.format(i),
+                              number=i,
+                              position=Point(x, y)))
+        return leds
 
     def get_turn_handler(self):
         self.algolink = algoLink.AlgoLink()
