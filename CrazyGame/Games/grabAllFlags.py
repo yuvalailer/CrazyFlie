@@ -6,9 +6,9 @@ from shapely.geometry import Point
 
 from pygameUtils import displayManager
 from pygameUtils import button
-from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
 from CrazyGame import logger
+from Peripherals import algoLink
 from Games import pathFinder
 from Games import followPath
 
@@ -31,6 +31,7 @@ class GrabAllFlags:
         self.running = True
         self.players = [munch.Munch(last_updated=0), munch.Munch(last_updated=0)]
         self.current_player = None
+        self.algolink = None
 
     def run(self):
         self.velocity = self.orch.drone_velocity
@@ -94,6 +95,8 @@ class GrabAllFlags:
             self.reset_leds()
             self.drone.color = self.current_player.color
             self.run_turn()
+            if self.algolink:
+                self.algolink.disconnect()
             self.orch.stop_drone(self.drone)
             self.move_drone_to_start_position()
             self.displayManager.text_line.set_text('%s turn ended' % self.current_player.name)
@@ -174,10 +177,11 @@ class GrabAllFlags:
         return self.orch.drone_reach_position(self.drone, goal)
 
     def computer_player_prepare_to_turn(self):
-        friend_drones = [self.orch.update_drone_xy_pos(self.current_player.drone)]
-        opponent_drones = [self.orch.update_drone_xy_pos(self.current_player.next_player.drone)]
-        target = self.current_player.target
-        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 100)
+        self.algolink = algoLink.AlgoLink()
+        self.algolink.connect()
+        self.algolink.set_world(self.orch.size)
+        self.algolink.set_drone_size(self.orch.drone_radius*2)
+        path = self.algolink.capture_all_flags(self.start_position, self.current_player.targets_left, [], [])
         if not path:
             cf_logger.info('no path found')
             path = [self.orch.update_drone_xy_pos(self.drone)]*2

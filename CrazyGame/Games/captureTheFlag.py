@@ -48,7 +48,6 @@ class CaptureTheFlag:
         self.landmarks.initialize_leds('capture')
         self.initialize_players()
 
-
         self.choose_mode()
         if not self.running:
             return

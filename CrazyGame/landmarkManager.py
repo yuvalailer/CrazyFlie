@@ -9,6 +9,7 @@ class LandmarkManager:
     def __init__(self, arduino_controller, drones_controller):
         self.drones_controller = drones_controller
         rigid_bodies = self.drones_controller.get_objects()
+        self.real_leds = False
         self.leds = self._parse_leds(rigid_bodies)
         self.obstacles = self._parse_obstacles(rigid_bodies)
         self.arduino_cont = arduino_controller
@@ -18,6 +19,7 @@ class LandmarkManager:
         leds = []
         for inx, obj in enumerate(landmarks):
             if obj.startswith('led'):
+                self.real_leds = True
                 leds.append(Munch(name=obj,
                                   number=inx,
                                   color=displaysConsts.BLACK,
@@ -33,8 +35,8 @@ class LandmarkManager:
         return obstacles
 
     def initialize_leds(self, game_name):
-        if len(self.leds) == 0:
-            if game_name == 'capture':
+        if not self.real_leds:
+            if game_name == 'capture' or game_name == 'demo':
                 self.leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.30, 0.96)),
                             Munch(name='led2', number=1,color=displaysConsts.BLUE, position=Point(0.20, 0.96))]
             if game_name == 'grab':
