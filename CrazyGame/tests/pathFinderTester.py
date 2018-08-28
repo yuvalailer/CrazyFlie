@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from Games import pathFinder
 from datetime import datetime
 from CrazyGame.Peripherals import dronesControllerSimulator
+from CrazyGame import dronesOrchestrator
 
 def plot_player(ax, p, r, c):
     circle =  plt.Circle((p.x, p.y), r, color=c, fill=False)
@@ -21,8 +22,10 @@ target = Point(2.3, 0.96)
 
 start_time = datetime.now()
 drones_simulator = dronesControllerSimulator.DronesController()
+orch = dronesOrchestrator.DronesOrchestrator(drones_simulator)
 world_size = drones_simulator.get_world_size()
-path = pathFinder.find_best_path(friend_drones, opponent_drones, target, world_size)
+path = pathFinder.find_best_path(friend_drones, opponent_drones, target,
+                                 orch.min_x, orch.max_x, orch.min_y, orch.max_y)
 end_time = datetime.now()
 
 elapsed_time = end_time - start_time

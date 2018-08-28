@@ -56,6 +56,7 @@ class CrazyGame:
         self.landmarkManager = landmarkManager.LandmarkManager(self.arduino_controller,
                                                                self.drone_controller)
         self.displayManager.set_board(self.orch, self.landmarkManager)
+        self.displayManager.set_batteries_display(self.orch)
         self.run_starting_animation()
 
     def set_arduino_control(self):

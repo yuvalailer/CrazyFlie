@@ -43,6 +43,22 @@ class DronesOrchestrator:
         return self.size[1]
 
     @property
+    def min_x(self):
+        return MARGIN_X + DRONE_RADIUS
+
+    @property
+    def max_x(self):
+        return self.size[0] - MARGIN_X - DRONE_RADIUS
+
+    @property
+    def min_y(self):
+        return MARGIN_Y + DRONE_RADIUS
+
+    @property
+    def max_y(self):
+        return self.size[1] - MARGIN_Y - DRONE_RADIUS
+
+    @property
     def drone_velocity(self):
         return self._drone_velocity
 
@@ -162,10 +178,15 @@ class DronesOrchestrator:
                      drone.position.y + direction[1] * self.drone_step_size)
 
     def check_point_in_bounds(self, target, drone):
-        if not (2*DRONE_RADIUS + MARGIN_X <= target.x + self.drone_radius <= self.width - MARGIN_X):
+        if not (self.min_x <= target.x <= self.max_x):
             cf_logger.warning('drone %s is trying to move out of x bounds' % drone.name)
             return False
-        if not (2*DRONE_RADIUS +MARGIN_Y <= target.y + self.drone_radius <= self.height - MARGIN_Y):
+        if not (self.min_y <= target.y <= self.max_y):
             cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
             return False
         return True
+
+    def update_drones_battery(self):
+        for drone in self.drones:
+            drone.battery_level = self.drones_controller.battery_status(drone)
+

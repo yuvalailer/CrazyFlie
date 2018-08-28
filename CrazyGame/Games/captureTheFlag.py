@@ -1,10 +1,11 @@
 import munch
+from munch import Munch
 import pygame
 import time
 import functools
 from shapely.geometry import Point
 
-from pygameUtils import displayManager
+from pygameUtils import displayManager, batteriesDisplay
 from pygameUtils import button
 from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
@@ -45,7 +46,8 @@ class CaptureTheFlag:
         self.step_size = self.orch.drone_step_size
         assert len(self.orch.drones) > 1, 'need at least two drones'
 
-        self.landmarks.initialize_leds('capture')
+        if not self.landmarks.real_leds:
+            self.set_virtual_leds()
         self.initialize_players()
 
         self.choose_mode()
@@ -55,12 +57,21 @@ class CaptureTheFlag:
         self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
+        self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
         self.displayManager.render()
 
         self.quit = False
         self.running = True
         self.game_loop()
+
+    def set_virtual_leds(self):
+        self.landmarks.leds = [Munch(name='led1', number=0,
+                                     position=Point(self.orch.max_x, (self.orch.max_y + self.orch.min_y) / 2)),
+                               Munch(name='led2', number=1,
+                                     position=Point(self.orch.min_x, (self.orch.max_y + self.orch.min_y) / 2))]
+        self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.GREEN)
+        self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.BLUE)
 
     def allocate_players(self):
         drone1position = Point(0.3, 0.96)
@@ -188,7 +199,8 @@ class CaptureTheFlag:
         cf_logger.critical('player %s current target is %s ' %(self.current_player.name, target))
         cf_logger.critical('player %s current position is: %s' %(self.current_player.name,
                                                                  self.orch.get_drone_pos(self.current_player.drone)))
-        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, self.orch.size)
+        path = pathFinder.find_best_path(friend_drones, opponent_drones, target,
+                                         self.orch.min_x, self.orch.max_x, self.orch.min_y, self.orch.max_y)
         if not path:
             cf_logger.info('no path found')
             path = [self.orch.update_drone_xy_pos(self.current_player.drone)]*2

@@ -1,12 +1,13 @@
 import socket
 import time
+from shapely.geometry import Point
 from CrazyGame import logger
 
 cf_logger = logger.get_logger(__name__)
 
 DEFAULT_LOCAL_IP = "127.0.0.1"
 DEFAULT_VM_IP = "172.16.1.2"
-DEFAULT_TCP_PORT = 8080
+DEFAULT_TCP_PORT = 20000
 DEFAULT_BUFFER_SIZE = 1024
 CONNECTION_TIME_OUT = 2
 
@@ -42,6 +43,7 @@ class AlgoLink:
         raise ConnectionError
 
     def disconnect(self):
+        # self._send("disconnect")
         cf_logger.debug("disconnect")
         self._socket.close()
 
@@ -49,22 +51,37 @@ class AlgoLink:
         pass
 
     def set_drone_size(self, drone_size):
-        pass
-
+        self._send("set_drone_size$" + str(drone_size))
+        
 
     def set_obstacles(self, obstacles):
         pass
 
+    # start pos - point
+    # sites list of points
+
     def capture_all_flags(self, start_pos, sites, friend_drone, opponent_drones):
-        temp = "find_path$" + " ".join(str(x) for x in start_pos)
-        temp += "$" + " ".join(str(x) for x in sites)
-        temp += "$" + " ".join(str(x) for x in friend_drone)
-        temp += " " + " ".join(str(x) for x in opponent_drones)
+        """
 
-        ret = self._send(temp)
-        print(ret)
-        return ret.split(" ")
+        :type start_pos: Point
+        """
+        temp = "find_path$" + str(start_pos.x) + " " + str(start_pos.y)
+        temp += "$" + " ".join(str(p.x) + " " + str(p.y) for p in sites)
+        temp += "$"
+        if friend_drone:
+            temp += str(friend_drone.x) + " " + str(friend_drone.y)
+        if opponent_drones:
+            temp += " " + " ".join(str(p.x) + " " + str(p.y) for p in opponent_drones)
 
+        res = self._send(temp)
+        if not res:
+            raise ConnectionError
+        res = res.split(" ")
+        print(res)
+        ret = []
+        for i in range(int(len(res) / 2)):
+            ret.append(Point(float(res[2 * i]), float(res[2 * i + 1])))
+        return ret
 
 
     def _send(self, command):

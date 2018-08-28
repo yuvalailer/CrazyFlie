@@ -26,9 +26,11 @@ def setup_orch():
     orch = dronesOrchestrator.DronesOrchestrator(controller)
     return orch
 
-def find_path(friend_drones, opponent_drones, target):
+
+def find_path(friend_drones, opponent_drones, target, min_x, max_x, min_y, max_y):
     start_time = datetime.now()
-    path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 100)
+    path = pathFinder.find_best_path(friend_drones, opponent_drones, target,
+                                     min_x, max_x, min_y, max_y)
     end_time = datetime.now()
 
     elapsed_time = end_time - start_time
@@ -44,7 +46,8 @@ def main():
     drone = orch.drones[0]
     orch.try_take_off(drone, blocking=True)
     target = Point(0.5, 0.5)
-    path = find_path([orch.update_drone_xy_pos(orch.drones[0])], [orch.update_drone_xy_pos(orch.drones[1])], target)
+    path = find_path([orch.update_drone_xy_pos(orch.drones[0])], [orch.update_drone_xy_pos(orch.drones[1])], target,
+                     orch.min_x, orch.max_x, orch.min_y, orch.max_y)
 
     pf = followPath.Follower(path, orch.drones[0], orch)
     while not pf.completed:

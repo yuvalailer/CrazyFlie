@@ -1,4 +1,5 @@
 import munch
+from munch import Munch
 import pygame
 import time
 import functools
@@ -9,7 +10,6 @@ from pygameUtils import button
 from pygameUtils import displaysConsts
 from CrazyGame import logger
 from Peripherals import algoLink
-from Games import pathFinder
 from Games import followPath
 
 cf_logger = logger.get_logger(__name__)
@@ -37,7 +37,6 @@ class GrabAllFlags:
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
 
-        self.landmarks.initialize_leds('grab')
         self.initialize()
 
         self.displayManager.reset_main_rect(update_display=False)
@@ -51,6 +50,8 @@ class GrabAllFlags:
         self.game_loop()
 
     def initialize(self):
+        if not self.landmarks.real_leds:
+            self.set_virtual_leds()
         cf_logger.info('create players')
         self.drone = self.orch.drones[0]
         self.start_position = self.orch.update_drone_xy_pos(self.drone)
@@ -65,7 +66,7 @@ class GrabAllFlags:
         self.players[0].name = 'computer'
         self.players[1].name = 'your'
 
-        self.players[0].prepare_to_turn = self.computer_player_prepare_to_turn
+        self.players[0].prepare_to_turn = self.get_turn_handler()
         self.players[1].prepare_to_turn = self.human_player_prepare_to_turn
 
         self.players[0].manage_turn = self.computer_player_manage_turn
@@ -73,6 +74,28 @@ class GrabAllFlags:
 
         self.players[0].winner_message = 'YOU LOSE, TOO BAD, LOSER!!!'
         self.players[1].winner_message = 'YOU ARE THE WINNER'
+
+    def set_virtual_leds(self):
+        self.landmarks.leds = [Munch(name='led1', number=0,
+                                     position=Point(
+                                         ((self.orch.max_x + self.orch.min_x) / 2) + 2 * self.orch.drone_radius,
+                                         ((self.orch.max_y + self.orch.min_y) / 2))),
+                               Munch(name='led2', number=1,
+                                     position=Point(
+                                         ((self.orch.max_x + self.orch.min_x) / 2) - 2 * self.orch.drone_radius,
+                                         ((self.orch.max_y + self.orch.min_y) / 2)))]
+        self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.RED)
+        self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.RED)
+
+    def get_turn_handler(self):
+        self.algolink = algoLink.AlgoLink()
+        try:
+            self.algolink.connect()
+        except ConnectionError:
+            return self.computer_simulator_prepare_to_turn
+        self.algolink.set_world(self.orch.size)
+        self.algolink.set_drone_size(self.orch.drone_radius*2)
+        return self.computer_player_prepare_to_turn
 
     def reset_leds(self):
         for led in self.landmarks.leds:
@@ -95,24 +118,30 @@ class GrabAllFlags:
             self.reset_leds()
             self.drone.color = self.current_player.color
             self.run_turn()
-            if self.algolink:
-                self.algolink.disconnect()
             self.orch.stop_drone(self.drone)
             self.move_drone_to_start_position()
             self.displayManager.text_line.set_text('%s turn ended' % self.current_player.name)
             self.current_player = self.current_player.next_player
             self.interactive_sleep(2)
-            break
+            if not self.running:
+                break
+
+        if self.algolink:
+                self.algolink.disconnect()
 
         if not self.running:
             return
         winner = self.calculate_winner()
+        self.interactive_sleep(3)
         self.displayManager.text_line.set_text(winner.winner_message)
         self.orch.land(self.drone)
-        self.interactive_sleep(5)
+        self.interactive_sleep(4)
 
     def calculate_winner(self):
-        return self.players[0] if (self.players[0].time > self.players[1].time) else self.players[1]
+        text = "computer's time - {0:.2f}, your time - {1:.2f}".format(self.players[0].time, self.players[1].time)
+        cf_logger.info(text)
+        self.displayManager.text_line.set_text(text)
+        return self.players[0] if (self.players[0].time < self.players[1].time) else self.players[1]
 
     def run_turn(self):
         start_turn_time = time.time()
@@ -122,7 +151,7 @@ class GrabAllFlags:
             current_time = time.time()
             elapsed_time = current_time - start_turn_time
             if current_time - last_render_time > RENDER_RATE:
-                text = '%s - turn time %2f second' % (self.current_player.name, elapsed_time)
+                text = '{0} - turn time {1:.2f} second'.format(self.current_player.name, elapsed_time)
                 self.orch.update_drones_positions()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
@@ -177,15 +206,19 @@ class GrabAllFlags:
         return self.orch.drone_reach_position(self.drone, goal)
 
     def computer_player_prepare_to_turn(self):
-        self.algolink = algoLink.AlgoLink()
-        self.algolink.connect()
-        self.algolink.set_world(self.orch.size)
-        self.algolink.set_drone_size(self.orch.drone_radius*2)
-        path = self.algolink.capture_all_flags(self.start_position, self.current_player.targets_left, [], [])
+        sites = [led.position for led in self.landmarks.leds]
+        path = self.algolink.capture_all_flags(self.start_position, sites, [], [])
         if not path:
             cf_logger.info('no path found')
             path = [self.orch.update_drone_xy_pos(self.drone)]*2
-        self.current_player.follower = followPath.Follower(path, self.current_player.drone, self.orch)
+        self.current_player.follower = followPath.Follower(path, self.drone, self.orch)
+
+    def computer_simulator_prepare_to_turn(self):
+        path = [self.orch.update_drone_xy_pos(self.drone)]
+        sites = [led.position for led in self.landmarks.leds]
+        path.extend(sites)
+        self.current_player.follower = followPath.Follower(path, self.drone, self.orch)
+
 
     def computer_player_manage_turn(self):
         if time.time() - self.current_player.last_updated > 0.1:
@@ -227,8 +260,6 @@ class GrabAllFlags:
     def manage_button_click(self, button):
         if button == self.back_button:
             self.running = False
-
-
 
     def add_buttons(self, choose=False):
         self.displayManager.add_button(self.back_button)
