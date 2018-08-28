@@ -6,7 +6,7 @@ IMG = displaysConsts.BATTERY_DISPLAY_IMG
 X_POSITION = 10
 Y_POSITION = 10
 POS = (X_POSITION, 320)
-SIZE = (82, 49)
+SIZE = (65, 45)
 
 
 class BatteriesDisplay:
@@ -50,9 +50,9 @@ class BatteriesDisplay:
             self.display_surf.blit(text_surface, position)
 
             battery_status = str(drone.battery_level)
-            text_surface = self.font.render(battery_status, False, displaysConsts.BLACK)
+            text_surface = self.font.render(str(int(battery_status)) + '%', False, displaysConsts.BLACK)
             position = (self.rect[i].centerx - text_surface.get_width() / 2,
-                        (self.rect[i].top  - text_surface.get_height() / 2) + 35)
+                        (self.rect[i].top - text_surface.get_height() / 2) + 35)
             self.display_surf.blit(text_surface, position)
 
 

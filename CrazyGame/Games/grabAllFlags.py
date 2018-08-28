@@ -42,13 +42,14 @@ class GrabAllFlags:
         self.displayManager.reset_main_rect(update_display=False)
         self.displayManager.text_line.set_text('grab all the flags')
         self.displayManager.board.display = True
+        self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
         self.displayManager.render()
 
         self.quit = False
         self.running = True
         self.game_loop()
-
+        self.displayManager.batteriesDisplay.display = False
     def initialize(self):
         if not self.landmarks.real_leds:
             self.set_virtual_leds()
@@ -153,6 +154,7 @@ class GrabAllFlags:
             if current_time - last_render_time > RENDER_RATE:
                 text = '{0} - turn time {1:.2f} second'.format(self.current_player.name, elapsed_time)
                 self.orch.update_drones_positions()
+                self.orch.update_drones_battery()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
                 last_render_time = time.time()

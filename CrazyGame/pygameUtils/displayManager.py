@@ -116,7 +116,6 @@ class TextLine:
     def render(self):
         if self.display:
             pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.rect)
-
             textsurface = self.font.render(self._text, False, displaysConsts.BLACK)
             text_pos = (self.rect.centerx - textsurface.get_width() / 2, self.rect.y + 10)
             self.display_surf.blit(textsurface, text_pos)
