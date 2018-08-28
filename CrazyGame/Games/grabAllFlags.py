@@ -37,17 +37,6 @@ class GrabAllFlags:
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
 
-
-        if not self.landmarks.real_leds:
-            self.landmarks.leds = [Munch(name='led1', number=0,
-                   position=Point(((self.orch.max_x + self.orch.min_x) / 2) + 2*self.orch.drone_radius,
-                                  ((self.orch.max_y + self.orch.min_y) / 2))),
-             Munch(name='led2', number=1,
-                   position=Point(((self.orch.max_x + self.orch.min_x) / 2) - 2*self.orch.drone_radius,
-                                  ((self.orch.max_y + self.orch.min_y) / 2)))]
-            self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.RED)
-            self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.RED)
-
         self.initialize()
 
         self.displayManager.reset_main_rect(update_display=False)
@@ -61,6 +50,8 @@ class GrabAllFlags:
         self.game_loop()
 
     def initialize(self):
+        if not self.landmarks.real_leds:
+            self.set_virtual_leds()
         cf_logger.info('create players')
         self.drone = self.orch.drones[0]
         self.start_position = self.orch.update_drone_xy_pos(self.drone)
@@ -83,6 +74,18 @@ class GrabAllFlags:
 
         self.players[0].winner_message = 'YOU LOSE, TOO BAD, LOSER!!!'
         self.players[1].winner_message = 'YOU ARE THE WINNER'
+
+    def set_virtual_leds(self):
+        self.landmarks.leds = [Munch(name='led1', number=0,
+                                     position=Point(
+                                         ((self.orch.max_x + self.orch.min_x) / 2) + 2 * self.orch.drone_radius,
+                                         ((self.orch.max_y + self.orch.min_y) / 2))),
+                               Munch(name='led2', number=1,
+                                     position=Point(
+                                         ((self.orch.max_x + self.orch.min_x) / 2) - 2 * self.orch.drone_radius,
+                                         ((self.orch.max_y + self.orch.min_y) / 2)))]
+        self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.RED)
+        self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.RED)
 
     def get_turn_handler(self):
         self.algolink = algoLink.AlgoLink()

@@ -47,12 +47,7 @@ class CaptureTheFlag:
         assert len(self.orch.drones) > 1, 'need at least two drones'
 
         if not self.landmarks.real_leds:
-            self.landmarks.leds = [Munch(name='led1', number=0,
-                                         position=Point(self.orch.max_x, (self.orch.max_y + self.orch.min_y)/2)),
-                         Munch(name='led2', number=1,
-                               position=Point(self.orch.min_x, (self.orch.max_y + self.orch.min_y)/2))]
-            self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.GREEN)
-            self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.BLUE)
+            self.set_virtual_leds()
         self.initialize_players()
 
         self.choose_mode()
@@ -68,6 +63,14 @@ class CaptureTheFlag:
         self.quit = False
         self.running = True
         self.game_loop()
+
+    def set_virtual_leds(self):
+        self.landmarks.leds = [Munch(name='led1', number=0,
+                                     position=Point(self.orch.max_x, (self.orch.max_y + self.orch.min_y) / 2)),
+                               Munch(name='led2', number=1,
+                                     position=Point(self.orch.min_x, (self.orch.max_y + self.orch.min_y) / 2))]
+        self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.GREEN)
+        self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.BLUE)
 
     def allocate_players(self):
         drone1position = Point(0.3, 0.96)
