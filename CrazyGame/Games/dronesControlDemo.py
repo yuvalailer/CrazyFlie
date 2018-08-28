@@ -61,6 +61,7 @@ class DronesControlDemo:
                 current_time = time.time()
 
             self.manage_events()
+        self.orch.stop_drone(self.current_drone)
 
     def set_virtual_leds(self):
         self.landmarks.leds = [Munch(name='led1', number=0,

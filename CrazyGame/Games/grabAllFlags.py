@@ -130,6 +130,7 @@ class GrabAllFlags:
                 self.algolink.disconnect()
 
         if not self.running:
+            self.orch.stop_drone(self.drone)
             return
         winner = self.calculate_winner()
         self.interactive_sleep(3)

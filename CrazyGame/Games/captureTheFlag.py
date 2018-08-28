@@ -118,6 +118,7 @@ class CaptureTheFlag:
             self.interactive_sleep(2)
 
         if not self.running:
+            self.orch.stop_drone(self.current_player.drone)
             return
         self.displayManager.text_line.set_text(self.current_player.winner_message)
         self.land_drones()
