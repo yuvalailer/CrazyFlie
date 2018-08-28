@@ -132,7 +132,7 @@ class GrabAllFlags:
         if not self.running:
             return
         winner = self.calculate_winner()
-        self.interactive_sleep(3)
+        self.interactive_sleep(4)
         self.displayManager.text_line.set_text(winner.winner_message)
         self.orch.land(self.drone)
         self.interactive_sleep(4)
