@@ -48,17 +48,27 @@ class AlgoLink:
         self._socket.close()
 
     def set_world(self, world_size):
-        pass
+        self._send("set_world_size$" + str(world_size[0] + " " + str(world_size[1])))
 
     def set_drone_size(self, drone_size):
         self._send("set_drone_size$" + str(drone_size))
-        
 
     def set_obstacles(self, obstacles):
         pass
 
-    # start pos - point
-    # sites list of points
+    def find_ski_path(self, start_pos, gates):
+        temp = "find_ski_path$" + str(start_pos.x) + " " + str(start_pos.y)
+        temp += "$" + " ".join(
+            str(gate[0].x) + " " + str(gate[0].y) + " " + str(gate[1].x) + " " + str(gate[1].y) for gate in gates)
+        res = self._send(temp)
+        if not res:
+            raise ConnectionError
+        res = res.split(" ")
+        print(res)
+        ret = []
+        for i in range(int(len(res) / 2)):
+            ret.append(Point(float(res[2 * i]), float(res[2 * i + 1])))
+        return ret
 
     def capture_all_flags(self, start_pos, sites, friend_drone, opponent_drones):
         """
@@ -82,7 +92,6 @@ class AlgoLink:
         for i in range(int(len(res) / 2)):
             ret.append(Point(float(res[2 * i]), float(res[2 * i + 1])))
         return ret
-
 
     def _send(self, command):
         try:

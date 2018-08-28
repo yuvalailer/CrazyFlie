@@ -17,7 +17,7 @@ GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
 
 games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
                          'sandbox': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png'],
-                         'grab all flags': ['button_unpressed_ctf.png', 'button_pressed_ctf.png']}
+                         'grab all flags': ['button_unpressed_cta.png', 'button_pressed_cta.png']}
 
 games_images = {'capture the flag': 'capture_the_flag.png',
                 'sandbox': 'capture_the_flag.png',
