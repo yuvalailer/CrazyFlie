@@ -51,7 +51,8 @@ class AlgoLink:
         pass
 
     def set_drone_size(self, drone_size):
-        pass
+        self._send("set_drone_size$" + str(drone_size))
+        
 
     def set_obstacles(self, obstacles):
         pass
@@ -66,10 +67,15 @@ class AlgoLink:
         """
         temp = "find_path$" + str(start_pos.x) + " " + str(start_pos.y)
         temp += "$" + " ".join(str(p.x) + " " + str(p.y) for p in sites)
-        temp += "$" + str(friend_drone.x) + " " + str(friend_drone.y)
-        temp += " " + " ".join(str(p.x) + " " + str(p.y) for p in opponent_drones)
+        temp += "$"
+        if friend_drone:
+            temp += str(friend_drone.x) + " " + str(friend_drone.y)
+        if opponent_drones:
+            temp += " " + " ".join(str(p.x) + " " + str(p.y) for p in opponent_drones)
 
         res = self._send(temp)
+        if not res:
+            raise ConnectionError
         res = res.split(" ")
         print(res)
         ret = []
