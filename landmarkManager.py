@@ -1,5 +1,5 @@
 from munch import Munch
-from CrazyGame.pygameUtils import displaysConsts
+from pygameUtils import displaysConsts
 from shapely.geometry import Point
 
 LED_RADIUS = 0.05

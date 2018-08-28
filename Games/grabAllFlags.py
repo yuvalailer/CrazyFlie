@@ -9,7 +9,7 @@ from shapely.geometry import Point
 from pygameUtils import displayManager
 from pygameUtils import button
 from pygameUtils import displaysConsts
-from CrazyGame import logger
+import logger
 from Peripherals import algoLink
 from Games import followPath
 

@@ -1,9 +1,9 @@
 import pygame
 import os
-from CrazyGame import logger
-from CrazyGame.pygameUtils import displaysConsts
-from CrazyGame.pygameUtils import displayBoard
-from CrazyGame.pygameUtils import batteriesDisplay
+import logger
+from pygameUtils import displaysConsts
+from pygameUtils import displayBoard
+from pygameUtils import batteriesDisplay
 
 cf_logger = logger.get_logger(__name__)
 

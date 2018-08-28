@@ -6,7 +6,7 @@ import time
 
 test_sys_path()
 from Peripherals.dronesController import DronesController
-from CrazyGame.joystick import Joystick
+from joystick import Joystick
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 

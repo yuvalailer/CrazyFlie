@@ -1,6 +1,6 @@
 import pygame
 import numpy as np
-from CrazyGame import logger
+import logger
 
 cp_logger = logger.get_logger(__name__)
 

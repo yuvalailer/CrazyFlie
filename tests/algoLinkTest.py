@@ -1,4 +1,4 @@
-from CrazyGame.Peripherals import algoLink
+from Peripherals import algoLink
 from shapely.geometry import Point
 
 algo_link = algoLink.AlgoLink()

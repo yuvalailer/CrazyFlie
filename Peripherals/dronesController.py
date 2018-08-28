@@ -1,6 +1,6 @@
 import socket
 import time
-from CrazyGame import logger
+import logger
 
 cf_logger = logger.get_logger(__name__)
 

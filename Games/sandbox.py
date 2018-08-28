@@ -7,7 +7,7 @@ from pygameUtils import displayManager
 from pygameUtils import button
 from pygameUtils import multiButtons
 from pygameUtils import displaysConsts
-from CrazyGame import logger
+import logger
 
 cf_logger = logger.get_logger(__name__)
 

@@ -1,6 +1,6 @@
 import time
-from CrazyGame import logger
-from CrazyGame.pygameUtils import displaysConsts
+import logger
+from pygameUtils import displaysConsts
 from shapely.geometry import Point
 from shapely.geometry import LineString
 from munch import Munch

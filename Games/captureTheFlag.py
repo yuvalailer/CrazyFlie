@@ -9,7 +9,7 @@ from pygameUtils import displayManager, batteriesDisplay
 from pygameUtils import button
 from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
-from CrazyGame import logger
+import logger
 from Games import pathFinder
 from Games import followPath
 

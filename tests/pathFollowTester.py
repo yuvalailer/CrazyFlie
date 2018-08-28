@@ -2,11 +2,11 @@
 import logging
 import time
 import sys
-from CrazyGame import logger
+import logger
 from shapely.geometry import Point
 from Games import pathFinder
 from datetime import datetime
-from CrazyGame import dronesOrchestrator
+import dronesOrchestrator
 from Games import followPath
 from Peripherals import dronesControllerSimulator
 

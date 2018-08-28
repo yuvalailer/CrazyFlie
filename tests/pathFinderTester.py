@@ -1,7 +1,7 @@
 from fixSysPath import test_sys_path
 test_sys_path()
 import logging
-from CrazyGame import logger
+import logger
 logger.set_default_logging_level(logging.INFO)
 cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start path finder tester ####")
@@ -9,8 +9,8 @@ from shapely.geometry import Point
 import matplotlib.pyplot as plt
 from Games import pathFinder
 from datetime import datetime
-from CrazyGame.Peripherals import dronesControllerSimulator
-from CrazyGame import dronesOrchestrator
+from Peripherals import dronesControllerSimulator
+import dronesOrchestrator
 
 def plot_player(ax, p, r, c):
     circle =  plt.Circle((p.x, p.y), r, color=c, fill=False)

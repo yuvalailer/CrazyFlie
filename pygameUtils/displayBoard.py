@@ -1,8 +1,8 @@
 import pygame
-from CrazyGame.pygameUtils import displayManager
-from CrazyGame.pygameUtils import displaysConsts
-from CrazyGame import landmarkManager
-from CrazyGame import logger
+from pygameUtils import displayManager
+from pygameUtils import displaysConsts
+import landmarkManager
+import logger
 import logging
 from shapely.geometry import Point
 

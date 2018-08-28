@@ -1,7 +1,7 @@
 import pygame
 import os
 from pygameUtils import displaysConsts
-from CrazyGame import logger
+import logger
 import logging
 cf_logger = logger.get_logger(__name__, logging.INFO)
 

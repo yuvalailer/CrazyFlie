@@ -4,7 +4,7 @@ import time
 
 import pygame
 
-from CrazyGame import dronesOrchestrator, logger, landmarkManager, joystick
+import dronesOrchestrator, logger, landmarkManager, joystick
 from pygameUtils import button, displayManager
 from Games import captureTheFlag, sandbox, grabAllFlags
 from Peripherals import dronesController, dronesControllerSimulator, arduinoController

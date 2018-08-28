@@ -7,7 +7,7 @@ from shapely.geometry import LineString
 from shapely.geometry import Point
 
 import dronesOrchestrator
-from CrazyGame import logger
+import logger
 
 cf_logger = logger.get_logger(__name__)
 

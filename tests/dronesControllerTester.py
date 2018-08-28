@@ -3,7 +3,7 @@
 import time
 from fixSysPath import test_sys_path
 test_sys_path()
-from CrazyGame import logger
+import logger
 from Peripherals.dronesController import DronesController
 import sys
 import math
