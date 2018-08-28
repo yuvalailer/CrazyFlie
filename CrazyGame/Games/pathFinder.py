@@ -23,7 +23,7 @@ def _path_distance(path):
 
 
 def _in_minkowski_board(p, min_x, max_x, min_y, max_y):
-    return min_x< p.x < max_x and min_y < p.y < max_y
+    return min_x <= p.x <= max_x and min_y <= p.y <= max_y
 
 
 def _cut_path(path, allowed_distance):
