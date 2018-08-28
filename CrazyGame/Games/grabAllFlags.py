@@ -55,8 +55,8 @@ class GrabAllFlags:
         cf_logger.info('create players')
         self.drone = self.orch.drones[0]
         self.start_position = self.orch.update_drone_xy_pos(self.drone)
-        self.players[0].color = displaysConsts.BLUE
-        self.players[1].color = displaysConsts.GREEN
+        self.players[0].color = displaysConsts.BLACK
+        self.players[1].color = displaysConsts.BLUE
         for i in range(2):
             self.players[i].next_player = self.players[1-i]
             self.players[i].targets_left = self.get_targets()
@@ -138,7 +138,7 @@ class GrabAllFlags:
         self.interactive_sleep(4)
 
     def calculate_winner(self):
-        text = "computer's time - {0:.2f}, your time - {1:.2f}".format(self.players[0].time, self.players[1].time)
+        text = "computer's time - {0:.2f}    |    your time - {1:.2f}".format(self.players[0].time, self.players[1].time)
         cf_logger.info(text)
         self.displayManager.text_line.set_text(text)
         return self.players[0] if (self.players[0].time < self.players[1].time) else self.players[1]
