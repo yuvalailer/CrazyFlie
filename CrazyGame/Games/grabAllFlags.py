@@ -40,7 +40,7 @@ class GrabAllFlags:
 
         if not self.landmarks.real_leds:
             self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.RED, position=Point(1.30, 0.96)),
-                            Munch(name='led2', number=1,color=displaysConsts.RED, position=Point(0.90, 0.96))]
+                                   Munch(name='led2', number=1, color=displaysConsts.RED, position=Point(0.90, 0.96))]
         self.initialize()
 
         self.displayManager.reset_main_rect(update_display=False)
@@ -122,12 +122,15 @@ class GrabAllFlags:
         if not self.running:
             return
         winner = self.calculate_winner()
+        self.interactive_sleep(3)
         self.displayManager.text_line.set_text(winner.winner_message)
         self.orch.land(self.drone)
-        self.interactive_sleep(5)
+        self.interactive_sleep(4)
 
     def calculate_winner(self):
-        cf_logger.info("computer's time - {}, your time - {}".format(self.players[0].time, self.players[1].time))
+        text = "computer's time - {0:.2f}, your time - {1:.2f}".format(self.players[0].time, self.players[1].time)
+        cf_logger.info(text)
+        self.displayManager.text_line.set_text(text)
         return self.players[0] if (self.players[0].time < self.players[1].time) else self.players[1]
 
     def run_turn(self):
@@ -138,7 +141,7 @@ class GrabAllFlags:
             current_time = time.time()
             elapsed_time = current_time - start_turn_time
             if current_time - last_render_time > RENDER_RATE:
-                text = '%s - turn time %2f second' % (self.current_player.name, elapsed_time)
+                text = '{0} - turn time {1:.2f} second'.format(self.current_player.name, elapsed_time)
                 self.orch.update_drones_positions()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
@@ -193,7 +196,8 @@ class GrabAllFlags:
         return self.orch.drone_reach_position(self.drone, goal)
 
     def computer_player_prepare_to_turn(self):
-        path = self.algolink.capture_all_flags(self.start_position, self.current_player.targets_left, [], [])
+        sites = [led.position for led in self.landmarks.leds]
+        path = self.algolink.capture_all_flags(self.start_position, sites, [], [])
         if not path:
             cf_logger.info('no path found')
             path = [self.orch.update_drone_xy_pos(self.drone)]*2
