@@ -41,7 +41,7 @@ class DronesControlDemo:
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
-        self.displayManager.render()
+        self.displayManager.render(render_batteries=True)
 
         self.current_drone = self.orch.drones[0]
         self.led = None
@@ -49,14 +49,12 @@ class DronesControlDemo:
         self.quit = False
         self.running = True
         self.game_loop()
-        self.displayManager.batteriesDisplay.display = False
-        
+
     def game_loop(self):
         current_time = time.time()
         while self.running:
             if time.time() - current_time > 0.07:
                 self.orch.update_drones_positions()
-                self.orch.update_drones_battery()
                 self.displayManager.render()
                 joystick_dir = self.joystick.get_normalize_direction()
                 if joystick_dir:

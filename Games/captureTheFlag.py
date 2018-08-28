@@ -5,7 +5,7 @@ import time
 import functools
 from shapely.geometry import Point
 
-from pygameUtils import displayManager, batteriesDisplay
+from pygameUtils import displayManager
 from pygameUtils import button
 from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
@@ -42,7 +42,6 @@ class CaptureTheFlag:
         self.players = [munch.Munch(last_updated=0), munch.Munch(last_updated=0)]
         self.current_player = None
 
-
     def run(self):
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
@@ -61,12 +60,11 @@ class CaptureTheFlag:
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
-        self.displayManager.render()
+        self.displayManager.render(render_batteries=True)
 
         self.quit = False
         self.running = True
         self.game_loop()
-        self.displayManager.batteriesDisplay.display = False
 
     def set_virtual_leds(self):
         self.landmarks.leds = [Munch(name='led1', number=0,
@@ -137,7 +135,6 @@ class CaptureTheFlag:
             if current_time - last_render_time > RENDER_RATE:
                 text = '%s - turn ends in %2f second' % (self.current_player.name, turn_left_time)
                 self.orch.update_drones_positions()
-                self.orch.update_drones_battery()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
                 last_render_time = time.time()

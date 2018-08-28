@@ -147,6 +147,7 @@ class CrazyGame:
     def choose_game(self):
         self.displayManager.text_line.set_text('choose your game')
         self.displayManager.board.display = False
+        self.displayManager.batteriesDisplay.display = False
         self.set_games_buttons()
         while True:
             event = pygame.event.wait()

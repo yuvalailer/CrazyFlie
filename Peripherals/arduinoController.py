@@ -56,6 +56,7 @@ class ArduinoController:
         self.ser.close()
 
     def set_led(self, led, r, g, b):
+        cf_logger.info('%d - (%d %d %d)' % (led, r, g, b))
         checksum = (LED_MESSAGE_PREFIX + led + r + g + b) % 256
         values = bytearray([LED_MESSAGE_PREFIX, led, r, g, b, checksum])
         self._serMutex.acquire()
