@@ -6,6 +6,7 @@ from shapely.geometry import Point
 
 from pygameUtils import displayManager
 from pygameUtils import button
+from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
 from CrazyGame import logger
 from Games import pathFinder
@@ -13,66 +14,87 @@ from Games import followPath
 
 cf_logger = logger.get_logger(__name__)
 
+DIS_FROM_EDGE = 150
+Y_POS = 300
 BACK_BUTTON_SIZE = (100, 50)
+CHOOSE_BUTTON_SIZE = (200, 130)
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
-TURN_TIME = 10
+COM_COM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
+COM_PLAYER_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - CHOOSE_BUTTON_SIZE[0], Y_POS)
+PLAYER_PLAYER_BUTTON_POS = ((displayManager.MAIN_RECT.width-CHOOSE_BUTTON_SIZE[0])/2, Y_POS)
+TURN_TIME = 4
 RENDER_RATE = 1/15
-
+MOUSE_LEFT_BUTTON = 1
+CTF_IMAGE = 'capture_the_flag.png'
 
 class CaptureTheFlag:
     def __init__(self):
         self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
+        self.com_com_button = multiLinesButton.MultiLinesButton(COM_COM_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['computer','vs','computer'])
+        self.com_player_button = multiLinesButton.MultiLinesButton(COM_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','computer'])
+        self.player_player_button = multiLinesButton.MultiLinesButton(PLAYER_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','player'])
+        self.getting = True
+        self.quit = False
+        self.running = True
+        self.players = [munch.Munch(last_updated=0), munch.Munch(last_updated=0)]
+        self.current_player = None
+
 
     def run(self):
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
+        assert len(self.orch.drones) > 1, 'need at least two drones'
 
-        self.displayManager.reset_main_rect(update_display=False)
+        self.initialize_players()
+        self.landmarks.initialize_leds('capture')
+
+        self.choose_mode()
+        if not self.running:
+            return
+
+        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
+        self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.add_buttons()
         self.displayManager.render()
-
-        assert len(self.orch.drones) > 1, 'need at least two drones'
-        self.set_players()
 
         self.quit = False
         self.running = True
         self.game_loop()
 
-    def set_players(self):
-        cf_logger.info('create players')
-        self.players = [munch.Munch(name='your',
-                                    drone=self.orch.drones[0],
-                                    start_position=Point(0.25, 0.96),
-                                    led=self.landmarks.leds[0],
-                                    target=self.landmarks.leds[0].position,
-                                    last_updated=0,
-                                    prepare_to_turn=self.human_player_prepare_to_turn,
-                                    manage_turn=self.human_player_manage_turn,
-                                    winner_message='YOU ARE THE WINNER',
-                                    color=displaysConsts.BLUE),
-                        munch.Munch(name='computer',
-                                    drone=self.orch.drones[1],
-                                    start_position=Point(2.43, 0.96),
-                                    led=self.landmarks.leds[1],
-                                    target=self.landmarks.leds[1].position,
-                                    last_updated=0,
-                                    prepare_to_turn=self.computer_player_prepare_to_turn,
-                                    manage_turn=self.computer_player_manage_turn,
-                                    winner_message='YOU LOSE, NOT TOO BAD',
-                                    color=displaysConsts.GREEN)
-                                    ]
+    def allocate_players(self):
+        drone1position = Point(0.3, 0.96)
+        drone2position = Point(2.2, 0.96)
+        if drone1position.distance(self.landmarks.leds[0].position) < drone2position.distance(self.landmarks.leds[0].position):
+            drone1 = self.orch.drones[0]
+            drone2 = self.orch.drones[1]
+        else:
+            drone1 = self.orch.drones[1]
+            drone2 = self.orch.drones[0]
 
-        self.players[0].next_player = self.players[1]
-        self.players[1].next_player = self.players[0]
-        self.players[0].drone.color = displaysConsts.BLACK
-        self.players[1].drone.color = displaysConsts.BLACK
-        self.landmarks.set_led(self.players[0].led, self.players[0].color)
-        self.landmarks.set_led(self.players[1].led, self.players[1].color)
+        self.players[0].drone = drone1
+        self.players[0].start_position = drone1position
+        self.players[1].drone = drone2
+        self.players[1].start_position = drone2position
+        self.players[0].color = displaysConsts.BLUE
+        self.players[1].color = displaysConsts.GREEN
+
+    def initialize_players(self):
+        cf_logger.info('create players - {}'.format(len(self.players)))
+        self.allocate_players()
+        for i in range(2):
+            self.players[i].led = self.landmarks.leds[i]
+            self.players[i].target = self.landmarks.leds[i].position
+            self.players[i].next_player = self.players[1-i]
+            self.players[i].drone.color = displaysConsts.BLACK
+            self.landmarks.set_led(self.players[i].led, self.players[i].color)
+
         self.current_player = self.players[1]
 
     def game_loop(self):
-        self.move_drones_to_start_position()
+        for drone in self.orch.drones:
+            self.orch.land(drone)
+        self.move_drones_to_start_positions()
         cf_logger.info('start game')
         while self.running:
             cf_logger.info('run %s turn' % self.current_player.name)
@@ -110,13 +132,17 @@ class CaptureTheFlag:
                 last_render_time = time.time()
             self.current_player.manage_turn()
             self.manage_events()
+        cf_logger.debug('player %s finished his movement at position: %s' % (self.current_player.name,
+                                                                             self.orch.get_drone_pos(
+                                                                                 self.current_player.drone)))
 
     def land_drones(self):
         for player in self.players:
             self.orch.land(player.drone)
 
-    def move_drones_to_start_position(self):
+    def move_drones_to_start_positions(self):
         for player in self.players:
+            cf_logger.info("players - %d" % len(self.players))
             cf_logger.info("move %s to start position" % player.name)
             self.orch.try_take_off(player.drone)
             wait_func = functools.partial(self.orch.drone_is_up, player.drone)
@@ -124,7 +150,7 @@ class CaptureTheFlag:
 
             self.orch.try_goto(player.drone, player.start_position)
             wait_func = functools.partial(self.orch.drone_reach_position, player.drone, player.start_position)
-            self.wait_to(wait_func, timeout=10)
+            self.wait_to(wait_func, timeout=30)
 
             self.orch.land(player.drone)
 
@@ -159,7 +185,13 @@ class CaptureTheFlag:
         friend_drones = [self.orch.update_drone_xy_pos(self.current_player.drone)]
         opponent_drones = [self.orch.update_drone_xy_pos(self.current_player.next_player.drone)]
         target = self.current_player.target
-        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, 100)
+        cf_logger.critical('player %s current target is %s ' %(self.current_player.name, target))
+        cf_logger.critical('player %s current position is: %s' %(self.current_player.name,
+                                                                 self.orch.get_drone_pos(self.current_player.drone)))
+        path = pathFinder.find_best_path(friend_drones, opponent_drones, target, self.orch.size)
+        if not path:
+            cf_logger.info('no path found')
+            path = [self.orch.update_drone_xy_pos(self.current_player.drone)]*2
         self.current_player.follower = followPath.Follower(path, self.current_player.drone, self.orch)
 
     def computer_player_manage_turn(self):
@@ -184,9 +216,10 @@ class CaptureTheFlag:
             if event.type == pygame.QUIT:
                 self.quit = True
                 self.running = False
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+                self.getting = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == MOUSE_LEFT_BUTTON:
                 self.displayManager.handle_mouse_event(event.type)
-            elif event.type == pygame.MOUSEBUTTONUP:
+            elif event.type == pygame.MOUSEBUTTONUP and event.button == MOUSE_LEFT_BUTTON:
                 mouse_event_obj = self.displayManager.handle_mouse_event(event.type)
                 if mouse_event_obj:
                     if mouse_event_obj[0] == 'button':
@@ -200,7 +233,58 @@ class CaptureTheFlag:
 
     def manage_button_click(self, button):
         if button == self.back_button:
+            self.getting = False
             self.running = False
+        if button == self.com_com_button:
+            self.com_com_update()
+            self.getting = False
+        if button == self.com_player_button:
+            self.com_player_update()
+            self.getting = False
+        if button == self.player_player_button:
+            self.player_player_update()
+            self.getting = False
 
-    def add_buttons(self):
+    def com_com_update(self):
+        for i in range(2):
+            self.players[i].name = 'computer {}'.format(i+1)
+            self.players[i].prepare_to_turn = self.computer_player_prepare_to_turn
+            self.players[i].manage_turn = self.computer_player_manage_turn
+            self.players[i].winner_message = 'computer {} wins'.format(i+1)
+
+    def com_player_update(self):
+        self.players[0].name = 'computer'
+        self.players[1].name = 'your'
+
+        self.players[0].prepare_to_turn = self.computer_player_prepare_to_turn
+        self.players[1].prepare_to_turn = self.human_player_prepare_to_turn
+
+        self.players[0].manage_turn = self.computer_player_manage_turn
+        self.players[1].manage_turn = self.human_player_manage_turn
+
+        self.players[0].winner_message = 'YOU LOSE, TOO BAD, LOSER!!!'
+        self.players[1].winner_message = 'YOU ARE THE WINNER'
+
+    def player_player_update(self):
+        for i in range(2):
+            self.players[i].name = 'player {}'.format(i+1)
+            self.players[i].prepare_to_turn = self.human_player_prepare_to_turn
+            self.players[i].manage_turn = self.human_player_manage_turn
+            self.players[i].winner_message = 'player {} wins'.format(i+1)
+
+    def add_buttons(self, choose=False):
         self.displayManager.add_button(self.back_button)
+        if choose:
+            self.displayManager.add_button(self.com_com_button)
+            self.displayManager.add_button(self.com_player_button)
+            self.displayManager.add_button(self.player_player_button)
+
+    def choose_mode(self):
+        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
+        self.displayManager.text_line.set_text('Choose game mode')
+        self.add_buttons(choose=True)
+        self.displayManager.render()
+        self.getting = True
+        while self.getting:
+            self.manage_events()
+            time.sleep(0.1)

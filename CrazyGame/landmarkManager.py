@@ -23,10 +23,6 @@ class LandmarkManager:
                                   color=displaysConsts.BLACK,
                                   position=self.update_landmark_xy_position(obj)))
 
-
-        if len(leds) == 0:
-            leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.53, 0.96)),
-                    Munch(name='led2', number=1,color=displaysConsts.BLUE, position=Point(0.15, 0.96))]
         return leds
 
     def _parse_obstacles(self, landmarks):
@@ -35,6 +31,15 @@ class LandmarkManager:
             if landmark.startswith('obstacle'):
                 obstacles.append(Munch(name=landmark, color=displaysConsts.BLACK))
         return obstacles
+
+    def initialize_leds(self, game_name):
+        if len(self.leds) == 0:
+            if game_name == 'capture':
+                self.leds = [Munch(name='led1', number=0, color=displaysConsts.GREEN, position=Point(2.30, 0.96)),
+                            Munch(name='led2', number=1,color=displaysConsts.BLUE, position=Point(0.20, 0.96))]
+            if game_name == 'grab':
+                self.leds = [Munch(name='led1', number=0, color=displaysConsts.RED, position=Point(1.30, 0.96)),
+                            Munch(name='led2', number=1,color=displaysConsts.RED, position=Point(0.90, 0.96))]
 
     def update_landmark_xy_position(self, landmark):
         pos = self.drones_controller.get_object_position(landmark.name)

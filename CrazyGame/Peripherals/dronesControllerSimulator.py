@@ -6,8 +6,8 @@ import math
 
 cf_logger = logger.get_logger(__name__)
 
-WORLD_X = 2.68
-WORLD_Y = 1.92
+WORLD_X = 2.46
+WORLD_Y = 1.72
 
 TAKEOFF_HEIGHT = 0.5
 DEFAULT_VELOCITY = 0.1
@@ -106,7 +106,7 @@ class DronesController:
         return np.random.normal(exp, var, 1)
 
 
-class MoveManager():
+class MoveManager:
     def __init__(self, start, target, velocity):
         self._start = start
         self._target = target
@@ -123,15 +123,17 @@ class MoveManager():
         return self._move_end
 
     def get_position(self):
+        if self.move_end:
+            return list(self._target)
+
         current_time = time.time()
         if current_time > self._end_time:
             self._move_end = True
             return list(self._target)
 
-        move_complieted_ratio = (current_time - self._start_time) / self._total_time
-
-        pos_x = self._start[0] + self._move_vector[0] * move_complieted_ratio
-        pos_y = self._start[1] + self._move_vector[1] * move_complieted_ratio
+        move_completed_ratio = (current_time - self._start_time) / self._total_time
+        pos_x = self._start[0] + self._move_vector[0] * move_completed_ratio
+        pos_y = self._start[1] + self._move_vector[1] * move_completed_ratio
 
         return [pos_x, pos_y]
 

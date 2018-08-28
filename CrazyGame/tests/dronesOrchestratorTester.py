@@ -60,8 +60,8 @@ def go_to_out_of_bounds_tests(orch, drone):
 
 def move_out_of_bounds_tests(orch, drone):
     cf_logger.info("*** MOVE OUT OF BOUNDS TEST***")
-    orch.try_move_drone(drone, (-1, 0))
-    time.sleep(1)
+    while orch.try_move_drone(drone, (1, 0)):
+        time.sleep(1)
 
 
 def takeoff_land_tests(orch, droneA, droneB):

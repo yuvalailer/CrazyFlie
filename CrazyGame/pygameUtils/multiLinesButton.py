@@ -9,20 +9,20 @@ UNPRESSED_BUTTON_IMAGE = 'button_unpressed.png'
 PRESSED_BUTTON_IMAGE = 'button_pressed.png'
 
 
-class Button:
+class MultiLinesButton:
     BUTTON_TEXT_COLOR = displaysConsts.WHITE
 
-    def __init__(self, position, size, text, unpressed_image_name=UNPRESSED_BUTTON_IMAGE, pressed_image_name=PRESSED_BUTTON_IMAGE, show_text=True):
+    def __init__(self, position, size, lines, unpressed_image_name=UNPRESSED_BUTTON_IMAGE, pressed_image_name=PRESSED_BUTTON_IMAGE):
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
         self.font = pygame.font.SysFont("arial", min(30, self.rect.height - 5))
-        self.text = text
+        self.lines = lines
+        self.text_surfaces = [self.font.render(self.lines[i], False, MultiLinesButton.BUTTON_TEXT_COLOR) for i in range(len(lines))]
         self.size = size
         self.current_image = ''
-        self.show_text = show_text
         self.pressed = False
-        self.text_surface = self.font.render(self.text, False, Button.BUTTON_TEXT_COLOR)
-        self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
-                              self.rect.centery - self.text_surface.get_height() / 2)
+        self.step = self.size[1]//(len(self.lines)+1)
+        self.text_positions = [(self.rect.centerx - self.text_surfaces[i].get_width() / 2,
+                              self.rect.top + self.step*(i+1) - self.text_surfaces[i].get_height() / 2) for i in range(len(self.text_surfaces))]
 
         self.has_image = unpressed_image_name is not None
         self.unpressed_image_name = unpressed_image_name
@@ -31,10 +31,11 @@ class Button:
         self.set_pressed(False)
         self.current_color = (0, 0, 0)
 
-    def set_text(self, text):
-        self.text_surface = self.font.render(text, False, Button.BUTTON_TEXT_COLOR)
-        self.text_position = (self.rect.centerx - self.text_surface.get_width() / 2,
-                              self.rect.centery - self.text_surface.get_height() / 2)
+    def set_text(self, lines):
+        self.text_surfaces = [self.font.render(self.lines[i], False, MultiLinesButton.BUTTON_TEXT_COLOR) for i in range(len(lines))]
+        self.text_positions = [(self.rect.centerx - self.text_surfaces[i].get_width() / 2,
+                              self.rect.top + self.text_surfaces[i].get_height() * i) for i in range(len(self.text_surfaces))]
+
         self.render()
 
     def render(self):
@@ -43,8 +44,8 @@ class Button:
         else:
             pygame.draw.rect(self.display_surf, self.current_color, self.rect)
 
-        if self.show_text:
-            self.display_surf.blit(self.text_surface, self.text_position)
+        for i in range(len(self.text_surfaces)):
+            self.display_surf.blit(self.text_surfaces[i], self.text_positions[i])
 
     def set_pressed(self, state):
         self.pressed = state
@@ -59,7 +60,7 @@ class Button:
 
     def handle_mouse_event(self, event_type, mouse_location):
         if self.rect.collidepoint(*mouse_location):
-            cf_logger.debug('mouse event %s occurred on button %s'%(event_type, self.text))
+            cf_logger.debug('mouse event %s occurred on button %s' % (event_type, self.lines))
             if event_type == pygame.MOUSEBUTTONDOWN:
                 self.set_pressed(True)
             elif event_type == pygame.MOUSEBUTTONUP:

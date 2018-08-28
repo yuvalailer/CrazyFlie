@@ -11,8 +11,8 @@ DRONE_VELOCITY = 0.1
 DRONE_STEP_SIZE = 0.1
 DRONE_RADIUS = 0.1
 TARGET_RADIUS = 0.05
-
-
+MARGIN_X = 0.15
+MARGIN_Y = 0.15
 
 class DronesOrchestrator:
     def __init__(self, drones_controller):
@@ -124,7 +124,7 @@ class DronesOrchestrator:
         drone.grounded = False
 
     def drone_is_up(self, drone):
-        return self.get_drone_pos(drone)[2] > 0.1
+        return self.get_drone_pos(drone)[2] > 0.45
 
     def drone_reach_position(self, drone, target):
         return self.update_drone_xy_pos(drone).distance(target) < TARGET_RADIUS
@@ -162,10 +162,10 @@ class DronesOrchestrator:
                      drone.position.y + direction[1] * self.drone_step_size)
 
     def check_point_in_bounds(self, target, drone):
-        if not (0 <= target.x + self.drone_radius <= self.width):
+        if not (2*DRONE_RADIUS + MARGIN_X <= target.x + self.drone_radius <= self.width - MARGIN_X):
             cf_logger.warning('drone %s is trying to move out of x bounds' % drone.name)
             return False
-        if not 0 <= target.y + self.drone_radius <= self.height:
+        if not (2*DRONE_RADIUS +MARGIN_Y <= target.y + self.drone_radius <= self.height - MARGIN_Y):
             cf_logger.warning('drone %s is trying to move out of y bounds' % drone.name)
             return False
         return True
