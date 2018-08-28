@@ -2,6 +2,7 @@ import munch
 from munch import Munch
 import pygame
 import time
+import random
 import functools
 from shapely.geometry import Point
 
@@ -23,6 +24,8 @@ TURN_TIME = 10
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
 
+LED_NUM = 4
+
 
 class GrabAllFlags:
     def __init__(self):
@@ -42,21 +45,22 @@ class GrabAllFlags:
         self.displayManager.reset_main_rect(update_display=False)
         self.displayManager.text_line.set_text('grab all the flags')
         self.displayManager.board.display = True
+        self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
         self.displayManager.render()
 
         self.quit = False
         self.running = True
         self.game_loop()
-
+        self.displayManager.batteriesDisplay.display = False
     def initialize(self):
         if not self.landmarks.real_leds:
             self.set_virtual_leds()
         cf_logger.info('create players')
         self.drone = self.orch.drones[0]
         self.start_position = self.orch.update_drone_xy_pos(self.drone)
-        self.players[0].color = displaysConsts.BLUE
-        self.players[1].color = displaysConsts.GREEN
+        self.players[0].color = displaysConsts.BLACK
+        self.players[1].color = displaysConsts.BLUE
         for i in range(2):
             self.players[i].next_player = self.players[1-i]
             self.players[i].targets_left = self.get_targets()
@@ -76,16 +80,24 @@ class GrabAllFlags:
         self.players[1].winner_message = 'YOU ARE THE WINNER'
 
     def set_virtual_leds(self):
-        self.landmarks.leds = [Munch(name='led1', number=0,
-                                     position=Point(
-                                         ((self.orch.max_x + self.orch.min_x) / 2) + 2 * self.orch.drone_radius,
-                                         ((self.orch.max_y + self.orch.min_y) / 2))),
-                               Munch(name='led2', number=1,
-                                     position=Point(
-                                         ((self.orch.max_x + self.orch.min_x) / 2) - 2 * self.orch.drone_radius,
-                                         ((self.orch.max_y + self.orch.min_y) / 2)))]
-        self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.RED)
-        self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.RED)
+        self.landmarks.leds = self.generate_leds(LED_NUM)
+        for led in self.landmarks.leds:
+            self.landmarks.set_led(led, displaysConsts.RED)
+
+    def generate_leds(self, led_num):
+        RATIO = 10000
+        leds = []
+        x_start = self.orch.min_x * RATIO
+        x_end = self.orch.max_x * RATIO
+        y_start = self.orch.min_y * RATIO
+        y_end = self.orch.max_y * RATIO
+        for i in range(led_num):
+            x = random.randint(x_start, x_end)/RATIO
+            y = random.randint(y_start, y_end)/RATIO
+            leds.append(Munch(name='led{}'.format(i),
+                              number=i,
+                              position=Point(x, y)))
+        return leds
 
     def get_turn_handler(self):
         self.algolink = algoLink.AlgoLink()
@@ -114,6 +126,15 @@ class GrabAllFlags:
 
         self.orch.try_take_off(self.drone)
         cf_logger.info('run %s turn' % self.current_player.name)
+        self.displayManager.text_line.set_text('get ready for your turn!')
+        self.interactive_sleep(2)
+        running = True
+        start_time = time.time()
+        while running:
+            current_time = time.time() - start_time
+            self.displayManager.text_line.set_text('in {0:d}'.format(3-int(current_time)))
+            if current_time >= 3:
+                running = False
         for i in range(2):
             self.reset_leds()
             self.drone.color = self.current_player.color
@@ -132,13 +153,13 @@ class GrabAllFlags:
         if not self.running:
             return
         winner = self.calculate_winner()
-        self.interactive_sleep(3)
+        self.interactive_sleep(4)
         self.displayManager.text_line.set_text(winner.winner_message)
         self.orch.land(self.drone)
-        self.interactive_sleep(4)
+        self.interactive_sleep(3)
 
     def calculate_winner(self):
-        text = "computer's time - {0:.2f}, your time - {1:.2f}".format(self.players[0].time, self.players[1].time)
+        text = "computer's time - {0:.2f}    |    your time - {1:.2f}".format(self.players[0].time, self.players[1].time)
         cf_logger.info(text)
         self.displayManager.text_line.set_text(text)
         return self.players[0] if (self.players[0].time < self.players[1].time) else self.players[1]
@@ -153,6 +174,7 @@ class GrabAllFlags:
             if current_time - last_render_time > RENDER_RATE:
                 text = '{0} - turn time {1:.2f} second'.format(self.current_player.name, elapsed_time)
                 self.orch.update_drones_positions()
+                self.orch.update_drones_battery()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
                 last_render_time = time.time()

@@ -26,7 +26,9 @@ PLAYER_PLAYER_BUTTON_POS = ((displayManager.MAIN_RECT.width-CHOOSE_BUTTON_SIZE[0
 TURN_TIME = 4
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
+NUMBER_OF_PLAYERS = 2
 CTF_IMAGE = 'capture_the_flag.png'
+
 
 class CaptureTheFlag:
     def __init__(self):
@@ -64,29 +66,25 @@ class CaptureTheFlag:
         self.quit = False
         self.running = True
         self.game_loop()
+        self.displayManager.batteriesDisplay.display = False
 
     def set_virtual_leds(self):
         self.landmarks.leds = [Munch(name='led1', number=0,
-                                     position=Point(self.orch.max_x, (self.orch.max_y + self.orch.min_y) / 2)),
+                                     position=Point(self.orch.max_x - 0.5*self.orch.drone_radius,
+                                                    (self.orch.max_y + self.orch.min_y) / 2)),
                                Munch(name='led2', number=1,
-                                     position=Point(self.orch.min_x, (self.orch.max_y + self.orch.min_y) / 2))]
+                                     position=Point(self.orch.min_x + 0.5*self.orch.drone_radius,
+                                                    (self.orch.max_y + self.orch.min_y) / 2))]
         self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.GREEN)
         self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.BLUE)
 
     def allocate_players(self):
-        drone1position = Point(0.3, 0.96)
-        drone2position = Point(2.2, 0.96)
-        if drone1position.distance(self.landmarks.leds[0].position) < drone2position.distance(self.landmarks.leds[0].position):
-            drone1 = self.orch.drones[0]
-            drone2 = self.orch.drones[1]
-        else:
-            drone1 = self.orch.drones[1]
-            drone2 = self.orch.drones[0]
-
-        self.players[0].drone = drone1
-        self.players[0].start_position = drone1position
-        self.players[1].drone = drone2
-        self.players[1].start_position = drone2position
+        self.players[0].drone = self.orch.drones[0]
+        self.players[1].start_position = Point(self.orch.max_x - 1.5*self.orch.drone_radius,
+                                               (self.orch.max_y + self.orch.min_y) / 2)
+        self.players[1].drone = self.orch.drones[1]
+        self.players[0].start_position = Point(self.orch.min_x + 1.5*self.orch.drone_radius,
+                                               (self.orch.max_y + self.orch.min_y) / 2)
         self.players[0].color = displaysConsts.BLUE
         self.players[1].color = displaysConsts.GREEN
 
@@ -96,7 +94,7 @@ class CaptureTheFlag:
         for i in range(2):
             self.players[i].led = self.landmarks.leds[i]
             self.players[i].target = self.landmarks.leds[i].position
-            self.players[i].next_player = self.players[1-i]
+            self.players[i].next_player = self.players[(i+1) % NUMBER_OF_PLAYERS]
             self.players[i].drone.color = displaysConsts.BLACK
             self.landmarks.set_led(self.players[i].led, self.players[i].color)
 
@@ -138,6 +136,7 @@ class CaptureTheFlag:
             if current_time - last_render_time > RENDER_RATE:
                 text = '%s - turn ends in %2f second' % (self.current_player.name, turn_left_time)
                 self.orch.update_drones_positions()
+                self.orch.update_drones_battery()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
                 last_render_time = time.time()
