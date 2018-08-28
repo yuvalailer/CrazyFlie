@@ -53,6 +53,7 @@ class GrabAllFlags:
         self.running = True
         self.game_loop()
         self.displayManager.batteriesDisplay.display = False
+
     def initialize(self):
         if not self.landmarks.real_leds:
             self.set_virtual_leds()

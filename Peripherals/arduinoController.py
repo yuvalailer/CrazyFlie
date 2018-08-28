@@ -85,12 +85,13 @@ class ArduinoController:
 
     def _set_defaults(self):
         start = time.time()
-        while time.time() - start < 1:
+        while True:
             if self._data:
                 break
+            if time.time() - start > 5:
+                raise Exception('time out waiting for arduino data')
             time.sleep(0.1)
-        else:
-            raise Exception('timeout waiting for arduino data')
+
         time.sleep(0.1)
         axs = []
         ays = []
