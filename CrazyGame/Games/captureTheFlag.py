@@ -47,6 +47,7 @@ class CaptureTheFlag:
         assert len(self.orch.drones) > 1, 'need at least two drones'
 
         self.initialize_players()
+        self.landmarks.initialize_leds('capture')
 
         self.choose_mode()
         if not self.running:

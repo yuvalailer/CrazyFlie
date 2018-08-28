@@ -6,22 +6,25 @@ import pygame
 
 from CrazyGame import dronesOrchestrator, logger, landmarkManager, joystick
 from pygameUtils import button, displayManager
-from Games import captureTheFlag, joystickDemo, dronesControlDemo
+from Games import captureTheFlag, joystickDemo, dronesControlDemo, grabAllFlags
 from Peripherals import dronesController, dronesControllerSimulator, arduinoController
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
 GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
          'joystick demo': joystickDemo.JoystickDemo,
-         'drones control demo': dronesControlDemo.DronesControlDemo}
+         'drones control demo': dronesControlDemo.DronesControlDemo,
+         'grab all flags': grabAllFlags.GrabAllFlags}
 
 games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
-         'joystick demo': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
-         'drones control demo': ['button_unpressed_ctf.png', 'button_pressed_ctf.png']}
+                        'joystick demo': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
+                        'drones control demo': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
+                        'grab all flags': ['button_unpressed_ctf.png', 'button_pressed_ctf.png']}
 
 games_images = {'capture the flag': 'capture_the_flag.png',
-         'joystick demo': 'capture_the_flag.png',
-         'drones control demo': 'capture_the_flag.png'}
+                'joystick demo': 'capture_the_flag.png',
+                'drones control demo': 'capture_the_flag.png',
+                'grab all flags': 'capture_the_flag.png'}
 
 MOUSE_LEFT_BUTTON = 1
 
@@ -128,10 +131,9 @@ class CrazyGame:
 
     def set_games_buttons(self):
         BUTTON_SIZE = (320, 120)
-        BUTTON_X_POS = 150
+        BUTTON_X_POS = 30
         BUTTON_Y_POS = 400
-        BUTTONS_X_DISTANCES = 350
-
+        BUTTONS_X_DISTANCES = BUTTON_SIZE[0] + 30
 
         self.displayManager.reset_main_rect(True, 'game_menu.png')
         for i, key in enumerate(GAMES):
