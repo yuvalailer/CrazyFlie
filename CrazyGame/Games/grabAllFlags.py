@@ -40,7 +40,7 @@ class GrabAllFlags:
 
         if not self.landmarks.real_leds:
             self.landmarks.leds = [Munch(name='led1', number=0, color=displaysConsts.RED, position=Point(1.30, 0.96)),
-                            Munch(name='led2', number=1,color=displaysConsts.RED, position=Point(0.90, 0.96))]
+                                   Munch(name='led2', number=1, color=displaysConsts.RED, position=Point(0.90, 0.96))]
         self.initialize()
 
         self.displayManager.reset_main_rect(update_display=False)
@@ -193,7 +193,8 @@ class GrabAllFlags:
         return self.orch.drone_reach_position(self.drone, goal)
 
     def computer_player_prepare_to_turn(self):
-        path = self.algolink.capture_all_flags(self.start_position, self.current_player.targets_left, [], [])
+        sites = [led.position for led in self.landmarks.leds]
+        path = self.algolink.capture_all_flags(self.start_position, sites, [], [])
         if not path:
             cf_logger.info('no path found')
             path = [self.orch.update_drone_xy_pos(self.drone)]*2
