@@ -42,7 +42,7 @@ class GrabAllFlags:
 
         self.initialize()
 
-        self.displayManager.reset_main_rect(update_display=False)
+        self.displayManager.reset_main_rect(True, 'cta_main.png');
         self.displayManager.text_line.set_text('grab all the flags')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True

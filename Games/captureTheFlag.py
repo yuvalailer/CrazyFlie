@@ -16,7 +16,7 @@ from Games import followPath
 cf_logger = logger.get_logger(__name__)
 
 DIS_FROM_EDGE = 150
-Y_POS = 300
+Y_POS = 430
 BACK_BUTTON_SIZE = (100, 50)
 CHOOSE_BUTTON_SIZE = (200, 130)
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)

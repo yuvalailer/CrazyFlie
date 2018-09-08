@@ -16,7 +16,7 @@ GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
          'grab all flags': grabAllFlags.GrabAllFlags}
 
 games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
-                         'sandbox': ['droneControl_demo_unpressed.png', 'droneControl_demo_pressed.png'],
+                         'sandbox': ['button_unpressed_sandbox.png', 'button_pressed_sandbox.png'],
                          'grab all flags': ['button_unpressed_cta.png', 'button_pressed_cta.png']}
 
 games_images = {'capture the flag': 'capture_the_flag.png',
@@ -127,8 +127,8 @@ class CrazyGame:
             return
 
     def set_games_buttons(self):
-        BUTTON_SIZE = (320, 120)
-        BUTTON_X_POS = 30
+        BUTTON_SIZE = (300, 120)
+        BUTTON_X_POS = 160
         BUTTON_Y_POS = 400
         BUTTONS_X_DISTANCES = BUTTON_SIZE[0] + 30
 
@@ -139,7 +139,7 @@ class CrazyGame:
             temp_button = button.Button(pos, BUTTON_SIZE, key, images[0], images[1], False)
             self.displayManager.add_button(temp_button)
 
-        pos = ((displayManager.MAIN_RECT.width - BUTTONS_X_DISTANCES)//2, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
+        pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
         temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'exit_unpressed.png', 'exit_pressed.png', False)
         self.displayManager.add_button(temp_button)
         self.displayManager.render()
