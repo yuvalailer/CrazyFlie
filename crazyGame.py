@@ -13,15 +13,17 @@ cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
 GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
          'sandbox': sandbox.DronesControlDemo,
-         'grab all flags': grabAllFlags.GrabAllFlags}
+         'grab all flags': grabAllFlags.GrabAllFlags,
+         'drone skiing': 'TODO->ENTER GAME CLASS'}
 
 games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
                          'sandbox': ['button_unpressed_sandbox.png', 'button_pressed_sandbox.png'],
-                         'grab all flags': ['button_unpressed_cta.png', 'button_pressed_cta.png']}
+                         'grab all flags': ['button_unpressed_cta.png', 'button_pressed_cta.png'],
+                        'drone skiing': ['button_unpressed_ski.png', 'button_pressed_ski.png']}
 
-games_images = {'capture the flag': 'capture_the_flag.png',
+'''games_images = {'capture the flag': 'capture_the_flag.png',
                 'sandbox': 'capture_the_flag.png',
-                'grab all flags': 'capture_the_flag.png'}
+                'grab all flags': 'capture_the_flag.png'} '''
 
 MOUSE_LEFT_BUTTON = 1
 
@@ -128,9 +130,9 @@ class CrazyGame:
 
     def set_games_buttons(self):
         BUTTON_SIZE = (300, 120)
-        BUTTON_X_POS = 160
+        BUTTON_X_POS = 40
         BUTTON_Y_POS = 400
-        BUTTONS_X_DISTANCES = BUTTON_SIZE[0] + 30
+        BUTTONS_X_DISTANCES = BUTTON_SIZE[0] + 10
 
         self.displayManager.reset_main_rect(True, 'game_menu.png')
         for i, key in enumerate(GAMES):
@@ -139,7 +141,7 @@ class CrazyGame:
             temp_button = button.Button(pos, BUTTON_SIZE, key, images[0], images[1], False)
             self.displayManager.add_button(temp_button)
 
-        pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
+        pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES*1.5, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
         temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'exit_unpressed.png', 'exit_pressed.png', False)
         self.displayManager.add_button(temp_button)
         self.displayManager.render()
