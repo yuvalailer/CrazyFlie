@@ -136,20 +136,22 @@ git clone https://github.com/xqgex/CrazyFlie
 
 # Crazy Game
 After choosing the controller you wish to work wish, you will get to the **choose your game** window:
-![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/choose_game.JPG “Choose your Game”)
+![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/choose_game.JPG)
 From this screen you can choose the mode you wish to play.
 
 ## Capture the Flag
 ### Getting Started
 By pressing the Capture the Flag icon:
-![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_icon.JPG "Capture the Flag button")
+
+![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_icon.JPG)
 
 You will be transferred to the Capture the Flag game mode selection screen:
-![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_icon.JPG “Capture the Flag modes”)
+![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_modes.JPG)
 Here you can choose the way you wish to play the game:
-Computer Vs. Computer
-Player Vs. Computer
-Player Vs. Player
+- Computer Vs. Computer
+- Player Vs. Computer
+- Player Vs. Player
+
 Regardless of  which mode you chose, you will be passed to the main game window.
 At first the drones will take their starting positions.
 Then, in turns each player will have 4 seconds to make his move towards the goal.
@@ -157,61 +159,64 @@ Then, in turns each player will have 4 seconds to make his move towards the goal
 The first player to reach his respective colored LED is the winner.
 
 ### Features
-At the top left corner of the screen you have battery indications for all drones in the field.
-The drones have a safety zone that will not allow to get close to each to other more than a certain radius, both in the game and in the field.
- # Controls
+- At the top left corner of the screen you have battery indications for all drones in the field.
+- The drones have a safety zone that will not allow to get close to each to other more than a certain radius, both in the game and in the field.
+### Controls
 The player controls his drones with the arrow keys on the keyboard.
 
 ---
 ## Sand Box
 ### Getting Started
 By pressing the Sand Box icon:
-![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_icon.JPG “Sand Box button”)
+
+![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_icon.JPG)
+
 You will be transferred to the Sand Box:
-![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_window.JPG “The Sand Box”)
+![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_window.JPG)
 ### Goal
 Here you are free to play around with the drones with no special restrictions or goal.
 ### Controls
 | Key | Function |
 |:-----:|:------------:|
-| Up   | Move drone up|
-| Down | Move drone down |
-| Left |  Move drone left |
-| Right | Move drone right |
+| Up   | Move drone "north"|
+| Down | Move drone "south" |
+| Left |  Move drone "west" |
+| Right | Move drone "east" |
 | U | Take off selected drone |
 | L | Land selected drone |
-| Space | Change selected drone |
 | S | stop the selected drone |
+| Space | Change the selected drone |
 
 The selected drone will be marked green while the other drones are black.
 
 ### Features
 At the top left corner of the screen we have a few ways to control the motion of the drones:
-The two top buttons: **Velocity** and **Step Size** are Radio Buttons. Meaning, only one can be pressed down at any given moment.
-While one of them is pressed, you can change the value associated with it with the ‘+’ and ‘-’ buttons.
-After the desired value is selected, you can press the **_update_** button to update the values.
-A message will appear at the bottom of the screen confirming the new values.
+- The two top buttons: **Velocity** and **Step Size** are Radio Buttons. Meaning, only one can be pressed down at any given moment.
+- While one of them is pressed, you can change the value associated with it with the ‘+’ and ‘-’ buttons.
+- After the desired value is selected, you can press the **_update_** button to update the values.
+- A message will appear at the bottom of the screen confirming the new values.
+
 ---
 
 
 ## Catch’em all 
 ### Getting Started
 By pressing the Catch’em all icon:
-![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_icon.JPG “Catch’em All button”)
+
+![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_icon.JPG)
+
 You will be transferred to the Catch’em All game screen:
-![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_screen.JPG “Catch’em All Screen”)
+![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_screen.JPG)
 ### Goal
 The goal in this mode is to pass through all given targets at the minimal time possible to beat the computer’s time.
 ### The Flow
-First of all the system will try to connect to the computer’s side algorithm. If none is present, the system will use a simplified static algorithm for the computer’s turn.
-Then, the first turn will be of the player. You will have a countdown to the start of your turn and then you will have to pass through all the targets in a path that seems shortest to you.
-After you have passed through all the targets, the drone will return to the starting position to prepare for the computer’s turn.
-The computer will execute its path, and in the end the winner with the shortest time will be announced.
+1. First of all the system will try to connect to the computer’s side algorithm. If none is present, the system will use a simplified static algorithm for the computer’s turn.
+2. Then, the first turn will be of the player. You will have a countdown to the start of your turn and then you will have to pass through all the targets in a path that seems shortest to you.
+3. After you have passed through all the targets, the drone will return to the starting position to prepare for the computer’s turn.
+4. The computer will execute its path, and in the end the winner with the shortest time will be announced.
 ### LEDs
 The LEDs will be used as the targets to pass through. They are all red at the start of the game and once a target is reached it will turn green.
 If no physical LEDs are detected by the system, 4 simulative LEDs will be randomly placed on the game board.
-- goal, controls (joystick), game modes, features (LED...)
-add relevant screenshots, icons and so on to make this part understandable 
 
 ---
 
