@@ -4,7 +4,7 @@ import time
 from fixSysPath import test_sys_path
 test_sys_path()
 import logger
-from Peripherals.dronesController import DronesController
+from Drivers.dronesController import DronesController
 import sys
 import math
 

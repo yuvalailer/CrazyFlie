@@ -9,8 +9,9 @@ from shapely.geometry import Point
 import matplotlib.pyplot as plt
 from Games import pathFinder
 from datetime import datetime
-from Peripherals import dronesControllerSimulator
-import dronesOrchestrator
+from Drivers import dronesControllerSimulator
+from Managers import dronesOrchestrator
+
 
 def plot_player(ax, p, r, c):
     circle =  plt.Circle((p.x, p.y), r, color=c, fill=False)

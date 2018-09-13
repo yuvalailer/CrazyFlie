@@ -1,14 +1,13 @@
 # from fixSysPath import test_sys_path
 import logging
 import time
-import sys
 import logger
 from shapely.geometry import Point
 from Games import pathFinder
 from datetime import datetime
-import dronesOrchestrator
+from Managers import dronesOrchestrator
 from Games import followPath
-from Peripherals import dronesControllerSimulator
+from Drivers import dronesControllerSimulator
 
 # test_sys_path()
 logger.set_default_logging_level(logging.INFO)

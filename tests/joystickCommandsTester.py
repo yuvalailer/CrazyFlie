@@ -5,8 +5,8 @@ import pygame
 import time
 
 test_sys_path()
-from Peripherals.dronesController import DronesController
-from joystick import Joystick
+from Drivers.dronesController import DronesController
+from Managers.joystick import Joystick
 
 cf_logger = logger.get_logger(__name__) # debug(), info(), warning(), error(), exception(), critical()
 

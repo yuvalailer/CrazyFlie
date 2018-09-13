@@ -10,7 +10,7 @@ from pygameUtils import displayManager
 from pygameUtils import button
 from pygameUtils import displaysConsts
 import logger
-from Peripherals import algoLink
+from Drivers import algoLink
 from Games import followPath
 
 cf_logger = logger.get_logger(__name__)

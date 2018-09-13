@@ -132,10 +132,14 @@ class DronesOrchestrator:
         cf_logger.info('take off drone %s', drone.name)
         self.drones_controller.take_off(drone.name)
 
-        if blocking:  #add timeout
+        if blocking:  # add timeout
             cf_logger.info('waiting to drone %s to take off', drone.name)
+            start_time = time.time()
             while not self.drone_is_up(drone):
                 time.sleep(0.2)
+                if time.time() - start_time > 5:
+                    cf_logger.critical('timeout exceeded for taking off drone %s' % drone.name)
+                    return
 
         drone.grounded = False
 

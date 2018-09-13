@@ -4,10 +4,11 @@ import time
 
 import pygame
 
-import dronesOrchestrator, logger, landmarkManager, joystick
+import logger
+from Managers import dronesOrchestrator, joystick, landmarkManager
 from pygameUtils import button, displayManager
 from Games import captureTheFlag, sandbox, grabAllFlags
-from Peripherals import dronesController, dronesControllerSimulator, arduinoController
+from Drivers import dronesController, dronesControllerSimulator, arduinoController
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 

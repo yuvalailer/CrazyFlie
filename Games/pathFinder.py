@@ -6,7 +6,7 @@ import numpy as np
 from shapely.geometry import LineString
 from shapely.geometry import Point
 
-import dronesOrchestrator
+from Managers import dronesOrchestrator
 import logger
 
 cf_logger = logger.get_logger(__name__)
