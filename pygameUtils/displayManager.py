@@ -96,11 +96,12 @@ class DisplayManager:
         if self.batteriesDisplay:
             self.batteriesDisplay.render()
 
-    def render(self):
+    def render(self, render_batteries=False):
         self._render_buttons()
         self.text_line.render()
         self._render_board()
-        self._render_batteries_display()
+        if render_batteries:
+            self._render_batteries_display()
 
         pygame.display.update()
 

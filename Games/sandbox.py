@@ -17,18 +17,19 @@ BACK_BUTTON_SIZE = (100, 50)
 VARIABLE_BUTTON_SIZE = (250, 100)
 MATH_OPT_BUTTON_SIZE = (80, 80)
 UPDATE_BUTTON_SIZE = (200, 80)
-
+X_MIDDLE_POS = 80
+Y_HIGHEST_POS = 80
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
 
 
 class DronesControlDemo:
     def __init__(self):
         self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
-        self.velocity_button = button.Button((10, 50), VARIABLE_BUTTON_SIZE, 'velocity')
-        self.step_size_button = button.Button((10, 160), VARIABLE_BUTTON_SIZE, 'step size')
-        self.plus_button = button.Button((50, 270), MATH_OPT_BUTTON_SIZE, '+')
-        self.minus_button = button.Button((150, 270), MATH_OPT_BUTTON_SIZE, '-')
-        self.update_button = button.Button((40, 370), UPDATE_BUTTON_SIZE, 'update')
+        self.velocity_button = button.Button((X_MIDDLE_POS, Y_HIGHEST_POS), VARIABLE_BUTTON_SIZE, 'velocity')
+        self.step_size_button = button.Button((X_MIDDLE_POS, Y_HIGHEST_POS + 110), VARIABLE_BUTTON_SIZE, 'step size')
+        self.plus_button = button.Button((X_MIDDLE_POS + 40, Y_HIGHEST_POS + 220), MATH_OPT_BUTTON_SIZE, '+')
+        self.minus_button = button.Button((X_MIDDLE_POS + MATH_OPT_BUTTON_SIZE[0] + 50, Y_HIGHEST_POS + 220), MATH_OPT_BUTTON_SIZE, '-')
+        self.update_button = button.Button((X_MIDDLE_POS + 20, Y_HIGHEST_POS + 310), UPDATE_BUTTON_SIZE, 'update')
 
     def run(self):
         self.velocity = self.orch.drone_velocity
@@ -41,7 +42,7 @@ class DronesControlDemo:
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
-        self.displayManager.render()
+        self.displayManager.render(render_batteries=True)
 
         self.current_drone = self.orch.drones[0]
         self.led = None
@@ -49,14 +50,12 @@ class DronesControlDemo:
         self.quit = False
         self.running = True
         self.game_loop()
-        self.displayManager.batteriesDisplay.display = False
-        
+
     def game_loop(self):
         current_time = time.time()
         while self.running:
             if time.time() - current_time > 0.07:
                 self.orch.update_drones_positions()
-                self.orch.update_drones_battery()
                 self.displayManager.render()
                 joystick_dir = self.joystick.get_normalize_direction()
                 if joystick_dir:

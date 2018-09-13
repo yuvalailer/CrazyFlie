@@ -5,7 +5,7 @@ import time
 import functools
 from shapely.geometry import Point
 
-from pygameUtils import displayManager, batteriesDisplay
+from pygameUtils import displayManager
 from pygameUtils import button
 from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
@@ -16,7 +16,7 @@ from Games import followPath
 cf_logger = logger.get_logger(__name__)
 
 DIS_FROM_EDGE = 150
-Y_POS = 300
+Y_POS = 430
 BACK_BUTTON_SIZE = (100, 50)
 CHOOSE_BUTTON_SIZE = (200, 130)
 BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
@@ -42,7 +42,6 @@ class CaptureTheFlag:
         self.players = [munch.Munch(last_updated=0), munch.Munch(last_updated=0)]
         self.current_player = None
 
-
     def run(self):
         self.velocity = self.orch.drone_velocity
         self.step_size = self.orch.drone_step_size
@@ -56,17 +55,22 @@ class CaptureTheFlag:
         if not self.running:
             return
 
-        self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)
+        if self.current_mode == 'computerVsPlayer':
+            self.displayManager.reset_main_rect(picture_name='computerVsPlayer.png')
+        if self.current_mode == 'computerVsComputer':
+            self.displayManager.reset_main_rect(picture_name='computerVsComputer.png')
+        if self.current_mode == 'playerVsPlayer':
+            self.displayManager.reset_main_rect(picture_name='playerVsPlayer.png')
+
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
         self.add_buttons()
-        self.displayManager.render()
+        self.displayManager.render(render_batteries=True)
 
         self.quit = False
         self.running = True
         self.game_loop()
-        self.displayManager.batteriesDisplay.display = False
 
     def set_virtual_leds(self):
         self.landmarks.leds = [Munch(name='led1', number=0,
@@ -137,7 +141,6 @@ class CaptureTheFlag:
             if current_time - last_render_time > RENDER_RATE:
                 text = '%s - turn ends in %2f second' % (self.current_player.name, turn_left_time)
                 self.orch.update_drones_positions()
-                self.orch.update_drones_battery()
                 self.displayManager.text_line.set_text(text, update_display=False)
                 self.displayManager.render()
                 last_render_time = time.time()
@@ -258,6 +261,7 @@ class CaptureTheFlag:
             self.getting = False
 
     def com_com_update(self):
+        self.current_mode = 'computerVsComputer'
         for i in range(2):
             self.players[i].name = 'computer {}'.format(i+1)
             self.players[i].prepare_to_turn = self.computer_player_prepare_to_turn
@@ -265,6 +269,7 @@ class CaptureTheFlag:
             self.players[i].winner_message = 'computer {} wins'.format(i+1)
 
     def com_player_update(self):
+        self.current_mode = 'computerVsPlayer'
         self.players[0].name = 'computer'
         self.players[1].name = 'your'
 
@@ -278,6 +283,7 @@ class CaptureTheFlag:
         self.players[1].winner_message = 'YOU ARE THE WINNER'
 
     def player_player_update(self):
+        self.current_mode = 'playerVsPlayer'
         for i in range(2):
             self.players[i].name = 'player {}'.format(i+1)
             self.players[i].prepare_to_turn = self.human_player_prepare_to_turn

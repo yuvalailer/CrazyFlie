@@ -192,5 +192,5 @@ class DronesOrchestrator:
 
     def update_drones_battery(self):
         for drone in self.drones:
-            drone.battery_level = self.drones_controller.battery_status(drone)
+            drone.battery_level = self.drones_controller.battery_status(drone.name)
 

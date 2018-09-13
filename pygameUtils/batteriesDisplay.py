@@ -20,6 +20,8 @@ class BatteriesDisplay:
         self.font = pygame.font.SysFont("arial", 15)
         self.step = (self.size[1] // (len(self.orch.drones) + 1)) - 25
         self.render()
+        image = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, IMG))
+        self.background_img = pygame.transform.scale(image, self.size)
 
     def display_positions(self):
         num_drones = len(self.orch.drones)
@@ -36,8 +38,7 @@ class BatteriesDisplay:
     def render(self):
         if not self.display:
             return
-        temp = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, IMG))
-        self.background_img = pygame.transform.scale(temp, self.size)
+
         self.orch.update_drones_battery()
         self.display_positions()
         for i, drone in enumerate(self.orch.drones):
@@ -49,8 +50,7 @@ class BatteriesDisplay:
                         (self.rect[i].top - text_surface.get_height() / 2) + 15)
             self.display_surf.blit(text_surface, position)
 
-            battery_status = str(drone.battery_level)
-            text_surface = self.font.render(str(int(battery_status)) + '%', False, displaysConsts.BLACK)
+            text_surface = self.font.render(str(int(drone.battery_level)) + '%', False, displaysConsts.BLACK)
             position = (self.rect[i].centerx - text_surface.get_width() / 2,
                         (self.rect[i].top - text_surface.get_height() / 2) + 35)
             self.display_surf.blit(text_surface, position)
