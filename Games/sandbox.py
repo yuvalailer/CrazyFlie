@@ -13,18 +13,18 @@ cf_logger = logger.get_logger(__name__)
 
 VELOCITY_OFFSET = 0.05
 STEP_SIZE_OFFSET = 0.05
-BACK_BUTTON_SIZE = (100, 50)
+BACK_BUTTON_SIZE = (250, 100)
 VARIABLE_BUTTON_SIZE = (250, 100)
 MATH_OPT_BUTTON_SIZE = (80, 80)
 UPDATE_BUTTON_SIZE = (200, 80)
 X_MIDDLE_POS = 80
 Y_HIGHEST_POS = 80
-BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
+BACK_BUTTON_POS = (80, displayManager.MAIN_RECT.height - BACK_BUTTON_SIZE[1] - 20)
 
 
 class DronesControlDemo:
     def __init__(self):
-        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
+        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back.png', 'back_pressed.png')
         self.velocity_button = button.Button((X_MIDDLE_POS, Y_HIGHEST_POS), VARIABLE_BUTTON_SIZE, 'velocity')
         self.step_size_button = button.Button((X_MIDDLE_POS, Y_HIGHEST_POS + 110), VARIABLE_BUTTON_SIZE, 'step size')
         self.plus_button = button.Button((X_MIDDLE_POS + 40, Y_HIGHEST_POS + 220), MATH_OPT_BUTTON_SIZE, '+')
@@ -38,7 +38,7 @@ class DronesControlDemo:
         if not self.landmarks.real_leds:
             self.set_virtual_leds()
 
-        self.displayManager.reset_main_rect(True, 'droneControllerDemo_main.png')
+        self.displayManager.reset_main_rect(True, 'scaled_blue.png')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
         self.add_buttons()

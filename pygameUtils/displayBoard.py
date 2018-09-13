@@ -75,8 +75,8 @@ class DisplayBoard:
         return new_x, new_y
 
     def _render_board(self):
-        pygame.draw.rect(self.display_surf, displaysConsts.DARK_ORANGE, self.inner_rect)
-        pygame.draw.rect(self.display_surf, displaysConsts.WHITE, self.working_rect)
+        pygame.draw.rect(self.display_surf, displaysConsts.BLACK, self.inner_rect)
+        pygame.draw.rect(self.display_surf, displaysConsts.SMOKE, self.working_rect)
 
     def _render_drone(self, drone):
         drone.display_position = self.translate_xy_real2board(drone.position)

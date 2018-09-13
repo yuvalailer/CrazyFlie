@@ -11,19 +11,13 @@ from Peripherals import dronesController, dronesControllerSimulator, arduinoCont
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
-GAMES = {'capture the flag': captureTheFlag.CaptureTheFlag,
-         'sandbox': sandbox.DronesControlDemo,
-         'grab all flags': grabAllFlags.GrabAllFlags,
-         'drone skiing': 'TODO->ENTER GAME CLASS'}
+GAMES = {'sandbox': sandbox.DronesControlDemo,
+         'capture the flag': captureTheFlag.CaptureTheFlag,
+         'grab all flags': grabAllFlags.GrabAllFlags}
 
-games_buttons_images = {'capture the flag': ['button_unpressed_ctf.png', 'button_pressed_ctf.png'],
-                         'sandbox': ['button_unpressed_sandbox.png', 'button_pressed_sandbox.png'],
-                         'grab all flags': ['button_unpressed_cta.png', 'button_pressed_cta.png'],
-                        'drone skiing': ['button_unpressed_ski.png', 'button_pressed_ski.png']}
-
-'''games_images = {'capture the flag': 'capture_the_flag.png',
-                'sandbox': 'capture_the_flag.png',
-                'grab all flags': 'capture_the_flag.png'} '''
+games_buttons_images = {'capture the flag': ['capture.png', 'capture_pressed.png'],
+                         'sandbox': ['sand.png', 'sand_pressed.png'],
+                         'grab all flags': ['catch.png', 'catch_pressed.png']}
 
 MOUSE_LEFT_BUTTON = 1
 
@@ -72,16 +66,20 @@ class CrazyGame:
         self.joystick = joystick.Joystick(self.arduino_controller)
 
     def set_drone_controller_buttons(self):
-        BUTTON_SIZE = (200, 100)
-        DIS_FROM_EDGE = 200
-        Y_POS = 400
-        VM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
-        DEMO_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - BUTTON_SIZE[0], Y_POS)
+        BUTTON_SIZE = (380, 109)
+        STEP = 1.3
+        DIS_FROM_EDGE = 220
+        X_POS = (displayManager.MAIN_RECT.width-BUTTON_SIZE[0])//2
+        VM_BUTTON_POS = (X_POS, DIS_FROM_EDGE)
+        DEMO_BUTTON_POS = (X_POS, DIS_FROM_EDGE + STEP*BUTTON_SIZE[1])
+        EXIT_BUTTON_POS = (X_POS, DIS_FROM_EDGE + 2*STEP*BUTTON_SIZE[1])
 
-        vm_button = button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm')
-        demo_button = button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'simulator')
+        vm_button = button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm', unpressed_image_name='VM.png', pressed_image_name='VM_pressed.png', show_text=False)
+        demo_button = button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'simulator', unpressed_image_name='simulator.png', pressed_image_name='simulator_pressed.png', show_text=False)
+        exit_button = button.Button(EXIT_BUTTON_POS, BUTTON_SIZE, 'exit', unpressed_image_name='exit.png', pressed_image_name='exit_pressed.png', show_text=False)
         self.displayManager.add_button(vm_button)
         self.displayManager.add_button(demo_button)
+        self.displayManager.add_button(exit_button)
         self.displayManager.render()
 
     def get_drone_controller_type(self):
@@ -129,20 +127,22 @@ class CrazyGame:
             return
 
     def set_games_buttons(self):
-        BUTTON_SIZE = (300, 120)
-        BUTTON_X_POS = 40
-        BUTTON_Y_POS = 400
-        BUTTONS_X_DISTANCES = BUTTON_SIZE[0] + 10
+        BUTTON_SIZE = (340, 100)
+        STEP = 1.3
+        Y_POS = (displayManager.MAIN_RECT.height-BUTTON_SIZE[1])//2
+        X_CENTER = (displayManager.MAIN_RECT.width-BUTTON_SIZE[0])//2
+        X_POS = 30
+        BUTTONS_X_DISTANCES = BUTTON_SIZE[0]*STEP
 
-        self.displayManager.reset_main_rect(True, 'game_menu.png')
+        self.displayManager.reset_main_rect(True, 'menu_screen.png')
         for i, key in enumerate(GAMES):
-            pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES*i, BUTTON_Y_POS)
+            pos = (X_POS + i*BUTTONS_X_DISTANCES, Y_POS)
             images = games_buttons_images.get(key)
             temp_button = button.Button(pos, BUTTON_SIZE, key, images[0], images[1], False)
             self.displayManager.add_button(temp_button)
 
-        pos = (BUTTON_X_POS + BUTTONS_X_DISTANCES*1.5, displayManager.MAIN_RECT.height - BUTTON_SIZE[1] - 10)
-        temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'exit_unpressed.png', 'exit_pressed.png', False)
+        pos = (X_CENTER, displayManager.MAIN_RECT.height-BUTTON_SIZE[1]-20)
+        temp_button = button.Button(pos, BUTTON_SIZE, 'exit', 'exit.png', 'exit_pressed.png', False)
         self.displayManager.add_button(temp_button)
         self.displayManager.render()
 

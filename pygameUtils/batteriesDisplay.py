@@ -1,10 +1,9 @@
 import pygame
-from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
 import os
 IMG = displaysConsts.BATTERY_DISPLAY_IMG
 X_POSITION = 10
-Y_POSITION = 10
+Y_POSITION = 20
 POS = (X_POSITION, 320)
 SIZE = (65, 45)
 
@@ -27,7 +26,7 @@ class BatteriesDisplay:
         num_drones = len(self.orch.drones)
         res = []
         for i in range(num_drones):
-            position = (10 + i*85, Y_POSITION)
+            position = (40 + i*85, Y_POSITION)
             temp = pygame.Rect(position[0], position[1], SIZE[0], SIZE[1])
             res.append(temp)
         self.rect = res

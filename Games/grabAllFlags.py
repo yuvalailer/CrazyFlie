@@ -17,9 +17,9 @@ cf_logger = logger.get_logger(__name__)
 
 DIS_FROM_EDGE = 150
 Y_POS = 300
-BACK_BUTTON_SIZE = (100, 50)
+BACK_BUTTON_SIZE = (360, 105)
 CHOOSE_BUTTON_SIZE = (200, 130)
-BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
+BACK_BUTTON_POS = (20, displayManager.MAIN_RECT.height - BACK_BUTTON_SIZE[1] - 20)
 TURN_TIME = 10
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
@@ -29,7 +29,7 @@ LED_NUM = 4
 
 class GrabAllFlags:
     def __init__(self):
-        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
+        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back.png', 'back_pressed.png')
         self.quit = False
         self.running = True
         self.players = [munch.Munch(last_updated=0), munch.Munch(last_updated=0)]
@@ -42,7 +42,7 @@ class GrabAllFlags:
 
         self.initialize()
 
-        self.displayManager.reset_main_rect(True, 'cta_main.png');
+        self.displayManager.reset_main_rect(True, 'scaled_blue.png');
         self.displayManager.text_line.set_text('grab all the flags')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True

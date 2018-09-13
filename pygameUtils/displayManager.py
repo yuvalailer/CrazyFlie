@@ -24,10 +24,10 @@ class DisplayManager:
         pygame.display.set_caption('Crazy Game')
         self.reset_main_rect(update_display=False)
         self.text_line = TextLine(self.display_surf, 'Welcome To Crazy Game')
-        self.default_picture = 'main_720p.png'
+        self.default_picture = 'blue_background2.png'
         pygame.display.update()
 
-    def reset_main_rect(self, update_display=True, picture_name='main_720p.png'):
+    def reset_main_rect(self, update_display=True, picture_name='front_screen.png'):
         background_image = pygame.image.load(os.path.join(displaysConsts.PICTURE_DIRECTORY, picture_name))
         self.display_surf.blit(background_image, (0, 0))
         self.buttons = []

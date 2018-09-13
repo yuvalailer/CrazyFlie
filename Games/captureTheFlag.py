@@ -7,7 +7,6 @@ from shapely.geometry import Point
 
 from pygameUtils import displayManager
 from pygameUtils import button
-from pygameUtils import multiLinesButton
 from pygameUtils import displaysConsts
 import logger
 from Games import pathFinder
@@ -15,11 +14,12 @@ from Games import followPath
 
 cf_logger = logger.get_logger(__name__)
 
-DIS_FROM_EDGE = 150
-Y_POS = 430
-BACK_BUTTON_SIZE = (100, 50)
-CHOOSE_BUTTON_SIZE = (200, 130)
-BACK_BUTTON_POS = (50, displayManager.MAIN_RECT.height - 100)
+DIS_FROM_EDGE = 20
+BACK_BUTTON_SIZE = (360, 109)
+CHOOSE_BUTTON_SIZE = (380, 200)
+BACK_BUTTON_POS = ((displayManager.MAIN_RECT.width-BACK_BUTTON_SIZE[0])//2, displayManager.MAIN_RECT.height - BACK_BUTTON_SIZE[1] - 20)
+BACK_BUTTON_SECOND_POS = (DIS_FROM_EDGE, displayManager.MAIN_RECT.height - BACK_BUTTON_SIZE[1] - 20)
+Y_POS = (displayManager.MAIN_RECT.height-CHOOSE_BUTTON_SIZE[1])//2
 COM_COM_BUTTON_POS = (DIS_FROM_EDGE, Y_POS)
 COM_PLAYER_BUTTON_POS = (displayManager.MAIN_RECT.width - DIS_FROM_EDGE - CHOOSE_BUTTON_SIZE[0], Y_POS)
 PLAYER_PLAYER_BUTTON_POS = ((displayManager.MAIN_RECT.width-CHOOSE_BUTTON_SIZE[0])/2, Y_POS)
@@ -27,15 +27,15 @@ TURN_TIME = 4
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
 NUMBER_OF_PLAYERS = 2
-CTF_IMAGE = 'capture_the_flag.png'
+CTF_IMAGE = 'capture_screen.png'
 
 
 class CaptureTheFlag:
     def __init__(self):
-        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back_button_unpressed.png', 'back_button_pressed.png')
-        self.com_com_button = multiLinesButton.MultiLinesButton(COM_COM_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['computer','vs','computer'])
-        self.com_player_button = multiLinesButton.MultiLinesButton(COM_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','computer'])
-        self.player_player_button = multiLinesButton.MultiLinesButton(PLAYER_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, ['player','vs','player'])
+        self.back_button = button.Button(BACK_BUTTON_POS, BACK_BUTTON_SIZE, '', 'back.png', 'back_pressed.png')
+        self.com_com_button = button.Button(COM_COM_BUTTON_POS, CHOOSE_BUTTON_SIZE, '', 'comp_vs_comp.png', 'comp_vs_comp_pressed.png')
+        self.com_player_button = button.Button(COM_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, '', 'player_vs_comp.png', 'player_vs_comp_pressed.png')
+        self.player_player_button = button.Button(PLAYER_PLAYER_BUTTON_POS, CHOOSE_BUTTON_SIZE, '', 'player_vs_player.png', 'player_vs_player_pressed.png')
         self.getting = True
         self.quit = False
         self.running = True
@@ -55,13 +55,7 @@ class CaptureTheFlag:
         if not self.running:
             return
 
-        if self.current_mode == 'computerVsPlayer':
-            self.displayManager.reset_main_rect(picture_name='computerVsPlayer.png')
-        if self.current_mode == 'computerVsComputer':
-            self.displayManager.reset_main_rect(picture_name='computerVsComputer.png')
-        if self.current_mode == 'playerVsPlayer':
-            self.displayManager.reset_main_rect(picture_name='playerVsPlayer.png')
-
+        self.displayManager.reset_main_rect(picture_name='scaled_blue.png')
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
@@ -291,11 +285,14 @@ class CaptureTheFlag:
             self.players[i].winner_message = 'player {} wins'.format(i+1)
 
     def add_buttons(self, choose=False):
-        self.displayManager.add_button(self.back_button)
         if choose:
+            self.displayManager.add_button(self.back_button)
             self.displayManager.add_button(self.com_com_button)
             self.displayManager.add_button(self.com_player_button)
             self.displayManager.add_button(self.player_player_button)
+        else:
+            self.back_button = button.Button(BACK_BUTTON_SECOND_POS, BACK_BUTTON_SIZE, '', 'back.png', 'back_pressed.png')
+            self.displayManager.add_button(self.back_button)
 
     def choose_mode(self):
         self.displayManager.reset_main_rect(picture_name=CTF_IMAGE)

@@ -5,8 +5,8 @@ import logger
 import logging
 cf_logger = logger.get_logger(__name__, logging.INFO)
 
-UNPRESSED_BUTTON_IMAGE = 'button_unpressed.png'
-PRESSED_BUTTON_IMAGE = 'button_pressed.png'
+UNPRESSED_BUTTON_IMAGE = 'empty.png'
+PRESSED_BUTTON_IMAGE = 'empty_pressed.png'
 
 
 class Button:
@@ -14,7 +14,7 @@ class Button:
 
     def __init__(self, position, size, text, unpressed_image_name=UNPRESSED_BUTTON_IMAGE, pressed_image_name=PRESSED_BUTTON_IMAGE, show_text=True):
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
-        self.font = pygame.font.SysFont("arial", min(30, self.rect.height - 5))
+        self.font = pygame.font.SysFont("comicsansms", min(30, self.rect.height - 5))
         self.text = text
         self.size = size
         self.current_image = ''
