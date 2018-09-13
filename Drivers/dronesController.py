@@ -68,7 +68,7 @@ class DronesController:
             cf_logger.error("Failed to get list of leds")
             return False
 
-    def take_your_place(self, drone_name, pos): # pos = [x, y]
+    def take_your_place(self, drone_name, pos):  # pos = [x, y]
         self._send("TakeYourPlace${}${}${}".format(drone_name, pos[0], pos[1]))
 
     def get_object_position(self, object_name):

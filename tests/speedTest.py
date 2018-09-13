@@ -10,7 +10,7 @@ from fixSysPath import test_sys_path
 
 test_sys_path()
 import logger
-from Peripherals import dronesController
+from Drivers import dronesController
 import sys
 import math
 

@@ -3,8 +3,8 @@ cf_logger = logger.get_logger(__name__)
 cf_logger.info("#### start silly player tester ####")
 from fixSysPath import test_sys_path
 test_sys_path()
-from Peripherals import controlBoard
-import joystick
+from Drivers import controlBoard
+from Managers import joystick
 import matplotlib.pyplot as plt
 
 NUMBER_OF_LEDS = 6
