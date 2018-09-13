@@ -55,7 +55,7 @@ class CaptureTheFlag:
         if not self.running:
             return
 
-        self.displayManager.reset_main_rect(picture_name='scaled_blue.png')
+        self.displayManager.reset_main_rect(picture_name='ctf.png')
         self.displayManager.text_line.set_text('capture the flag')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True

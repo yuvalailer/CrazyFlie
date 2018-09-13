@@ -8,7 +8,8 @@ import logger
 from Managers import dronesOrchestrator, joystick, landmarkManager
 from pygameUtils import button, displayManager
 from Games import captureTheFlag, sandbox, grabAllFlags
-from Drivers import dronesController, dronesControllerSimulator, arduinoController
+from Drivers import dronesController, dronesControllerSimulator, arduinoController, algoLink
+
 
 cf_logger = logger.get_logger(__name__, logging_level=logging.DEBUG)
 
@@ -33,6 +34,7 @@ class CrazyGame:
             game = GAMES[game_name]()
             game.joystick = self.joystick
             game.displayManager = self.displayManager
+            game.algolink = self.algolink
             game.orch = self.orch
             game.landmarks = self.landmarkManager
             game.run()
@@ -44,6 +46,7 @@ class CrazyGame:
         cf_logger.info('start initialization process')
         self.displayManager = displayManager.DisplayManager()
         time.sleep(0.5)
+        self.algolink = self.set_algolink()
         self.set_arduino_control()
         self.set_drone_controller()
         self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller)
@@ -52,6 +55,16 @@ class CrazyGame:
         self.displayManager.set_board(self.orch, self.landmarkManager)
         self.displayManager.set_batteries_display(self.orch)
         self.run_starting_animation()
+
+    def set_algolink(self):
+        algolink = algoLink.AlgoLink()
+        try:
+            algolink.connect()
+        except ConnectionError:
+            return None
+        algolink.set_world(self.orch.size)
+        algolink.set_drone_size(self.orch.drone_radius*2)
+        return algolink
 
     def set_arduino_control(self):
         cf_logger.info('connecting to arduino board')

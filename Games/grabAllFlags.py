@@ -10,7 +10,6 @@ from pygameUtils import displayManager
 from pygameUtils import button
 from pygameUtils import displaysConsts
 import logger
-from Drivers import algoLink
 from Games import followPath
 
 cf_logger = logger.get_logger(__name__)
@@ -19,7 +18,7 @@ DIS_FROM_EDGE = 150
 Y_POS = 300
 BACK_BUTTON_SIZE = (360, 105)
 CHOOSE_BUTTON_SIZE = (200, 130)
-BACK_BUTTON_POS = (20, displayManager.MAIN_RECT.height - BACK_BUTTON_SIZE[1] - 20)
+BACK_BUTTON_POS = (20, displayManager.MAIN_RECT.height - BACK_BUTTON_SIZE[1] - 15)
 TURN_TIME = 10
 RENDER_RATE = 1/15
 MOUSE_LEFT_BUTTON = 1
@@ -34,7 +33,6 @@ class GrabAllFlags:
         self.running = True
         self.players = [munch.Munch(last_updated=0), munch.Munch(last_updated=0)]
         self.current_player = None
-        self.algolink = None
 
     def run(self):
         self.velocity = self.orch.drone_velocity
@@ -42,7 +40,7 @@ class GrabAllFlags:
 
         self.initialize()
 
-        self.displayManager.reset_main_rect(True, 'scaled_blue.png');
+        self.displayManager.reset_main_rect(True, 'ash.png');
         self.displayManager.text_line.set_text('grab all the flags')
         self.displayManager.board.display = True
         self.displayManager.batteriesDisplay.display = True
@@ -70,7 +68,10 @@ class GrabAllFlags:
         self.players[0].name = 'computer'
         self.players[1].name = 'your'
 
-        self.players[0].prepare_to_turn = self.get_turn_handler()
+        if self.algolink:
+            self.players[0].prepare_to_turn = self.computer_player_prepare_to_turn
+        else:
+            self.players[0].prepare_to_turn = self.computer_simulator_prepare_to_turn
         self.players[1].prepare_to_turn = self.human_player_prepare_to_turn
 
         self.players[0].manage_turn = self.computer_player_manage_turn
@@ -98,16 +99,6 @@ class GrabAllFlags:
                               number=i,
                               position=Point(x, y)))
         return leds
-
-    def get_turn_handler(self):
-        self.algolink = algoLink.AlgoLink()
-        try:
-            self.algolink.connect()
-        except ConnectionError:
-            return self.computer_simulator_prepare_to_turn
-        self.algolink.set_world(self.orch.size)
-        self.algolink.set_drone_size(self.orch.drone_radius*2)
-        return self.computer_player_prepare_to_turn
 
     def reset_leds(self):
         for led in self.landmarks.leds:
