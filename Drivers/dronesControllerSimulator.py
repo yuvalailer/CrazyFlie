@@ -14,6 +14,7 @@ DEFAULT_VELOCITY = 0.1
 DEFAULT_STEP_SIZE = 0.1
 DRONES_NUM = 4
 
+# We want to simulate the noise in the physical plane, assuming it's Gaussian, and different noises
 NOISE_EXPECTATION_POS = 0
 NOISE_VAR_POS = 0.01
 NOISE_POS = True
@@ -24,6 +25,7 @@ NOISE_MOVE = True
 NOISE_DIR = {'posnoise': (NOISE_EXPECTATION_POS, NOISE_VAR_POS, NOISE_POS),
              'movetonoise': (NOISE_EXPECTATION_MOVE, NOISE_VAR_MOVE, NOISE_MOVE)}
 
+#We simulate the physical plane, by constantly saving drone positions instead of getting them from the cameras
 class DronesController:
     def __init__(self):
         self._world_size = [WORLD_X, WORLD_Y]

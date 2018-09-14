@@ -95,6 +95,8 @@ class DronesOrchestrator:
             self.drones_controller.move_drone(drone.name, [0, 0])
             drone.might_on_move = False
 
+    # Move a drone according to a given direction,
+    #  unless it predicts itself leaving the field bounds or colliding with another drone
     def try_move_drone(self, drone, direction):
         if drone.grounded:
             cf_logger.warning('try to move grounded drone %s' % drone.name)
@@ -119,6 +121,7 @@ class DronesOrchestrator:
         drone.might_on_move = True
         return True
 
+    # Takeoff a drone, unless there is a drone above it, in order to avoid a collision, in which case abort the action
     def try_take_off(self, drone, blocking=False):
         if not drone.grounded:
             cf_logger.warning('try to take off a flying drone %s' % drone.name)
@@ -157,6 +160,8 @@ class DronesOrchestrator:
         self.drones_controller.land(drone.name)
         drone.grounded = True
 
+    # Move a drone directly to a certain position,
+    #  unless it predicts itself leaving the field bounds, colliding with another drone in the end or in it's path
     def try_goto(self, drone, target):
         if drone.grounded:
             cf_logger.warning('goto failed - try to move grounded drone %s' % drone.name)

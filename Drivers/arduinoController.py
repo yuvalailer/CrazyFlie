@@ -55,6 +55,7 @@ class ArduinoController:
         cf_logger.info('close serial port')
         self.ser.close()
 
+    # Set a color to a desired LED by controlling the RGB values
     def set_led(self, led, r, g, b):
         cf_logger.info('%d - (%d %d %d)' % (led, r, g, b))
         checksum = (LED_MESSAGE_PREFIX + led + r + g + b) % 256
@@ -106,6 +107,7 @@ class ArduinoController:
         assert axs.count(self._default_x) > 0.7 * CALIBRATION_SAMPLES, 'default samples are not stable enough - ax'
         assert ays.count(self._default_y) > 0.7 * CALIBRATION_SAMPLES, 'default samples are not stable enough - ay'
 
+    #Get the Joystick position as a pair of x and y value.
     def _get_joystick_position(self):
         self._valuesMutex.acquire()
         data = self._data

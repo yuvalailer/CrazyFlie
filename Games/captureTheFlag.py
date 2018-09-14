@@ -66,6 +66,7 @@ class CaptureTheFlag:
         self.running = True
         self.game_loop()
 
+    # If there are no real LEDs that can be captures by the cameras, we create them in the simulator manually
     def set_virtual_leds(self):
         self.landmarks.leds = [Munch(name='led1', number=0,
                                      position=Point(self.orch.max_x - 0.5*self.orch.drone_radius,
@@ -76,6 +77,7 @@ class CaptureTheFlag:
         self.landmarks.set_led(self.landmarks.leds[0], displaysConsts.GREEN)
         self.landmarks.set_led(self.landmarks.leds[1], displaysConsts.BLUE)
 
+    # Allocate drones to players and define their starting positions
     def allocate_players(self):
         self.players[0].drone = self.orch.drones[0]
         self.players[1].start_position = Point(self.orch.max_x - 1.5*self.orch.drone_radius,
@@ -86,6 +88,7 @@ class CaptureTheFlag:
         self.players[0].color = displaysConsts.BLUE
         self.players[1].color = displaysConsts.GREEN
 
+    # Initialize parameters of the players
     def initialize_players(self):
         cf_logger.info('create players - {}'.format(len(self.players)))
         self.allocate_players()
@@ -175,6 +178,7 @@ class CaptureTheFlag:
             self.manage_events()
             time.sleep(0.1)
 
+    # Waiting for a function to return True
     def wait_to(self, wait_func, timeout=60, sleep_time=0.2):
         start_time = time.time()
         while self.running and time.time() - start_time < timeout:

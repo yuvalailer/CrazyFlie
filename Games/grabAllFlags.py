@@ -80,6 +80,7 @@ class GrabAllFlags:
         self.players[0].winner_message = 'YOU LOSE, TOO BAD, LOSER!!!'
         self.players[1].winner_message = 'YOU ARE THE WINNER'
 
+    # If there are no real LEDs that can be captures by the cameras, we create them in the simulator manually
     def set_virtual_leds(self):
         self.landmarks.leds = self.generate_leds(LED_NUM)
         for led in self.landmarks.leds:
@@ -105,6 +106,7 @@ class GrabAllFlags:
             led.visited = False
             self.landmarks.set_led(led, displaysConsts.RED)
 
+    # Use LEDS as targets
     def get_targets(self):
         targets = [led for led in self.landmarks.leds]
         for target in targets:
@@ -231,7 +233,6 @@ class GrabAllFlags:
         sites = [led.position for led in self.landmarks.leds]
         path.extend(sites)
         self.current_player.follower = followPath.Follower(path, self.drone, self.orch)
-
 
     def computer_player_manage_turn(self):
         if time.time() - self.current_player.last_updated > 0.1:

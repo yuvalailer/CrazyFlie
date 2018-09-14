@@ -65,6 +65,7 @@ class DronesControlDemo:
             self.manage_events()
         self.orch.stop_drone(self.current_drone)
 
+    # If there are no real LEDs that can be captures by the cameras, we create them in the simulator manually
     def set_virtual_leds(self):
         self.landmarks.leds = [Munch(name='led1', number=0,
                                      position=Point(self.orch.max_x - self.orch.drone_radius,

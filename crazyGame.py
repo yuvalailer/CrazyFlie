@@ -182,6 +182,7 @@ class CrazyGame:
                         self.tear_down()
                     return button.text
 
+    # Disconnect the arduino and the VM
     def tear_down(self):
         if self.arduino_controller:
             self.arduino_controller.disconnect()
