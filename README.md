@@ -176,23 +176,23 @@ You will be transferred to the Sand Box:
 ### Goal
 Here you are free to play around with the drones with no special restrictions or goal.
 ### Controls
-| Key | Function |
-|:-----:|:------------:|
-| Up   | Move drone "north"|
-| Down | Move drone "south" |
-| Left |  Move drone "west" |
-| Right | Move drone "east" |
-| U | Take off selected drone |
-| L | Land selected drone |
-| S | stop the selected drone |
-| Space | Change the selected drone |
+| Key | Description |Function |
+|-------|:-------:|:------------:|
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/up_arrow.JPG) | Up arrow   | Move drone "north"|
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/down_arrow.JPG) | Down arrow | Move drone "south" |
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/left_arrow.JPG) | Left arrow |  Move drone "west" |
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/right_arrow.JPG) | Right arrow | Move drone "east" |
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/u_key.JPG) | U | Take off the selected drone |
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/l_key.JPG) | L | Land the selected drone |
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/s_key.JPG) | S | stop the selected drone |
+| ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/space.JPG) | Space | Change the selected drone |
 
 The selected drone will be marked green while the other drones are black.
 
 ### Features
 At the top left corner of the screen we have a few ways to control the motion of the drones:
 - The two top buttons: **Velocity** and **Step Size** are Radio Buttons. Meaning, only one can be pressed down at any given moment.
-- While one of them is pressed, you can change the value associated with it with the ‘+’ and ‘-’ buttons.
+- While one of them is pressed, you can change the value associated with it with the `+` and `-` buttons.
 - After the desired value is selected, you can press the **_update_** button to update the values.
 - A message will appear at the bottom of the screen confirming the new values.
 
