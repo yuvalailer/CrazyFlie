@@ -46,25 +46,28 @@ class CrazyGame:
         cf_logger.info('start initialization process')
         self.displayManager = displayManager.DisplayManager()
         time.sleep(0.5)
-        self.algolink = self.set_algolink()
+
         self.set_arduino_control()
         self.set_drone_controller()
         self.orch = dronesOrchestrator.DronesOrchestrator(self.drone_controller)
         self.landmarkManager = landmarkManager.LandmarkManager(self.arduino_controller,
                                                                self.drone_controller)
+
+        self.set_algolink()
         self.displayManager.set_board(self.orch, self.landmarkManager)
         self.displayManager.set_batteries_display(self.orch)
-        self.run_starting_animation()
 
     def set_algolink(self):
-        algolink = algoLink.AlgoLink()
+        self.algolink = algoLink.AlgoLink()
         try:
-            algolink.connect()
+            self.algolink.connect()
         except ConnectionError:
-            return None
-        algolink.set_world(self.orch.size)
-        algolink.set_drone_size(self.orch.drone_radius*2)
-        return algolink
+            cf_logger.info('failed to connect to algoLink')
+            self.algolink = None
+            return
+        self.algolink.set_world(self.orch.size)
+        self.algolink.set_drone_size(self.orch.drone_radius*2)
+        cf_logger.info('algo link set successfully')
 
     def set_arduino_control(self):
         cf_logger.info('connecting to arduino board')
@@ -91,6 +94,7 @@ class CrazyGame:
         vm_button = button.Button(VM_BUTTON_POS, BUTTON_SIZE, 'vm', unpressed_image_name='VM.png', pressed_image_name='VM_pressed.png', show_text=False)
         demo_button = button.Button(DEMO_BUTTON_POS, BUTTON_SIZE, 'simulator', unpressed_image_name='simulator.png', pressed_image_name='simulator_pressed.png', show_text=False)
         exit_button = button.Button(EXIT_BUTTON_POS, BUTTON_SIZE, 'exit', unpressed_image_name='exit.png', pressed_image_name='exit_pressed.png', show_text=False)
+
         self.displayManager.add_button(vm_button)
         self.displayManager.add_button(demo_button)
         self.displayManager.add_button(exit_button)
@@ -125,7 +129,7 @@ class CrazyGame:
                 self.drone_controller = dronesController.DronesController()
             else:
                 self.drone_controller = dronesControllerSimulator.DronesController()
-                cf_logger.info('Connect to drone vm controller...')
+                cf_logger.info('Connect to drone simulator controller...')
             self.displayManager.text_line.set_text('Connect to drone vm controller...')
             try:
                 self.drone_controller.connect()
@@ -135,10 +139,6 @@ class CrazyGame:
                 self.displayManager.text_line.set_text(fail_text)
                 time.sleep(1)
                 self.drone_controller = None
-
-    def run_starting_animation(self):
-        if not self.drone_controller:
-            return
 
     def set_games_buttons(self):
         BUTTON_SIZE = (340, 100)

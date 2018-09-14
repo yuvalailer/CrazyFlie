@@ -35,17 +35,8 @@ class GrabAllFlags:
         self.current_player = None
 
     def run(self):
-        self.velocity = self.orch.drone_velocity
-        self.step_size = self.orch.drone_step_size
-
         self.initialize()
-
-        self.displayManager.reset_main_rect(True, 'ash.png');
-        self.displayManager.text_line.set_text('grab all the flags')
-        self.displayManager.board.display = True
-        self.displayManager.batteriesDisplay.display = True
-        self.add_buttons()
-        self.displayManager.render(render_batteries=True)
+        self.set_initialize_display()
 
         self.quit = False
         self.running = True
@@ -80,6 +71,15 @@ class GrabAllFlags:
         self.players[0].winner_message = 'YOU LOSE, TOO BAD, LOSER!!!'
         self.players[1].winner_message = 'YOU ARE THE WINNER'
 
+    # Set the display for grab all flags mode
+    def set_initialize_display(self):
+        self.displayManager.reset_main_rect(True, 'ash.png')
+        self.displayManager.text_line.set_text('grab all the flags')
+        self.displayManager.board.display = True
+        self.displayManager.batteriesDisplay.display = True
+        self.add_buttons()
+        self.displayManager.render(render_batteries=True)
+
     # If there are no real LEDs that can be captures by the cameras, we create them in the simulator manually
     def set_virtual_leds(self):
         self.landmarks.leds = self.generate_leds(LED_NUM)
@@ -87,15 +87,10 @@ class GrabAllFlags:
             self.landmarks.set_led(led, displaysConsts.RED)
 
     def generate_leds(self, led_num):
-        RATIO = 10000
         leds = []
-        x_start = self.orch.min_x * RATIO
-        x_end = self.orch.max_x * RATIO
-        y_start = self.orch.min_y * RATIO
-        y_end = self.orch.max_y * RATIO
         for i in range(led_num):
-            x = random.randint(x_start, x_end)/RATIO
-            y = random.randint(y_start, y_end)/RATIO
+            x = random.uniform(self.orch.min_x, self.orch.max_x)
+            y = random.uniform(self.orch.min_y, self.orch.max_y)
             leds.append(Munch(name='led{}'.format(i),
                               number=i,
                               position=Point(x, y)))
