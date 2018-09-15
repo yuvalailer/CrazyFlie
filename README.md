@@ -17,17 +17,17 @@ This guide provides the links and instructions for the steps needed in order to 
 
 ## Table of Content
 #### 1. Installation and Prerequisites 
- 1.1. Hardware - OptiTrack, VM, Windows, Peripherals (Joystick, LED)
+     1.1. Hardware - OptiTrack, VM, Windows, Peripherals (Joystick, LED)
      
- 1.2. Software - Git
+     1.2. Software - Git
 #### 2. Crazy Game
- 2.1. Capture the Flag  - 2 players (human or machine), fly 2-4 drones in a competition to capture the rival’s flags.
+     2.1. Capture the Flag  - 2 players (human or machine), fly 2-4 drones in a competition to capture the rival’s flags.
  
- 2.2 SandBox - Freeform game to experiment with the drones
+     2.2 SandBox - Freeform game to experiment with the drones
  
- 2.3. Catch’em all - 2 players (human or machine), taking turns flying one drone on a mission to capture all the targets in the shortest time.
+     2.3. Catch’em all - 2 players (human or machine), taking turns flying one drone on a mission to capture all the targets in the shortest time.
      
- 2.4. How to run the game
+     2.4. How to run the game
 
 #### 3. Thanks and Disclaimer
 
@@ -262,7 +262,7 @@ Enjoy the game.
 
 
 
-## Thanks and Disclaimer 
+## 3. Thanks and Disclaimer 
 We would like to thank Prof. Dan Halperin and the staff of the course for their guidance, Yoni Mendel and the Advanced Control Systems Lab in TAU for hosting and supporting this project. Special Thanks to Yotam Gani and Orel Ben-Yeshai for their support and assistance. 
 
 #### We don't own any IP rights for 3rd party components, such as software, hardware, internet articles, manuals, images (found on google image search) or any other 3rd party component of this project, which may be subjected to any kind of copyrights. All activities in this project were made for educational purposes only.
