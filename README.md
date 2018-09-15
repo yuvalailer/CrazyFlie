@@ -144,14 +144,15 @@ From this screen you can choose the mode you wish to play.
 
 ## 2.1 Capture the Flag
 ### Getting Started
-By pressing the Capture the Flag button you will be transferred to the Capture the Flag game mode selection screen:
+By pressing the `Capture the Flag` button you will be transferred to the Capture the Flag game mode selection screen:
 
 ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_menu.JPG)
 
 Here you can choose the way you wish to play the game:
-Computer Vs. Computer
-Player Vs. Computer
-Player Vs. Player
+- Computer Vs. Computer
+- Player Vs. Computer
+- Player Vs. Player
+
 Regardless of  which mode you chose, you will be passed to the main game window.
 At first the drones will take their starting positions.
 Then, in turns each player will have 4 seconds to make his move towards the goal.
@@ -167,7 +168,7 @@ The player controls his drones with the arrow keys on the keyboard.
 ---
 ## 2.2 Sand Box
 ### Getting Started
-By pressing the Sand Box Button you will be transferred to the Sand Box:
+By pressing the `Sand Box` Button you will be transferred to the Sand Box:
 
 ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_window.JPG)
 
@@ -196,9 +197,9 @@ Here you are free to play around with the drones with no special restrictions or
 
 ### Features
 At the top left corner of the screen we have a few ways to control the motion of the drones:
-- The two top buttons: `**Velocity**` and `**Step Size**` are Radio Buttons. Meaning, only one can be pressed down at any given moment.
+- The two top buttons: `Velocity` and `Step Size` are Radio Buttons. Meaning, only one can be pressed down at any given moment.
 - While one of them is pressed, you can change the value associated with it with the `+` and `-` buttons.
-- After the desired value is selected, you can press the **_update_** button to update the values.
+- After the desired value is selected, you can press the `update` button to update the values.
 - A message will appear at the bottom of the screen confirming the new values.
 ---
 
@@ -207,7 +208,7 @@ At the top left corner of the screen we have a few ways to control the motion of
 ### Watch this game in action:
 [![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/Video_image_new.jpg)](https://youtu.be/awm4osTDK7g)
 ### Getting Started
-By pressing the Catch’em all button you will be transferred to the Catch’em All game screen:
+By pressing the `Catch’em all` button you will be transferred to the Catch’em All game screen:
 
 ![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_screen.JPG)
 
