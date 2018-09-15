@@ -13,7 +13,7 @@ In this project, we created a framework for developing games of controlling real
 This guide provides the links and instructions for the steps needed in order to set up this project and play the games. The proceeding [Developers Guide](https://github.com/yuvalailer/CrazyFlie/blob/master/README.md) gives a deeper look into the software we wrote and can be useful for creating your own games and frameworks.
 
 ## Watch it in action:
-[![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/Video_image_new.jpg)](https://youtu.be/r_WV8khKviY)
+[![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/Video_image_new.jpg)](https://youtu.be/7neoFPj-ES8)
 
 ## Table of Content
 #### 1. Installation and Prerequisites 
@@ -30,7 +30,7 @@ This guide provides the links and instructions for the steps needed in order to 
      2.4. How to run the game
 
 #### 3. Thanks and Disclaimer
-
+
 
 # 1. Installation and Prerequisites 
 ## 1.1 Hardware
@@ -134,7 +134,7 @@ It is very important to add the main crazyFlie directory to python path.
 
   
 
-
+
 # 2. Crazy Game
 After choosing the controller you wish to work wish, you will get to the **choose your game** window:
 
@@ -205,8 +205,6 @@ At the top left corner of the screen we have a few ways to control the motion of
 
 
 ## 2.3 Catch’em all 
-### Watch this game in action:
-[![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/Video_image_new.jpg)](https://youtu.be/awm4osTDK7g)
 ### Getting Started
 By pressing the `Catch’em all` button you will be transferred to the Catch’em All game screen:
 
@@ -261,11 +259,15 @@ Enjoy the game.
 
 
 
-
+
 ## 3. Thanks and Disclaimer 
 We would like to thank Prof. Dan Halperin and the staff of the course for their guidance, Yoni Mendel and the Advanced Control Systems Lab in TAU for hosting and supporting this project. Special Thanks to Yotam Gani and Orel Ben-Yeshai for their support and assistance. 
 
 #### We don't own any IP rights for 3rd party components, such as software, hardware, internet articles, manuals, images (found on google image search) or any other 3rd party component of this project, which may be subjected to any kind of copyrights. All activities in this project were made for educational purposes only.
+
+
+
+
 
 
 
