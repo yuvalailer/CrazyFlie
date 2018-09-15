@@ -187,10 +187,10 @@ The selected drone will be marked green while the other drones are black.
 
 ### Features
 At the top left corner of the screen we have a few ways to control the motion of the drones:
-The two top buttons: **Velocity** and **Step Size** are Radio Buttons. Meaning, only one can be pressed down at any given moment.
-While one of them is pressed, you can change the value associated with it with the ‘+’ and ‘-’ buttons.
-After the desired value is selected, you can press the **_update_** button to update the values.
-A message will appear at the bottom of the screen confirming the new values.
+- The two top buttons: **Velocity** and **Step Size** are Radio Buttons. Meaning, only one can be pressed down at any given moment.
+- While one of them is pressed, you can change the value associated with it with the ‘+’ and ‘-’ buttons.
+- After the desired value is selected, you can press the **_update_** button to update the values.
+- A message will appear at the bottom of the screen confirming the new values.
 ---
 
 
