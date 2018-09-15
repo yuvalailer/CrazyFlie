@@ -13,27 +13,25 @@ In this project, we created a framework for developing games of controlling real
 This guide provides the links and instructions for the steps needed in order to set up this project and play the games. The proceeding [Developers Guide](https://github.com/yuvalailer/CrazyFlie/blob/master/README.md) gives a deeper look into the software we wrote and can be useful for creating your own games and frameworks.
 
 ## Watch it in action:
-[![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/Video_image_new.jpg)](https://youtu.be/r_WV8khKviY)
+[![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/Video_image_new.jpg)](https://youtu.be/7neoFPj-ES8)
 
 ## Table of Content
 #### 1. Installation and Prerequisites 
-     1.1. Hardware - OptiTrack, VM, Windows, Peripherals (Joystick, LED)
+a. Hardware - OptiTrack, VM, Windows, Peripherals (Joystick, LED)
      
-     1.2. Software - Git
+b. Software - Git
 #### 2. Crazy Game
-     2.1. Capture the Flag  - 2 players (human or machine), fly 2-4 drones in a competition to capture the rival’s flags.
+a. Capture the Flag  - 2 players (human or machine), fly 2-4 drones in a competition to capture the rival’s flags.
  
-     2.2 SandBox - Freeform game to experiment with the drones
- 
-     2.3. Catch’em all - 2 players (human or machine), taking turns flying one drone on a mission to capture all the targets in the shortest time.
+b. Catch’em all - 2 players (human or machine), taking turns flying one drone on a mission to capture all the targets in the shortest time.
      
-     2.4. How to run the game
+c. How to run the game
 
 #### 3. Thanks and Disclaimer
 
 
-# 1. Installation and Prerequisites 
-## 1.1 Hardware
+# Installation and Prerequisites 
+## Hardware
 ### Optitrack
 - [Flex 3 capture cameras](http://optitrack.com/products/flex-3/) .
 There is no standard number of needed cameras for this project to work. The amount depend on the size of the “playing field”. A good “rule of thumb” at least 3 cameras have to be able to see all infrared markers related to a “rigid object” at any given moment.
@@ -65,7 +63,7 @@ As mentioned before, the VM acts as a server. The main game (on Windows) communi
 The second software environment is Windows 10, which need to contain the Motive software and other files related to the game. These files can be found in [CrazyGame for Windows PC]{https://github.com/xqgex/CrazyFlie} - The GUI repository (without the motive software).
 
 
-# 1.2 Software
+# Software
 ## Motive
 Motive is the software used for controlling and processing the information received from the Optitrack cameras set. It is proprietary and requires a license. In Motive, collections of markers, identified by the cameras, are grouped together into trackable ‘rigid bodies’, that represent the location of objects in the real world. In our project, such objects are the Crazyflie Drones and the LEDs. it is very important to follow the next **naming convention** in order to use our system “as is” without changes.
 #### For Drones:
@@ -97,7 +95,7 @@ Our project is divided into five different Git repositories. Each one can be use
 - [CrazyGame Automatic player](https://github.com/xqgex/CrazyFlie_Autoplayer)
 
 ## Dependencies:
-Different parts of the project are made using different inviruments and software dependencies. Best practise of using this project is following the installation guide, on a **Windows** computer strong enough to carry the simultaneous load of the VM and the hoat softwarea, Which means **minimum 8 GB of RAM and virtualization capabilities**.
+Different parts of the project are made using different inviruments and software dependencies. Best practise of using this project is following the installation guide, on a **Windows** computer strong enough to carry the simultaneous load of the VM and the host softwares, Which means **minimum 8 GB of RAM and virtualization capabilities**.
 Alternatively it is possible to use it in other configurations but we don’t offer additional support for it.
 
 ## Installation Guide:
@@ -123,7 +121,7 @@ git clone https://github.com/xqgex/CrazyFlie
 It is very important to add the main crazyFlie directory to python path.
 7. Import the downloaded VM from step 2, in the VM host software from step 1. You can use [this guide](https://docs.oracle.com/cd/E26217_01/E26796/html/qs-import-vm.html).
 8. Set the following configuration ([“How To” guide](https://www.virtualbox.org/manual/ch03.html)) for the VM:
-- At least 4 GB of RAM
+- At least 4GB of RAM
 - static IP - 172.16.1.2
 - Network adapter attached to - “Host-Only adapter” (in the Virtualbox VM settings)
  
@@ -135,24 +133,22 @@ It is very important to add the main crazyFlie directory to python path.
   
 
 
-# 2. Crazy Game
+# Crazy Game
 After choosing the controller you wish to work wish, you will get to the **choose your game** window:
-
-![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/choose_game.JPG)
-
+![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/choose_game.JPG “Choose your Game”)
 From this screen you can choose the mode you wish to play.
 
-## 2.1 Capture the Flag
+## Capture the Flag
 ### Getting Started
-By pressing the `Capture the Flag` button you will be transferred to the Capture the Flag game mode selection screen:
+By pressing the Capture the Flag icon:
+![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_icon.JPG "Capture the Flag button")
 
-![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_menu.JPG)
-
+You will be transferred to the Capture the Flag game mode selection screen:
+![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/capture_icon.JPG “Capture the Flag modes”)
 Here you can choose the way you wish to play the game:
-- Computer Vs. Computer
-- Player Vs. Computer
-- Player Vs. Player
-
+Computer Vs. Computer
+Player Vs. Computer
+Player Vs. Player
 Regardless of  which mode you chose, you will be passed to the main game window.
 At first the drones will take their starting positions.
 Then, in turns each player will have 4 seconds to make his move towards the goal.
@@ -160,73 +156,65 @@ Then, in turns each player will have 4 seconds to make his move towards the goal
 The first player to reach his respective colored LED is the winner.
 
 ### Features
-- At the top left corner of the screen you have battery indications for all drones in the field.
-- The drones have a safety zone that will not allow to get close to each to other more than a certain radius, both in the game and in the field.
-### Controls
+At the top left corner of the screen you have battery indications for all drones in the field.
+The drones have a safety zone that will not allow to get close to each to other more than a certain radius, both in the game and in the field.
+ ### Controls
 The player controls his drones with the arrow keys on the keyboard.
 
 ---
-## 2.2 Sand Box
+## Sand Box
 ### Getting Started
-By pressing the `Sand Box` Button you will be transferred to the Sand Box:
-
-![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_window.JPG)
-
+By pressing the Sandbox icon:
+![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_icon.JPG “Sand Box button”)
+You will be transferred to the Sandbox:
+![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/sandbox_window.JPG “The Sand Box”)
 ### Goal
 Here you are free to play around with the drones with no special restrictions or goal.
 ### Controls
 | Key | Function |
 |:-----:|:------------:|
-| Up arrow  | Move drone "north"|
-| Down arrow | Move drone "south" |
-| Left arrow |  Move drone "west" |
-| Right arrow | Move drone "east" |
+| Up   | Move drone up|
+| Down | Move drone down |
+| Left |  Move drone left |
+| Right | Move drone right |
 | U | Take off selected drone |
 | L | Land selected drone |
-| S | stop the selected drone |
 | Space | Change selected drone |
-| R | Change LED to red |
-| G | Change LED to green |
-| B | Change LED to blue |
+| S | stop the selected drone |
+| R G B | Toggle LED color |
 
-- By clicking with the mouse on a drone you can change the selected drone
-- Same hold for LEDs
-
-
-- The selected drone will be marked green while the other drones are black.
+The selected drone will be marked green while the other drones are black.
 
 ### Features
 At the top left corner of the screen we have a few ways to control the motion of the drones:
-- The two top buttons: `Velocity` and `Step Size` are Radio Buttons. Meaning, only one can be pressed down at any given moment.
-- While one of them is pressed, you can change the value associated with it with the `+` and `-` buttons.
-- After the desired value is selected, you can press the `update` button to update the values.
-- A message will appear at the bottom of the screen confirming the new values.
+The two top buttons: **Velocity** and **Step Size** are Radio Buttons. Meaning, only one can be pressed down at any given moment.
+While one of them is pressed, you can change the value associated with it with the ‘+’ and ‘-’ buttons.
+After the desired value is selected, you can press the **_update_** button to update the values.
+A message will appear at the bottom of the screen confirming the new values.
 ---
 
 
-## 2.3 Catch’em all 
-### Watch this game in action:
-[![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/Video_image_new.jpg)](https://youtu.be/awm4osTDK7g)
+## Catch’em all 
 ### Getting Started
-By pressing the `Catch’em all` button you will be transferred to the Catch’em All game screen:
-
-![](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_screen.JPG)
-
+By pressing the Catch’em all icon:
+![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_icon.JPG “Catch’em All button”)
+You will be transferred to the Catch’em All game screen:
+![alt text](https://github.com/yuvalailer/CrazyFlie/blob/master/images/catch_screen.JPG “Catch’em All Screen”)
 ### Goal
 The goal in this mode is to pass through all given targets at the minimal time possible to beat the computer’s time.
 ### The Flow
-1. First of all the system will try to connect to the computer’s side algorithm. If none is present, the system will use a simplified static algorithm for the computer’s turn.
-2. Then, the first turn will be of the player. You will have a countdown to the start of your turn and then you will have to pass through all the targets in a path that seems shortest to you.
-3. After you have passed through all the targets, the drone will return to the starting position to prepare for the computer’s turn.
-4. The computer will execute its path, and in the end the winner with the shortest time will be announced.
+First of all the system will try to connect to the computer’s side algorithm. If none is present, the system will use a simplified static algorithm for the computer’s turn.
+Then, the first turn will be of the player. You will have a countdown to the start of your turn and then you will have to pass through all the targets in a path that seems shortest to you.
+After you have passed through all the targets, the drone will return to the starting position to prepare for the computer’s turn.
+The computer will execute its path, and in the end the winner with the shortest time will be announced.
 ### LEDs
-- The LEDs will be used as the targets to pass through. They are all red at the start of the game and once a target is reached it will turn green.
-- If no physical LEDs are detected by the system, 4 simulative LEDs will be randomly placed on the game board.
+The LEDs will be used as the targets to pass through. They are all red at the start of the game and once a target is reached it will turn green.
+If no physical LEDs are detected by the system, 4 simulative LEDs will be randomly placed on the game board.
 
 
 ---
 
-## 2.4. How to run the game 
+## How to run the game 
 After downloads all files related to the game both VM and Windows sides and after setting the drones and leds (optional) in Motive software follow those instructions to run the game.
 ### VM side:
 In CrazyFlie_ros/crazyflie_demo/scripts/ folder, enter: 
@@ -262,7 +250,7 @@ Enjoy the game.
 
 
 
-## 3. Thanks and Disclaimer 
+## Thanks and Disclaimer 
 We would like to thank Prof. Dan Halperin and the staff of the course for their guidance, Yoni Mendel and the Advanced Control Systems Lab in TAU for hosting and supporting this project. Special Thanks to Yotam Gani and Orel Ben-Yeshai for their support and assistance. 
 
 #### We don't own any IP rights for 3rd party components, such as software, hardware, internet articles, manuals, images (found on google image search) or any other 3rd party component of this project, which may be subjected to any kind of copyrights. All activities in this project were made for educational purposes only.
