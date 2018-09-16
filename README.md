@@ -36,7 +36,7 @@ This guide provides the links and instructions for the steps needed in order to 
 ## 1.1 Hardware
 ### Optitrack
 - [Flex 3 capture cameras](http://optitrack.com/products/flex-3/) .
-There is no standard number of needed cameras for this project to work. The amount depend on the size of the “playing field”. A good “rule of thumb” at least 3 cameras have to be able to see all infrared markers related to a “rigid object” at any given moment.
+There is no standard number of needed cameras for this project to work. The amount depend on the size of the “playing field”. A good “rule of thumb” is that at least 3 cameras have to be able to see all infrared markers related to a “rigid object” at any given moment.
 We had 6 cameras covering an area of about 1.5X1.5 meters, and up to 0.5 meter in the Z (upward) axis.
 - [Infrared markers](http://optitrack.com/products/motion-capture-markers/) - 
 Optitrack Cameras are able to identify objects by the reflection from the IR markers connected to the quadcopter.
